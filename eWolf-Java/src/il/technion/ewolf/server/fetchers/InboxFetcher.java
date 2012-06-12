@@ -18,11 +18,11 @@ public class InboxFetcher implements JsonDataFetcher {
 	
 	public class InboxItem implements Comparable<InboxItem> {
 		
-		public InboxItem(String sender, String timestamp, String key){
+		public InboxItem(String sender, String timestamp, String msg){
 			super();
 			this.sender = sender;
 			this.timestamp = timestamp;
-			this.key = key;
+			this.msg = msg;
 			
 			try {
 				itsDate = df.parse(timestamp);
@@ -34,7 +34,7 @@ public class InboxFetcher implements JsonDataFetcher {
 		
 		public String sender;
 		public String timestamp;
-		public String key;
+		public String msg;
 		
 		transient private Date itsDate;
 
@@ -139,35 +139,38 @@ public class InboxFetcher implements JsonDataFetcher {
 	}
 	
 	private SortedSet<InboxFetcher.InboxItem> getInbox() {
+		String msg = "This is the message."+
+					"<br> This is an image: " + "<img src='favicon.ico'>";
+		
 		SortedSet<InboxFetcher.InboxItem> inbox =
 				new TreeSet<InboxFetcher.InboxItem>();	
-		inbox.add(new InboxItem("Liran","01/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Anna","02/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Moshe","03/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Moshe","04/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("David","05/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Haim","06/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("לירן","07/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("אנה","08/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("גיל","09/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("דודו","10/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("חנה","12/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Craig","13/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("שלמה","14/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Facebook","15/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Gmail","16/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Google+","17/02/"+year,""+globalKey++));
-		inbox.add(new InboxItem("eWolf System","20/02/"+year,""+globalKey++));
+		inbox.add(new InboxItem("Liran","01/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Anna","02/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Moshe","03/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Moshe","04/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("David","05/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Haim","06/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("לירן","07/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("אנה","08/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("גיל","09/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("דודו","10/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("חנה","12/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Craig","13/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("שלמה","14/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Facebook","15/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Gmail","16/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Google+","17/02/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("eWolf System","20/02/"+year,""+(globalKey++) + " : " + msg));
 		
-		inbox.add(new InboxItem("Liran","21/01/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Liran","22/01/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Liran","23/01/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Liran","24/01/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Liran","25/01/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Liran","26/01/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Liran","27/01/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Liran","29/01/"+year,""+globalKey++));
-		inbox.add(new InboxItem("Liran","30/01/"+year,""+globalKey++));
+		inbox.add(new InboxItem("Liran","21/01/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Liran","22/01/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Liran","23/01/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Liran","24/01/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Liran","25/01/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Liran","26/01/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Liran","27/01/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Liran","29/01/"+year,""+(globalKey++) + " : " + msg));
+		inbox.add(new InboxItem("Liran","30/01/"+year,""+(globalKey++) + " : " + msg));
 		
 		return inbox;
 	}

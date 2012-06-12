@@ -1,10 +1,11 @@
-var InboxItem = function(id,sender,timestamp,key) {
+var InboxItem = function(id,sender,timestamp,msg) {
 	var isLoading = false;
 	var preMessageTitle = ">> ";
 	
-	var eWolfJsonGetter = new JSonGetter(id,"/json?callBack=?",handleNewData,null,-1);
-	
-	var itsMessage = null;
+	var itsMessage = $("<li/>").attr({
+		 "id": id,
+		 "class": "messageBox"
+	 }).append(msg).insertAfter(listItem).hide();
 	
 	var listItem = $("<li/>").attr({
 		"id": id
@@ -34,29 +35,8 @@ var InboxItem = function(id,sender,timestamp,key) {
 	})	.appendTo(aObj).hide();
 	
 	listItem.click(function() {
-		if(itsMessage == null) {
-			eWolfJsonGetter.getData({
-				message: key
-			},{
-				param1: "param1", param2: "param2"
-			});
-		} else {
-			itsMessage.toggle();
-		}
+		itsMessage.toggle();
 	});
-	
-	function handleNewData(data,parameters) {
-		console.log(data);
-		
-		$.each(data,function(i,item){
-			 if(item.key == "message") {
-				 itsMessage = $("<li/>").attr({
-					 "id": id,
-					 "class": "messageBox"
-				 }).append(item.data).insertAfter(listItem);
-			 } 
-		  });		 
-	}
 	
 	function updateView() {
 		var w = listItem.width()-timestampBox.width()-preMessageBox.width()-20;
