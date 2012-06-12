@@ -34,8 +34,7 @@ public class ProfileFetcher implements JsonDataFetcher {
 	 * @return	ProfileData object that contains user's name and ID
 	 */
 	@Override
-	public Object fetchData(String... parameters)
-			throws ProfileNotFoundException {
+	public Object fetchData(String... parameters) {
 		if(parameters.length != 1) {
 			return null;
 		}
@@ -47,7 +46,11 @@ public class ProfileFetcher implements JsonDataFetcher {
 			strUid = profile.getUserId().toString();
 		} else {
 			UserID uid = userIDFactory.getFromBase64(strUid);
-			profile = socialFS.findProfile(uid);			
+			try {
+				profile = socialFS.findProfile(uid);
+			} catch (ProfileNotFoundException e) {
+				return null;
+			}			
 		}
 		return new ProfileData(profile.getName(), strUid);
 	}

@@ -1,8 +1,5 @@
 package il.technion.ewolf.server;
 
-import il.technion.ewolf.server.fetchers.JsonDataFetcher;
-import il.technion.ewolf.socialfs.exception.ProfileNotFoundException;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,6 +17,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
+
+import il.technion.ewolf.server.fetchers.JsonDataFetcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -39,9 +38,8 @@ public class JsonHandler implements HttpRequestHandler {
 		public Object data;
 	}
 	
-	public JsonHandler addFetcher(String key, JsonDataFetcher fetcher) {
-		fetchers.put(key, fetcher);
-		return this;
+	public JsonDataFetcher addFetcher(String key, JsonDataFetcher fetcher) {
+		return fetchers.put(key, fetcher);
 	}
 	
 	@Override
@@ -64,15 +62,7 @@ public class JsonHandler implements HttpRequestHandler {
 				JsonDataFetcher fetcher = fetchers.get(nameValuePair.getName());
 				if(fetcher != null) {
 					String[] fetchParameters = nameValuePair.getValue().split(",");
-					Object o = null;
-
-					try {
-						o = fetcher.fetchData(fetchParameters);
-					} catch (ProfileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
+					Object o = fetcher.fetchData(fetchParameters);
 					if(o != null) {
 						lst.add(new jSonData(key, o));
 					}

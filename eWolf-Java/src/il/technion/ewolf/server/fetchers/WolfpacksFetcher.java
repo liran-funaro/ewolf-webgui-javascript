@@ -31,7 +31,7 @@ public class WolfpacksFetcher implements JsonDataFetcher {
 	 * @return	list of all social groups (wolfpacks), the user has access to them
 	 */
 	@Override
-	public Object fetchData(String... parameters) throws ProfileNotFoundException {
+	public Object fetchData(String... parameters) {
 		if(parameters.length != 1) {
 			return null;
 		}
@@ -47,7 +47,11 @@ public class WolfpacksFetcher implements JsonDataFetcher {
 		} else {
 			UserID uid = userIDFactory.getFromBase64(strUid);
 			Profile profile;
-			profile = socialFS.findProfile(uid);
+			try {
+				profile = socialFS.findProfile(uid);
+			} catch (ProfileNotFoundException e) {
+				return null;
+			}
 			for (WolfPack w : wgroups) {
 				if (w.getMembers().contains(profile)) {
 					groups.add(w.getName());
