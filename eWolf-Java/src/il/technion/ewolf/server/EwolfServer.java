@@ -135,9 +135,9 @@ public class EwolfServer {
 	
 	private static JsonHandler createJsonHandler(Injector injector) {
 		return new JsonHandler()
-		.addFetcher("profile", injector.getInstance(ProfileFetcher.class))
-		.addFetcher("wolfpacks", injector.getInstance(WolfpacksFetcher.class))
-		.addFetcher("wolfpackMembers", injector.getInstance(WolfpackMembersFetcher.class))
-		.addFetcher("inbox", new InboxFetcher());
+			.addFetcher("profile", injector.getInstance(ProfileFetcher.class))
+			.addFetcher("wolfpacks", injector.getInstance(WolfpacksFetcher.class))
+			.addFetcher("wolfpackMembers", injector.getInstance(WolfpackMembersFetcher.class))
+			.addFetcher("inbox", new InboxFetcher());
 	}
 }

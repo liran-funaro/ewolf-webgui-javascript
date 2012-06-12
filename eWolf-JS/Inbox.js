@@ -94,7 +94,7 @@ var Inbox = function (id,applicationFrame) {
 					 showMore.remove();
 				 }
 			 } 
-		  });		 
+		  }); 
 	  }
 	
 	function getInboxData(numberOfMessages,olderThen,newerThen,senderFilter,getOlderItems) {
