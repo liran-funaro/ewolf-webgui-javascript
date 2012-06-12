@@ -2,6 +2,8 @@ var InboxItem = function(id,sender,timestamp,msg) {
 	var isLoading = false;
 	var preMessageTitle = ">> ";
 	
+	var itsMessage = null;
+	
 	var listItem = $("<li/>").attr({
 		"id": id
 	});
@@ -29,13 +31,15 @@ var InboxItem = function(id,sender,timestamp,msg) {
 		"id": id,
 	})	.appendTo(aObj).hide();
 	
-	var itsMessage = $("<li/>").attr({
-		 "id": id,
-		 "class": "messageBox"
-	 }).append(msg).insertAfter(listItem).hide();
-	
-	listItem.click(function() {
-		itsMessage.toggle();
+	listItem.click(function() {		
+		if(itsMessage == null) {
+			itsMessage = $("<li/>").attr({
+				 "id": id,
+				 "class": "messageBox"
+			 }).append(msg).insertAfter(listItem);;
+		} else {
+			itsMessage.toggle();
+		}
 	});
 	
 	function updateView() {

@@ -23,7 +23,7 @@ var Inbox = function (id,applicationFrame) {
 		updateFromServer(true);
 	}).draw();
 	
-	function addItem(sender,timestamp,key,afterItem,olderItem) {
+	function addItem(sender,timestamp,message,afterItem,olderItem) {
 		 var sentAt = Date.parseExact(timestamp, dateFormat);
 
 		 if(oldestDate == null || sentAt - oldestDate < 0) {
@@ -34,11 +34,11 @@ var Inbox = function (id,applicationFrame) {
 			newestDate = sentAt;
 		}
 		
-		return drawItem(sender,timestamp,key,afterItem,olderItem);
+		return drawItem(sender,timestamp,message,afterItem,olderItem);
 	}
 	
-	function drawItem(sender,timestamp,key,afterItem,olderItem) {
-		 var obj = new InboxItem("__inboxitem__"+counter,sender,timestamp,key);
+	function drawItem(sender,timestamp,message,afterItem,olderItem) {
+		 var obj = new InboxItem("__inboxitem__"+counter,sender,timestamp,message);
 		 counter++;		 
 				
 		if(afterItem == null) {
