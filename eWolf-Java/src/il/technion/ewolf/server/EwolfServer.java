@@ -14,7 +14,6 @@ import il.technion.ewolf.server.fetchers.InboxFetcher;
 import il.technion.ewolf.server.fetchers.ProfileFetcher;
 import il.technion.ewolf.server.fetchers.WolfpackMembersFetcher;
 import il.technion.ewolf.server.fetchers.WolfpacksFetcher;
-import il.technion.ewolf.server.fetchers.JsonDataFetcher;
 import il.technion.ewolf.server.handlers.AddMessageBoardPostHandler;
 import il.technion.ewolf.server.handlers.AddSocialGroupHandler;
 import il.technion.ewolf.server.handlers.AddSocialGroupMemberHandler;
