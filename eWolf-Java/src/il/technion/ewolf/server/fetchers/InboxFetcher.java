@@ -18,11 +18,11 @@ public class InboxFetcher implements JsonDataFetcher {
 	
 	public class InboxItem implements Comparable<InboxItem> {
 		
-		public InboxItem(String sender, String timestamp, String msg){
+		public InboxItem(String sender, String timestamp, String message){
 			super();
 			this.sender = sender;
 			this.timestamp = timestamp;
-			this.msg = msg;
+			this.message = message;
 			
 			try {
 				itsDate = df.parse(timestamp);
@@ -34,7 +34,7 @@ public class InboxFetcher implements JsonDataFetcher {
 		
 		public String sender;
 		public String timestamp;
-		public String msg;
+		public String message;
 		
 		transient private Date itsDate;
 

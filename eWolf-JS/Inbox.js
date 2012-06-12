@@ -85,8 +85,10 @@ var Inbox = function (id,applicationFrame) {
 				 var lastItem = null;
 				 $.each(item.data,function(j,inboxItem) {						 
 					 lastItem = addItem(inboxItem.sender,
-							 inboxItem.timestamp,inboxItem.key,
-							 lastItem,parameters.getOlderItems);
+							 			inboxItem.timestamp,
+							 			inboxItem.message,
+							 			lastItem,
+							 			parameters.getOlderItems);
 				 });
 				 
 				 if(parameters.getOlderItems &&

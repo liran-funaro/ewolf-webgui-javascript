@@ -2,11 +2,6 @@ var InboxItem = function(id,sender,timestamp,msg) {
 	var isLoading = false;
 	var preMessageTitle = ">> ";
 	
-	var itsMessage = $("<li/>").attr({
-		 "id": id,
-		 "class": "messageBox"
-	 }).append(msg).insertAfter(listItem).hide();
-	
 	var listItem = $("<li/>").attr({
 		"id": id
 	});
@@ -33,6 +28,11 @@ var InboxItem = function(id,sender,timestamp,msg) {
 		"class": "refreshButtonArea",
 		"id": id,
 	})	.appendTo(aObj).hide();
+	
+	var itsMessage = $("<li/>").attr({
+		 "id": id,
+		 "class": "messageBox"
+	 }).append(msg).insertAfter(listItem).hide();
 	
 	listItem.click(function() {
 		itsMessage.toggle();
