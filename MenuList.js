@@ -19,7 +19,7 @@ var MenuList = function(menu,id,title,topbarFrame) {
 	return {
 		addMenuItem : function(id,title) {			 
 			var menuItem = new MenuItem(id,title,
-					"Click to "+title.toLowerCase(),topbarFrame).appendTo(list);
+					"Click to show "+title.toLowerCase(),topbarFrame).appendTo(list);
 			
 			items[id] = menuItem;
 			

@@ -2,6 +2,10 @@ var MainApps = function (menu,applicationFrame) {
 	var menuList = menu.createNewMenuList("mainapps","Main");
 	var apps = [];
 	
+	var profile = new Profile("profile",applicationFrame);
+	menuList.addMenuItem("profile","My Profile");
+	apps.push(profile);
+	
 	var wall = new Flicker("wall",applicationFrame);
 	menuList.addMenuItem("wall","My Wall");
 	apps.push(wall);
