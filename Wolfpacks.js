@@ -16,14 +16,13 @@ var Wolfpacks = function (menu,applicationFrame) {
 	function loadWolfpacks() {		
 		$.getJSON("/json?callBack=?",
 		{
-			 wolfpacks: "Show cats,cat,Show wolfs,wolf,Show birds,bird,Show models,model",
-			 wolfpacks2: "Show any,any"
+			 wolfpacks: "my"
 		}, function(data) {
 			console.log(data);
 			$.each(data, function(i,item){
 				if(item.key == "wolfpacks") {
-					$.each(item.data, function(i,insideItem){
-						addWolfpackApp(insideItem.key, insideItem.title);
+					$.each(item.data, function(i,pack){
+						addWolfpackApp("__packid__"+pack, pack);
 					});
 				} else if(item.key == "wolfpacks2") {
 					console.log(item.data);
