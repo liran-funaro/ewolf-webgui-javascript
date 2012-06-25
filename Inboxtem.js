@@ -1,6 +1,8 @@
-var InboxItem = function(id,sender,timestamp,msg) {
+var InboxItem = function(id,sender,senderId,timestamp,msg) {
 	var isLoading = false;
 	var preMessageTitle = ">> ";
+	
+	var dateFormat = "dd/MM/yyyy (HH:mm)";
 	
 	var itsMessage = null;
 	
@@ -21,10 +23,12 @@ var InboxItem = function(id,sender,timestamp,msg) {
 		"style": "width:1%;"
 	}).appendTo(aObj);
 	
+	var itsTime = new Date(timestamp);
+	
 	var timestampBox = $("<span/>").attr({
 		"id": id,
 		"class": "timestampBox"
-	}).append(timestamp).appendTo(aObj);
+	}).append(itsTime.toString(dateFormat)).appendTo(aObj);
 	
 	var loadingContainer = $("<div/>").attr({
 		"class": "refreshButtonArea",
@@ -52,6 +56,7 @@ var InboxItem = function(id,sender,timestamp,msg) {
 		}
 		
 		senderBox.text(sender).shorten({width:w});
+
 	}	
 	
 	function select() {

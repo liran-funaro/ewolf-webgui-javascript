@@ -2,7 +2,6 @@ var Inbox = function (id,applicationFrame) {
 	var appContainer = new AppContainer(id,applicationFrame);
 	var frame = appContainer.getFrame();
 	var counter = 0;
-	var dateFormat = "dd/MM/yyyy";
 	
 	var eWolfJsonGetter = new JSonGetter(id,"/json?callBack=?",handleNewData,null,60);
 	
@@ -14,31 +13,40 @@ var Inbox = function (id,applicationFrame) {
 		"id" : id+"Title"
 	})	.append("Inbox")
 		.appendTo(frame);
+	
+	$("<input/>").attr({
+		"id": "newMessageBtn",
+		"type": "button",
+		"value": "New Message...",
+		"class": "newMessageBotton"
+	}).appendTo(frame).click(function() {
+		new NewMessageBox("__newmessage__"+id,frame);
+	});
+	
+	var inboxContainer = $("<div/>").appendTo(frame);
 
 	var list = $("<ul/>").attr({
 		"id" : id
-	})	.appendTo(frame);
+	})	.appendTo(inboxContainer);
 	
 	var showMore = new ShowMore(frame,function() {
 		updateFromServer(true);
 	}).draw();
 	
-	function addItem(sender,timestamp,message,afterItem,olderItem) {
-		 var sentAt = Date.parseExact(timestamp, dateFormat);
-
-		 if(oldestDate == null || sentAt - oldestDate < 0) {
-			 oldestDate = sentAt;
+	function addItem(sender,senderId,timestamp,message,afterItem,olderItem) {
+		 if(oldestDate == null || timestamp - oldestDate < 0) {
+			 oldestDate = timestamp;
 		}
 		
-		if(newestDate == null || sentAt - newestDate > 0) {
-			newestDate = sentAt;
+		if(newestDate == null || timestamp - newestDate > 0) {
+			newestDate = timestamp;
 		}
 		
-		return drawItem(sender,timestamp,message,afterItem,olderItem);
+		return drawItem(sender,senderId,timestamp,message,afterItem,olderItem);
 	}
 	
-	function drawItem(sender,timestamp,message,afterItem,olderItem) {
-		 var obj = new InboxItem("__inboxitem__"+counter,sender,timestamp,message);
+	function drawItem(sender,senderId,timestamp,message,afterItem,olderItem) {
+		 var obj = new InboxItem("__inboxitem__"+counter,sender,senderId,timestamp,message);
 		 counter++;		 
 				
 		if(afterItem == null) {
@@ -60,14 +68,14 @@ var Inbox = function (id,applicationFrame) {
 		
 		if(getOlderItems && newestDate != null && oldestDate != null) {
 			newerThen = "null";
-			olderThen = oldestDate.toString(dateFormat);
+			olderThen = oldestDate-1;
 		} else {
 			olderThen = "null";
 			
 			if(newestDate == null) {
 				newerThen = "null";
 			} else {
-				newerThen = newestDate.toString(dateFormat);
+				newerThen = newestDate+1;
 			}
 		}
 		
@@ -84,7 +92,8 @@ var Inbox = function (id,applicationFrame) {
 			 if(item.key == "inbox") {
 				 var lastItem = null;
 				 $.each(item.data,function(j,inboxItem) {						 
-					 lastItem = addItem(inboxItem.sender,
+					 lastItem = addItem(inboxItem.senderName,
+							 			inboxItem.senderID,
 							 			inboxItem.timestamp,
 							 			inboxItem.message,
 							 			lastItem,

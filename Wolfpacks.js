@@ -24,8 +24,6 @@ var Wolfpacks = function (menu,applicationFrame) {
 					$.each(item.data, function(i,pack){
 						addWolfpackApp("__packid__"+pack, pack);
 					});
-				} else if(item.key == "wolfpacks2") {
-					console.log(item.data);
 				}
 			});  
 	  });	
