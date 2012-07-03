@@ -1,0 +1,3 @@
+var NewsFeedItem = function () {
+	
+};

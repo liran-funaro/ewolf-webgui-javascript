@@ -1,5 +1,19 @@
 var JSonGetter = function(id,requestAddress,handleDataFunction,onComplete,refreshIntervalSec) {
 		var timer = null;
+				
+		function onPostComplete() {
+			if(onComplete != null) {
+				onComplete(passToHandler);
+			}
+
+			eWolf.trigger("loadingEnd",[id]);
+			
+			if(refreshIntervalSec > 0) {
+				timer = setTimeout("eWolf.trigger('needRefresh."+id+"'," +
+						"["+id+"])",refreshIntervalSec*1000);
+			}
+		}
+		
 		
 		return {
 			getId : function() {
@@ -10,21 +24,18 @@ var JSonGetter = function(id,requestAddress,handleDataFunction,onComplete,refres
 			},
 			getData : function (data, passToHandler) {
 				clearTimeout(timer);
-				eWolf.trigger("loading",[id]);
+				eWolf.trigger("loading",[id]);				
 				
-				$.getJSON(requestAddress,data, function(inputData) {
-					handleDataFunction(inputData,passToHandler);
-				}) .complete( function(){
-						if(onComplete != null) {
-							onComplete(passToHandler);
-						}
-
-						eWolf.trigger("loadingEnd",[id]);
-						if(refreshIntervalSec > 0) {
-							timer = setTimeout("eWolf.trigger('needRefresh."+id+"'," +
-									"["+id+"])",refreshIntervalSec*1000);
-						}
-					});
+				$.post(	requestAddress,
+						JSON.stringify(data),
+						function(receivedData,textStatus) {
+							handleDataFunction(receivedData,/*textStatus,*/passToHandler);
+						},
+						"json").complete(onPostComplete);		 
+				
+//				$.getJSON(requestAddress,data, function(inputData) {
+//					handleDataFunction(inputData,passToHandler);
+//				}) .complete(onPostComplete);
 			}
 		};
 };
