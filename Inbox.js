@@ -3,7 +3,6 @@ var Inbox = function (id,applicationFrame) {
 	var frame = appContainer.getFrame();
 	var counter = 0;
 	
-	//var eWolfJsonGetter = new JSonGetter(id,"/json?callBack=?",handleNewData,null,60);
 	var eWolfJsonGetter = new JSonGetter(id,"/json",handleNewData,null,60);
 	
 	var newestDate = null;

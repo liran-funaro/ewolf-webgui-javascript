@@ -1,32 +1,27 @@
-var Wolfpacks = function (menu,applicationFrame) {
+var Wolfpacks = function (menu,applicationFrame) {		
 	var menuList = menu.createNewMenuList("wolfpacks","Wolfpacks");
-	var wolfpacks = [];
-	loadWolfpacks();
+	var eWolfJsonGetter = new JSonGetter("wolfpacks","/json",handleWolfpacks,null,0);
+	var wolfpackList = [];
+
+	eWolfJsonGetter.getData( {
+		 wolfpacks:{}
+	} , null);
+	
+	console.log({wolfpacks6:{}});
 	
 	function addWolfpackApp(key,title) {
 		var app = new Flicker(key,applicationFrame);
 		menuList.addMenuItem(key,title);
-		wolfpacks.push(app);
+		wolfpackList.push(app);
 	};
 	
-	/*!
-	 * Load menu from eWolf server.
-	 * Will be used to load wolfpacks of the user.
-	 */
-	function loadWolfpacks() {		
-		$.getJSON("/json?callBack=?",
-		{
-			 wolfpacks: "my"
-		}, function(data) {
-			console.log(data);
-			$.each(data, function(i,item){
-				if(item.key == "wolfpacks") {
-					$.each(item.data, function(i,pack){
-						addWolfpackApp("__packid__"+pack, pack);
-					});
-				}
-			});  
-	  });	
+	function handleWolfpacks(data, params) {
+		console.log(data);
+		if(data.wolfpacks != null) {
+			$.each(data.wolfpacks, function(i,pack){
+				addWolfpackApp("__packid__"+pack, pack);
+			});
+		}
 	}
 	
 	return this;

@@ -2,7 +2,7 @@ var Profile = function (id,applicationFrame) {
 	var appContainer = new AppContainer(id,applicationFrame);
 	var frame = appContainer.getFrame();
 
-	var profileGetter = new JSonGetter(id,"/json?callBack=?",handleNewData,null,3600);
+	var profileGetter = new JSonGetter(id,"/json",handleNewData,null,3600);
 	
 	$("<div/>").attr({
 		"class" : "profileTitle",
@@ -22,45 +22,37 @@ var Profile = function (id,applicationFrame) {
 	var wolfpacksContainer = $("<div/>").appendTo(frame);
 	var wolfpackslist = null;
 
-	function handleNewData(data,parameters) {		  
-		  $.each(data,function(i,item){
-			 console.log(item.data);
-			 
-			 if(item.key == "profile") {
-				 if(userDetailes != null) {
-					 userDetailes.remove();
-				 }
-				 
-				 userDetailes = $("<ul/>").appendTo(userDetailesContainer);
-				 $("<li/>").append("<B>Name:</B> " + item.data.name).appendTo(userDetailes);
-				 $("<li/>").append("<B>ID:</B> " + item.data.id).appendTo(userDetailes);
-			 } 
-			 
-			 if(item.key == "wolfpacks") {
-				 if(wolfpackslist != null) {
-					 wolfpackslist.remove();
-				 }
-				 
-				 wolfpackslist = $("<ul/>").appendTo(wolfpacksContainer);
-				 
-				 $.each(item.data,function(i,pack) {
-					 $("<li/>").append(pack).appendTo(wolfpackslist);
-				 });
+	function handleNewData(data,parameters) {
+		console.log(data);
+		
+		if(data.profile != null) {
+			 if(userDetailes != null) {
+				 userDetailes.remove();
 			 }
-		  }); 
+			 
+			 userDetailes = $("<ul/>").appendTo(userDetailesContainer);
+			 $("<li/>").append("<B>Name:</B> " + data.profile.name).appendTo(userDetailes);
+			 $("<li/>").append("<B>ID:</B> " + data.profile.id).appendTo(userDetailes);
+		}
+		
+		if(data.wolfpacks != null) {
+			if(wolfpackslist != null) {
+				 wolfpackslist.remove();
+			 }
+			 
+			 wolfpackslist = $("<ul/>").appendTo(wolfpacksContainer);
+			 
+			 $.each(data.wolfpacks,function(i,pack) {
+				 $("<li/>").append(pack).appendTo(wolfpackslist);
+			 });
+		}
 	  }
 	
 	function getProfileData() {
-		/*!
-		 * The parameters should be:
-		 * 	0:	user ID or the key word “my” if we want the logged in user wolfpacks.
-		 */
 		profileGetter.getData({
-			profile: "my",
-			wolfpacks: "my"
-		  }, {
-			  // No data to pass to handler
-		  });
+			profile: {},
+			wolfpacks: {}
+		  }, null);
 	}
 	
 	eWolf.bind("refresh."+id,function(event,eventId) {

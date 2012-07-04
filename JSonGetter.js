@@ -31,11 +31,7 @@ var JSonGetter = function(id,requestAddress,handleDataFunction,onComplete,refres
 						function(receivedData,textStatus) {
 							handleDataFunction(receivedData,/*textStatus,*/passToHandler);
 						},
-						"json").complete(onPostComplete);		 
-				
-//				$.getJSON(requestAddress,data, function(inputData) {
-//					handleDataFunction(inputData,passToHandler);
-//				}) .complete(onPostComplete);
+						"json").complete(onPostComplete);
 			}
 		};
 };
