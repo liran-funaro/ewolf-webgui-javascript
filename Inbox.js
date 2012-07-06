@@ -3,7 +3,7 @@ var Inbox = function (id,applicationFrame) {
 	var frame = appContainer.getFrame();
 	var counter = 0;
 	
-	var eWolfJsonGetter = new JSonGetter(id,"/json",handleNewData,null,60);
+	var request = new RequestHandler(id,"/json",handleNewData,null,60);
 	
 	var newestDate = null;
 	var oldestDate = null;
@@ -82,23 +82,34 @@ var Inbox = function (id,applicationFrame) {
 		console.log(data);
 
 		if (data.inbox != null) {
-			var lastItem = null;
-			$.each(data.inbox, function(j, inboxItem) {
-				lastItem = addItem(inboxItem.senderName, inboxItem.senderID,
-						inboxItem.timestamp, inboxItem.message, lastItem,
-						parameters.getOlderItems);
-			});
-
-			if (parameters.getOlderItems
-					&& data.inbox.length < parameters.inbox.maxMessages) {
-				showMore.remove();
+			if(data.inbox.result == "success") {
+				if(data.inbox.messageList != null) {
+					var lastItem = null;
+					$.each(data.inbox.messageList, function(j, inboxItem) {
+						lastItem = addItem(inboxItem.senderName, inboxItem.senderID,
+								inboxItem.timestamp, inboxItem.message, lastItem,
+								parameters.getOlderItems);
+					});
+					
+					if (parameters.getOlderItems
+							&& data.inbox.messageList.length < parameters.inbox.maxMessages) {
+						showMore.remove();
+					}
+					
+				} else {
+					console.log("No messageList parameter in response");
+				}				
+			} else {
+				console.log(data.inbox.result);
 			}
+		} else {
+			console.log("No inbox parameter in response");
 		}
 	}
 	
 	function getInboxData(data,getOlderItems) {
 		
-		eWolfJsonGetter.getData( {
+		request.getData( {
 			inbox:data
 		} , {
 			getOlderItems:getOlderItems,

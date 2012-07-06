@@ -8,7 +8,7 @@ var Flicker = function (key,applicationFrame) {
 		updateFromServer(true);
 	});
 	
-	var eWolfJsonGetter = new JSonGetter(id,
+	var request = new RequestHandler(id,
 			"http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?",
 			handleNewData,null,60);
 	
@@ -99,7 +99,7 @@ var Flicker = function (key,applicationFrame) {
 	}
 
 	function updateFromServer(getOlderItems) {		
-		eWolfJsonGetter.getData(
+		request.getData(
 		  {
 		    tags: id,
 		    tagmode: "any",

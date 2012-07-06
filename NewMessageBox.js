@@ -1,5 +1,5 @@
 var NewMessageBox = function(id,container) {
-	var eWolfJsonGetter = new JSonGetter(id,"/json?callBack=?",handleResponse,null,0);
+	var request = new RequestHandler(id,"/json",handleResponse,null,0);
 	
 	var box = $("<div/>").attr({
 		"class": "newMessageBoxClass"
@@ -30,6 +30,13 @@ var NewMessageBox = function(id,container) {
 	
 	$("<td/>").append(messageText).appendTo(msgRaw);
 	
+	var attacheRaw = $("<tr/>").appendTo(base);
+	$("<td/>").attr("style","vertical-align:text-top;").append("Attachment:").appendTo(attacheRaw);
+	
+	var uploaderArea = $("<td/>").appendTo(attacheRaw);
+	
+	var files = new filedrag(uploaderArea);
+
 	var btnRaw = $("<tr/>").appendTo(base);
 	
 	$("<td/>").appendTo(btnRaw);
@@ -40,13 +47,22 @@ var NewMessageBox = function(id,container) {
 		"type": "button",
 		"value": "Send"
 	}).appendTo(btnBox).click(function() {
-		/*!
-		 * The parameters should be:
-		 * 	0:	user id.
-		 * 	1:	message
-		 */
-		eWolfJsonGetter.getData({
-			sendMessage: userIdText.val()+","+messageText.val().replace(/\n/g,"<br>")
+		
+//		var uploader = new qq.FileUploaderBasic({
+//		    // path to server-side upload script
+//		    action: '/sfsupload',
+//		    params: {
+//		    	wolfpacks: "someWolfpack"
+//		    }
+//		});
+//		
+//		uploader._uploadFileList(files.getFiles());
+		
+		request.getData({
+			sendMessage: {
+				userID: userIdText.val(),
+				message: messageText.val().replace(/\n/g,"<br>")
+			}
 		  }, {
 			  // No data to pass to handler
 		  });
@@ -73,15 +89,15 @@ var NewMessageBox = function(id,container) {
 	
 	function handleResponse(data,parameters) {
 		console.log(data);
-		$.each(data,function(i,item){
-			if(item.key == "sendMessage") {
-				if(item.data == "success") {
-					destroySelf();
-				} else {
-					errorMessage.html(item.data);
-				}
-			}		
-		});
+		if (data.sendMessage != null) {
+			if(data.sendMessage.result == "success") {
+				destroySelf();
+			} else {
+				errorMessage.html(data.sendMessage.result);
+			}
+		} else {
+			console.log("No sendMessage parameter in response");
+		}		
 	}
 	
 	function destroySelf() {

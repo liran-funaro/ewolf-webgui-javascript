@@ -2,7 +2,7 @@ var Profile = function (id,applicationFrame) {
 	var appContainer = new AppContainer(id,applicationFrame);
 	var frame = appContainer.getFrame();
 
-	var profileGetter = new JSonGetter(id,"/json",handleNewData,null,3600);
+	var request = new RequestHandler(id,"/json",handleNewData,null,3600);
 	
 	$("<div/>").attr({
 		"class" : "profileTitle",
@@ -26,30 +26,48 @@ var Profile = function (id,applicationFrame) {
 		console.log(data);
 		
 		if(data.profile != null) {
-			 if(userDetailes != null) {
-				 userDetailes.remove();
-			 }
-			 
-			 userDetailes = $("<ul/>").appendTo(userDetailesContainer);
-			 $("<li/>").append("<B>Name:</B> " + data.profile.name).appendTo(userDetailes);
-			 $("<li/>").append("<B>ID:</B> " + data.profile.id).appendTo(userDetailes);
+			if(data.profile.result == "success") {
+				 if(userDetailes != null) {
+					 userDetailes.remove();
+				 }
+				 
+				 userDetailes = $("<ul/>").appendTo(userDetailesContainer);
+				 $("<li/>").append("<B>Name:</B> " + data.profile.name).appendTo(userDetailes);
+				 $("<li/>").append("<B>ID:</B> " + data.profile.id).appendTo(userDetailes);
+			} else {
+				console.log(data.profile.result);
+			}
+			
+		} else {
+			console.log("No profile parameter in response");
 		}
 		
 		if(data.wolfpacks != null) {
-			if(wolfpackslist != null) {
-				 wolfpackslist.remove();
-			 }
-			 
-			 wolfpackslist = $("<ul/>").appendTo(wolfpacksContainer);
-			 
-			 $.each(data.wolfpacks,function(i,pack) {
-				 $("<li/>").append(pack).appendTo(wolfpackslist);
-			 });
+			if(data.wolfpacks.result == "success") {
+				if(data.wolfpacks.wolfpacksList != null) {
+					if(wolfpackslist != null) {
+						 wolfpackslist.remove();
+					 }
+					 
+					 wolfpackslist = $("<ul/>").appendTo(wolfpacksContainer);
+					 
+					 $.each(data.wolfpacks.wolfpacksList,function(i,pack) {
+						 $("<li/>").append(pack).appendTo(wolfpackslist);
+					 });
+				} else {
+					console.log("No wolfpacksList parameter in response");
+				}				
+			} else {
+				console.log(data.wolfpacks.result);
+			}
+			
+		} else {
+			console.log("No wolfpacks parameter in response");
 		}
 	  }
 	
 	function getProfileData() {
-		profileGetter.getData({
+		request.getData({
 			profile: {},
 			wolfpacks: {}
 		  }, null);

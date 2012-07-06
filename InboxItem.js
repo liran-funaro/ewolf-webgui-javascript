@@ -1,5 +1,4 @@
 var InboxItem = function(id,sender,senderId,timestamp,msg) {
-	var isLoading = false;
 	var preMessageTitle = ">> ";
 	
 	var dateFormat = "dd/MM/yyyy (HH:mm)";
@@ -30,11 +29,6 @@ var InboxItem = function(id,sender,senderId,timestamp,msg) {
 		"class": "timestampBox"
 	}).append(itsTime.toString(dateFormat)).appendTo(aObj);
 	
-	var loadingContainer = $("<div/>").attr({
-		"class": "refreshButtonArea",
-		"id": id,
-	})	.appendTo(aObj).hide();
-	
 	listItem.click(function() {		
 		if(itsMessage == null) {
 			itsMessage = $("<li/>").attr({
@@ -48,15 +42,8 @@ var InboxItem = function(id,sender,senderId,timestamp,msg) {
 	
 	function updateView() {
 		var w = listItem.width()-timestampBox.width()-preMessageBox.width()-20;
-		if(isLoading) {
-			loadingContainer.show();
-			w = w - 20;
-		} else {
-			loadingContainer.hide();
-		}
 		
 		senderBox.text(sender).shorten({width:w});
-
 	}	
 	
 	function select() {
@@ -77,22 +64,6 @@ var InboxItem = function(id,sender,senderId,timestamp,msg) {
 		} else {
 			unselect();
 		}			
-	});
-	
-	eWolf.bind("loading."+id,function(event,eventId) {
-		if(id == eventId) {
-			isLoading = true;
-			updateView();
-			loadingContainer.spin(menuItemSpinnerOpts);
-		}	
-	});
-	
-	eWolf.bind("loadingEnd."+id,function(event,eventId) {
-		if(id == eventId) {
-			isLoading = false;
-			updateView();
-			loadingContainer.data('spinner').stop();
-		}	
 	});
 	
 	eWolf.bind("mainFrameResize", function(event,eventId) {
