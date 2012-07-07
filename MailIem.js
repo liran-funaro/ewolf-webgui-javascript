@@ -2,8 +2,9 @@ var MailItem = function(item) {
 	var canvas = $("<div/>").append(item.text);
 	
 	if(item.attachment != null) {
-		var imageCanvas = $("<div/>").appendTo(canvas);
-		var attachCanvas = $("<ul/>").appendTo(canvas);
+		var imageCanvas = $("<div/>");
+
+		var attachCanvas = $("<ul/>");
 		
 		$.each(item.attachment, function(i, attach) {
 			if(attach.contentType.substring(0,5) == "image") {
@@ -28,6 +29,15 @@ var MailItem = function(item) {
 				}).append(attach.filename).appendTo(li);
 			}
 		});
+		
+		if(! imageCanvas.is(":empty")) {
+			imageCanvas.appendTo(canvas);
+		}
+		
+		if(! attachCanvas.is(":empty")) {
+			canvas.append("Attachments:");
+			attachCanvas.appendTo(canvas);
+		}
 	}	
 	
 	return canvas;

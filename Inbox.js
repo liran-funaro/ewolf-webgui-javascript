@@ -9,7 +9,7 @@ var Inbox = function (id,applicationFrame) {
 	var oldestDate = null;
 	
 	$("<div/>").attr({
-		"class" : "inboxListTitle",
+		"class" : "eWolfTitle",
 		"id" : id+"Title"
 	})	.append("Inbox")
 		.appendTo(frame);
@@ -26,7 +26,8 @@ var Inbox = function (id,applicationFrame) {
 	var inboxContainer = $("<div/>").appendTo(frame);
 
 	var list = $("<ul/>").attr({
-		"id" : id
+		"id" : id,
+		"class" : "messageList"
 	})	.appendTo(inboxContainer);
 	
 	var showMore = new ShowMore(frame,function() {

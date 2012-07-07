@@ -5,7 +5,7 @@ var Profile = function (id,applicationFrame) {
 	var request = new RequestHandler(id,"/json",handleNewData,null,3600);
 	
 	$("<div/>").attr({
-		"class" : "profileTitle",
+		"class" : "eWolfTitle",
 		"id" : id+"Title"
 	})	.append("My Profile")
 		.appendTo(frame);
@@ -14,7 +14,7 @@ var Profile = function (id,applicationFrame) {
 	var userDetailes = null;
 	
 	$("<div/>").attr({
-		"class" : "wolfpacksTitle",
+		"class" : "eWolfTitle",
 		"id" : id+"Title"
 	})	.append("My Wolfpacks")
 		.appendTo(frame);

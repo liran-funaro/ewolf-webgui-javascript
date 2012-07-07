@@ -6,35 +6,38 @@ var InboxItem = function(id,sender,senderId,timestamp,msg) {
 	var itsMessage = null;
 	
 	var listItem = $("<li/>").attr({
-		"id": id
+		"id": id,
+		"class": "messageListItem"
 	});
 		
-	var aObj = $("<a/>").appendTo(listItem);
+	//var aObj = $("<a/>").appendTo(listItem);
 	
 	var preMessageBox = $("<span/>").attr({
 		"id": id,
 		"style": "width:1%;",
 		"class": "preMessageBox"
-	}).append(preMessageTitle).appendTo(aObj);
+	}).append(preMessageTitle).appendTo(listItem);
 	
 	var senderBox = $("<span/>").attr({
 		"id": id,
 		"style": "width:1%;"
-	}).appendTo(aObj);
+	}).appendTo(listItem);
 	
 	var itsTime = new Date(timestamp);
 	
 	var timestampBox = $("<span/>").attr({
 		"id": id,
 		"class": "timestampBox"
-	}).append(itsTime.toString(dateFormat)).appendTo(aObj);
+	}).append(itsTime.toString(dateFormat)).appendTo(listItem);
 	
 	listItem.click(function() {		
 		if(itsMessage == null) {
+			var msgBox = MailItem(JSON.parse(msg));
+			
 			itsMessage = $("<li/>").attr({
 				 "id": id,
 				 "class": "messageBox"
-			 }).append(msg).insertAfter(listItem);;
+			 }).append(msgBox).insertAfter(listItem);;
 		} else {
 			itsMessage.toggle();
 		}
@@ -45,26 +48,6 @@ var InboxItem = function(id,sender,senderId,timestamp,msg) {
 		
 		senderBox.text(sender).shorten({width:w});
 	}	
-	
-	function select() {
-		aObj.addClass("currentMenuSelection");
-		selected = true;
-		updateView();
-	}
-
-	function unselect() {
-		aObj.removeClass("currentMenuSelection");
-		selected = false;
-		updateView();
-	}
-	
-	eWolf.bind("select."+id,function(event,eventId) {
-		if(id == eventId) {
-			select();
-		} else {
-			unselect();
-		}			
-	});
 	
 	eWolf.bind("mainFrameResize", function(event,eventId) {
 		updateView();

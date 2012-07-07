@@ -20,16 +20,18 @@ var filedrag = function(uploaderArea) {
 		.appendTo(uploaderArea);
 	
 	var filelist = $("<ul/>")
-		.attr("id","filelist")
-		.appendTo(uploaderArea);
+		.attr({
+			"id":"filelist",
+			"class": "filesList"
+		}).appendTo(uploaderArea);
 
 
 	// output information
 	function Output(msg) {
 		var box = $("<input/>").attr({
-			"type": "checkbox"
-		});
-		
+			"type": "checkbox",
+			"checked": "checked"
+		});		
 
 		$("<li/>").attr({
 			"class": "filelistItem"

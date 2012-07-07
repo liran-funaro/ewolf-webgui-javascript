@@ -3,7 +3,11 @@ var NewMessageBox = function(id,container) {
 	
 	var box = $("<div/>").attr({
 		"class": "newMessageBoxClass"
-	}).appendTo(container);
+	}).appendTo(container).animate({
+		opacity : 0.9
+	}, 350, function() {
+		// Animation complete.
+	});;
 	
 	var base = $("<table/>").appendTo(box);
 	
@@ -58,10 +62,27 @@ var NewMessageBox = function(id,container) {
 //		
 //		uploader._uploadFileList(files.getFiles());
 		
+		var msg = messageText.val().replace(/\n/g,"<br>");
+		var mailObject = {
+				text: msg,
+				attachment: [{
+					filename: "testfile.doc",
+					contentType: "document",
+					path: "http://www.google.com"
+				},
+				{
+					filename: "image.jpg",
+					contentType: "image/jpeg",
+					path: "https://www.cia.gov/library/publications/the-world-factbook/graphics/flags/large/is-lgflag.gif"					
+				}]
+		};
+		
+		console.log(JSON.stringify(mailObject));
+		
 		request.getData({
 			sendMessage: {
 				userID: userIdText.val(),
-				message: messageText.val().replace(/\n/g,"<br>")
+				message: JSON.stringify(mailObject)
 			}
 		  }, {
 			  // No data to pass to handler
@@ -102,10 +123,17 @@ var NewMessageBox = function(id,container) {
 	
 	function destroySelf() {
 		if(box != null) {
-			box.remove();
-			box = null;
+			box.animate({
+				opacity : 0
+			}, 350, function() {
+				box.remove();
+				box = null;
+				delete this;
+			});;			
+		} else {
+			delete this;
 		}
-		delete this;
+		
 	}
 
 	return {
