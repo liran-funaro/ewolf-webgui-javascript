@@ -1,16 +1,19 @@
 #!/bin/sh
 
-cat *.js > core.js.temp
-cat CSS/*.css > CSS/home.css.temp
+JSTEMP=core.js.temp
+CSSTEMP=CSS/core.css.temp
 
-java -jar ./join_javascript/yuicompressor-2.4.7.jar --type js core.js.temp -o core.mini.js.temp
-rm core.js.temp
+JSTRG=../ewolf-webgui/server_resources/www/core.mini.js
+CSSTRG=../ewolf-webgui/server_resources/www/core.mini.css
 
-java -jar ./join_javascript/yuicompressor-2.4.7.jar --type css CSS/home.css.temp -o CSS/home.mini.css.temp
-rm CSS/home.css.temp
+cat *.js > $JSTEMP
+cat CSS/*.css > $CSSTEMP
 
-rm ../ewolf-webgui/server_resources/www/core.mini.js
-mv core.mini.js.temp ../ewolf-webgui/server_resources/www/core.mini.js
+rm $JSTRG
+java -jar ./join_javascript/yuicompressor-2.4.7.jar --type js $JSTEMP -o $JSTRG
+rm $JSTEMP
 
-rm ../ewolf-webgui/server_resources/www/home.css
-mv CSS/home.mini.css.temp ../ewolf-webgui/server_resources/www/home.css
+rm $CSSTRG
+java -jar ./join_javascript/yuicompressor-2.4.7.jar --type css $CSSTEMP -o $CSSTRG
+rm $CSSTEMP
+
