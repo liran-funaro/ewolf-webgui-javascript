@@ -6,7 +6,7 @@ var MainApps = function (menu,applicationFrame) {
 	menuList.addMenuItem("profile","My Profile");
 	apps.push(profile);
 	
-	var wall = new Flicker("wall",applicationFrame);
+	var wall = new NewsFeed("wall",applicationFrame);
 	menuList.addMenuItem("wall","My Wall");
 	apps.push(wall);
 	

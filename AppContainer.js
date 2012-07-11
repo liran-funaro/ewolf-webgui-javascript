@@ -3,19 +3,30 @@ var AppContainer = function(id,container) {
 		var needRefresh = true;
 		
 		var frame = $("<div/>").attr({
-			"id": id+"ApplicationFrame"
-		})	.hide()
+			"id": id+"ApplicationFrame",
+			"class": "applicationContainer"
+		})	.hide(0)
 			.appendTo(container);
 		
 		eWolf.bind("select."+id,function(event,eventId) {
-			if(id == eventId) {
-				frame.slideDown(700);
+			if(id == eventId) {				
+				frame.show(0);
+				frame.animate({
+					opacity : 1,
+				}, 700, function() {
+				});
+				
 				selected = true;
 				if(needRefresh) {
 					eWolf.trigger("refresh."+id,[id]);
 				}
 			} else {
-				frame.slideUp(700);
+				frame.animate({
+					opacity : 0,
+				}, 300, function() {
+					frame.hide(0);
+				});
+				
 				selected = false;
 			}			
 		});

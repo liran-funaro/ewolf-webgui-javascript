@@ -1,7 +1,8 @@
 /*** Inbox ***/
 
 .newMessageBotton {
-	position:absolute;
+	position:relative;
+	float:right;
 	right:20px;
 	top:10px;
 	width:150px !important;
@@ -22,6 +23,10 @@
 	padding-left:50px;
 	padding-right:50px;
 	padding-bottom:50px;
+/* 	margin-left:10%; */
+/* 	margin-right:10%; */
+/* 	margin-top:10%; */
+/* 	margin-bottom:10%; */
 }
 
 .preMessageBox {

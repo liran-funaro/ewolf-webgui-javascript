@@ -21,6 +21,8 @@ var Profile = function (id,applicationFrame) {
 	
 	var wolfpacksContainer = $("<div/>").appendTo(frame);
 	var wolfpackslist = null;
+	
+	getProfileData();
 
 	function handleNewData(data,parameters) {
 		console.log(data);
@@ -30,6 +32,8 @@ var Profile = function (id,applicationFrame) {
 				 if(userDetailes != null) {
 					 userDetailes.remove();
 				 }
+				 
+				 document.title = "eWolf - " + data.profile.name;
 				 
 				 userDetailes = $("<ul/>").appendTo(userDetailesContainer);
 				 $("<li/>").append("<B>Name:</B> " + data.profile.name).appendTo(userDetailes);

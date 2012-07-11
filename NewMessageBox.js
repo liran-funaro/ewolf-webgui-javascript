@@ -7,7 +7,7 @@ var NewMessageBox = function(id,container) {
 		opacity : 0.9
 	}, 350, function() {
 		// Animation complete.
-	});;
+	});
 	
 	var base = $("<table/>").appendTo(box);
 	

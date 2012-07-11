@@ -8,7 +8,7 @@ var Inbox = function (id,applicationFrame) {
 	var newestDate = null;
 	var oldestDate = null;
 	
-	$("<div/>").attr({
+	var titleDiv = $("<div/>").attr({
 		"class" : "eWolfTitle",
 		"id" : id+"Title"
 	})	.append("Inbox")
@@ -19,7 +19,7 @@ var Inbox = function (id,applicationFrame) {
 		"type": "button",
 		"value": "New Message...",
 		"class": "newMessageBotton"
-	}).appendTo(frame).click(function() {
+	}).appendTo(titleDiv).click(function() {
 		new NewMessageBox("__newmessage__"+id,frame);
 	});
 	

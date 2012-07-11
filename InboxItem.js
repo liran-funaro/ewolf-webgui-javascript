@@ -9,8 +9,6 @@ var InboxItem = function(id,sender,senderId,timestamp,msg) {
 		"id": id,
 		"class": "messageListItem"
 	});
-		
-	//var aObj = $("<a/>").appendTo(listItem);
 	
 	var preMessageBox = $("<span/>").attr({
 		"id": id,
