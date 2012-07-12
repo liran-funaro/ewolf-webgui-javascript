@@ -3,10 +3,17 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn,addBtn) {
 	var apps = new Object();
 	var lastSearch = null;
 	
-	function addSearchMenuItem(key,title) {
-		var app = new Flicker(key,applicationFrame);
+	function addSearchMenuItem(key) {
+		var app = new Profile(key,applicationFrame);
 		apps[key] = app;
-		menuList.addMenuItem(key,title);
+		
+		eWolf.one("loadingEnd",function(event,eventId) {
+			if(eventId == key) {
+				menuList.addMenuItem(key,app.getName());
+				eWolf.trigger("select",[key]);
+			}
+		});
+		
 	};
 	
 	function removeSearchMenuItem(key) {
@@ -24,22 +31,29 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn,addBtn) {
 		}
 	}
 	
+	function searchUser(key) {
+		if(key != "") {
+			if(key != eWolf.data("userID")) {
+				removeLastSearch();
+				lastSearch = key;
+				addSearchMenuItem(key);
+			}
+		}	
+	}
+	
 	addBtn.click(function() {
 		var key = query.val();
 		if(key != "") {
-			addSearchMenuItem(key,"Show "+key);
+			if(key != eWolf.data("userID")) {
+				addSearchMenuItem(key,"Show "+key);
+			}
 			eWolf.trigger("select",[key]);
 		}
 	});
 	
 	searchBtn.click(function() {
 		var key = query.val();
-		if(key != "") {
-			removeLastSearch();
-			lastSearch = key;
-			addSearchMenuItem(key,"Last: "+key);
-			eWolf.trigger("select",[key]);
-		}		
+		searchUser(key);	
 	});
 	
 	eWolf.bind("select."+id,function(event,eventId) {
@@ -65,6 +79,16 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn,addBtn) {
 	    	addBtn.show(200);
 	    }
 	});
+		
 	
-	return this;
+	eWolf.bind("search",function(event,key) {
+		searchUser(key);
+	});
+
+	
+	return {
+		search: function (key) {
+			searchUser(key);
+		}
+	};
 };

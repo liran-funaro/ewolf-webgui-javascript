@@ -1,0 +1,24 @@
+/*** User ***/
+
+.userBox {
+	text-decoration:none;
+	color:inherit;
+	padding-left:10px;
+	cursor:pointer;
+}
+
+.userBox:hover {
+/* 	color:rgba(0, 0, 255, 0.65); R, G, B, A */
+	text-decoration:underline;
+}
+
+.idBox {
+	font-size:10px;
+	color:#444;
+	font-style:italic;
+}
+
+.wolfpacksBox {
+	font-size:15px;
+	font-style:italic;
+}

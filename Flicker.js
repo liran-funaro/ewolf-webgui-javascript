@@ -8,7 +8,7 @@ var Flicker = function (key,applicationFrame) {
 		updateFromServer(true);
 	});
 	
-	var request = new RequestHandler(id,
+	var request = new JSONRequestHandler(id,
 			"http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?",
 			handleNewData,null,60);
 	
@@ -110,7 +110,9 @@ var Flicker = function (key,applicationFrame) {
 	}
 	
 	eWolf.bind("refresh."+id,function(event,eventId) {
-		updateFromServer(false);
+		if(id == eventId) {
+			updateFromServer(false);
+		}
 	});
 	
 	return {

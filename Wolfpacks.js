@@ -1,6 +1,6 @@
 var Wolfpacks = function (menu,applicationFrame) {		
 	var menuList = menu.createNewMenuList("wolfpacks","Wolfpacks");
-	var request = new RequestHandler("wolfpacks","/json",handleWolfpacks,null,0);
+	var request = new PostRequestHandler("wolfpacks","/json",handleWolfpacks,null,0);
 	var wolfpackList = [];
 
 	request.getData( {

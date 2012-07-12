@@ -18,7 +18,7 @@ var AppContainer = function(id,container) {
 				
 				selected = true;
 				if(needRefresh) {
-					eWolf.trigger("refresh."+id,[id]);
+					eWolf.trigger("refresh",[id]);
 				}
 			} else {
 				frame.animate({

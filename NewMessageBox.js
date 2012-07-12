@@ -1,5 +1,5 @@
 var NewMessageBox = function(id,container) {
-	var request = new RequestHandler(id,"/json",handleResponse,null,0);
+	var request = new PostRequestHandler(id,"/json",handleResponse,null,0);
 	
 	var box = $("<div/>").attr({
 		"class": "newMessageBoxClass"

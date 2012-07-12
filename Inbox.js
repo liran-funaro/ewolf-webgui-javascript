@@ -3,7 +3,7 @@ var Inbox = function (id,applicationFrame) {
 	var frame = appContainer.getFrame();
 	var counter = 0;
 	
-	var request = new RequestHandler(id,"/json",handleNewData,null,60);
+	var request = new PostRequestHandler(id,"/json",handleNewData,null,60);
 	
 	var newestDate = null;
 	var oldestDate = null;
@@ -47,7 +47,9 @@ var Inbox = function (id,applicationFrame) {
 	}
 	
 	function drawItem(sender,senderId,timestamp,message,afterItem,olderItem) {
-		 var obj = new InboxItem("__inboxitem__"+counter,sender,senderId,timestamp,message);
+		 var obj = new GenericItem("__inboxitem__"+counter,sender,senderId,
+				 timestamp,message,"messageListItem","messageBox",
+				 ">> ",true);
 		 counter++;		 
 				
 		if(afterItem == null) {
@@ -119,7 +121,9 @@ var Inbox = function (id,applicationFrame) {
 	}
 	
 	eWolf.bind("refresh."+id,function(event,eventId) {
-		updateFromServer(false);
+		if(id == eventId) {
+			updateFromServer(false);
+		}
 	});
 	
 	return {

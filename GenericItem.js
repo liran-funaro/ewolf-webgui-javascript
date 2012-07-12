@@ -1,4 +1,4 @@
-var GenericItem = function(id,sender,senderId,timestamp,msg,
+var GenericItem = function(id,senderName,senderID,timestamp,msg,
 		listClass,msgBoxClass,preMessageTitle,allowShrink) {
 	
 	var dateFormat = "dd/MM/yyyy (HH:mm)";
@@ -16,10 +16,8 @@ var GenericItem = function(id,sender,senderId,timestamp,msg,
 		"class": "preMessageBox"
 	}).append(preMessageTitle).appendTo(listItem);
 	
-	var senderBox = $("<span/>").attr({
-		"id": id,
-		"style": "width:1%;"
-	}).appendTo(listItem);
+	
+	var senderBox = new User(senderID,senderName).appendTo(listItem);
 	
 	var itsTime = new Date(timestamp);
 	
@@ -44,13 +42,11 @@ var GenericItem = function(id,sender,senderId,timestamp,msg,
 		} else {
 			itsMessage.toggle();
 		}
-	}
-	
+	}	
 	
 	function updateView() {
-		var w = listItem.width()-timestampBox.width()-preMessageBox.width()-20;
-		
-		senderBox.text(sender).shorten({width:w});
+		var w = listItem.width()-timestampBox.width()-preMessageBox.width()-20;		
+		senderBox.text(senderName).shorten({width:w});
 	}	
 	
 	eWolf.bind("mainFrameResize", function(event,eventId) {
@@ -60,7 +56,7 @@ var GenericItem = function(id,sender,senderId,timestamp,msg,
 	return {
 		appendTo: function(place) {
 			listItem.appendTo(place);
-			if(allowShrink) {
+			if(!allowShrink) {
 				toggleMessage();
 			}
 			updateView();
@@ -68,7 +64,7 @@ var GenericItem = function(id,sender,senderId,timestamp,msg,
 		},
 		prependTo: function(place) {
 			listItem.prependTo(place);
-			if(allowShrink) {
+			if(!allowShrink) {
 				toggleMessage();
 			}
 			updateView();
@@ -76,7 +72,7 @@ var GenericItem = function(id,sender,senderId,timestamp,msg,
 		},
 		insertAfter: function(place) {
 			listItem.insertAfter(place);
-			if(allowShrink) {
+			if(!allowShrink) {
 				toggleMessage();
 			}
 			updateView();

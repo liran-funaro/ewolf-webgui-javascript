@@ -3,7 +3,7 @@ var GenericFeed = function (id,applicationFrame,title,newButtonText) {
 	var frame = appContainer.getFrame();
 	var counter = 0;
 	
-	var request = new RequestHandler(id,"/json",handleNewData,null,60);
+	var request = new PostRequestHandler(id,"/json",handleNewData,null,60);
 	
 	var newestDate = null;
 	var oldestDate = null;
@@ -116,7 +116,9 @@ var GenericFeed = function (id,applicationFrame,title,newButtonText) {
 	}
 	
 	eWolf.bind("refresh."+id,function(event,eventId) {
-		updateFromServer(false);
+		if(id == eventId) {
+			updateFromServer(false);
+		}
 	});
 	
 	return {

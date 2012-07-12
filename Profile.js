@@ -1,26 +1,33 @@
 var Profile = function (id,applicationFrame) {
 	var appContainer = new AppContainer(id,applicationFrame);
 	var frame = appContainer.getFrame();
-
-	var request = new RequestHandler(id,"/json",handleNewData,null,3600);
 	
-	$("<div/>").attr({
-		"class" : "eWolfTitle",
-		"id" : id+"Title"
-	})	.append("My Profile")
-		.appendTo(frame);
+	var request = new PostRequestHandler(id,"/json",handleNewData,null,3600);
 	
-	var userDetailesContainer = $("<div/>").appendTo(frame);
-	var userDetailes = null;
+	var title = $("<div/>").appendTo(frame);
 	
-	$("<div/>").attr({
-		"class" : "eWolfTitle",
-		"id" : id+"Title"
-	})	.append("My Wolfpacks")
-		.appendTo(frame);
+	var name = $("<span/>").attr({
+		"class" : "eWolfTitle"
+	}).appendTo(title);
 	
-	var wolfpacksContainer = $("<div/>").appendTo(frame);
+	title.append("&nbsp;");
+	
+	var idRow = $("<span/>").attr({
+		"class": "idBox"
+	}).appendTo(title);
+	
+	title.append("&nbsp;&nbsp;&nbsp; ");
+	
+	var wolfpacksContainer = $("<span/>").attr({
+		"class":"wolfpacksBox"
+	}).appendTo(title);	
+	
 	var wolfpackslist = null;
+	
+	new NewsFeed(id,frame);
+	
+	var profileData = null;
+	var wolfpackData = null;
 	
 	getProfileData();
 
@@ -29,15 +36,10 @@ var Profile = function (id,applicationFrame) {
 		
 		if(data.profile != null) {
 			if(data.profile.result == "success") {
-				 if(userDetailes != null) {
-					 userDetailes.remove();
-				 }
-				 
-				 document.title = "eWolf - " + data.profile.name;
-				 
-				 userDetailes = $("<ul/>").appendTo(userDetailesContainer);
-				 $("<li/>").append("<B>Name:</B> " + data.profile.name).appendTo(userDetailes);
-				 $("<li/>").append("<B>ID:</B> " + data.profile.id).appendTo(userDetailes);
+				profileData = data.profile;
+				
+				name.html(new User(data.profile.id,data.profile.name));
+				idRow.html(data.profile.id);
 			} else {
 				console.log(data.profile.result);
 			}
@@ -48,15 +50,20 @@ var Profile = function (id,applicationFrame) {
 		
 		if(data.wolfpacks != null) {
 			if(data.wolfpacks.result == "success") {
+				wolfpackData = data.wolfpacks;
+				
 				if(data.wolfpacks.wolfpacksList != null) {
 					if(wolfpackslist != null) {
 						 wolfpackslist.remove();
 					 }
 					 
-					 wolfpackslist = $("<ul/>").appendTo(wolfpacksContainer);
+					 wolfpackslist = $("<span/>").appendTo(wolfpacksContainer);
 					 
 					 $.each(data.wolfpacks.wolfpacksList,function(i,pack) {
-						 $("<li/>").append(pack).appendTo(wolfpackslist);
+						 wolfpackslist.append(new Wolfpack(pack));
+						 if(i != data.wolfpacks.wolfpacksList.length-1) {
+							 wolfpackslist.append(", ");
+						 }
 					 });
 				} else {
 					console.log("No wolfpacksList parameter in response");
@@ -71,19 +78,45 @@ var Profile = function (id,applicationFrame) {
 	  }
 	
 	function getProfileData() {
+		var userObj = {};
+		
+		if(id != eWolf.data("userID")) {
+			userObj.userID = id;
+		}
+		
 		request.getData({
-			profile: {},
-			wolfpacks: {}
+			profile: userObj,
+			wolfpacks: userObj
 		  }, null);
 	}
 	
 	eWolf.bind("refresh."+id,function(event,eventId) {
-		getProfileData();
+		if(id == eventId) {
+			getProfileData();
+		}
 	});
 	
 	return {
-		getId : function() {
-			return id;
+		getID : function() {
+			if(profileData != null) {
+				return profileData.id;
+			} else {
+				return id;
+			}			
+		},
+		getName : function() {
+			if(profileData != null) {
+				return profileData.name;
+			} else {
+				return id;
+			}				
+		},
+		getWolfpacks : function() {
+			if(wolfpackData != null) {
+				return wolfpackData.wolfpacksList;
+			} else {
+				return [];
+			}			
 		},
 		isSelected : function() {
 			return appContainer.isSelected();

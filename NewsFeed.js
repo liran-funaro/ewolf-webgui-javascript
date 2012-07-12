@@ -20,11 +20,16 @@ var NewsFeed = function (id, applicationFrame) {
 	
 	var list = $("<ul/>").attr({
 		"id" : id,
-		"class" : "messageList"
+		"class" : "postList"
 	})	.appendTo(frame);
 	
 	var obj = new GenericItem("__genericitem__","Liran",
-			"1234",1234,JSON.stringify(mailObject),"","","",false);
+			"model",1234,JSON.stringify(mailObject),"postListItem","postBox","",false);
+
+	obj.appendTo(list);
+	
+	obj = new GenericItem("__genericitem__","Liran",
+			"cat",1234,JSON.stringify(mailObject),"postListItem","postBox","",false);
 
 	obj.appendTo(list);	
 };
