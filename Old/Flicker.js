@@ -1,7 +1,6 @@
-var Flicker = function (key,applicationFrame) {
-	var appContainer = new AppContainer(key,applicationFrame);
+var Flicker = function (id,key,applicationFrame) {
+	var appContainer = new AppContainer(id,applicationFrame);
 	var frame = appContainer.getFrame();
-	var id = appContainer.getId();
 	var newestData = new Date(0);
 	var oldestData = new Date(new Date()+7);
 	var showMore = new ShowMore(frame,function() {

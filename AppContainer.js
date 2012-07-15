@@ -5,8 +5,8 @@ var AppContainer = function(id,container) {
 		var frame = $("<div/>").attr({
 			"id": id+"ApplicationFrame",
 			"class": "applicationContainer"
-		})	.hide(0)
-			.appendTo(container);
+		})	.appendTo(container)
+			.hide(0);
 		
 		eWolf.bind("select."+id,function(event,eventId) {
 			if(id == eventId) {				

@@ -5,15 +5,15 @@ var Wolfpacks = function (menu,applicationFrame) {
 
 	request.getData( {
 		 wolfpacks:{}
-	} , null);
+	} );
 		
-	function addWolfpackApp(key,title) {
-		var app = new Flicker(key,applicationFrame);
-		menuList.addMenuItem(key,title);
+	function addWolfpackApp(pack) {
+		var app = new WolfpackPage("__pack__"+pack,pack,applicationFrame);
+		menuList.addMenuItem("__pack__"+pack,pack);
 		wolfpackList.push(app);
 	};
 	
-	function handleWolfpacks(data, params) {
+	function handleWolfpacks(data, postData) {
 		console.log(data);
 		
 		if(data.wolfpacks != null) {
@@ -21,7 +21,7 @@ var Wolfpacks = function (menu,applicationFrame) {
 				if(data.wolfpacks.wolfpacksList != null) {
 					$.each(data.wolfpacks.wolfpacksList,
 							function(i,pack){
-						addWolfpackApp("__packid__"+pack, pack);
+						addWolfpackApp(pack);
 					});
 				} else {
 					console.log("No wolfpackList parameter in response");

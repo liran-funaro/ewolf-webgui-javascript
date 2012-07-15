@@ -1,47 +1,38 @@
-var GenericItem = function(id,senderName,senderID,timestamp,msg,
+var GenericItem = function(senderID,senderName,timestamp,mail,
 		listClass,msgBoxClass,preMessageTitle,allowShrink) {
 	
 	var dateFormat = "dd/MM/yyyy (HH:mm)";
-	
-	var itsMessage = null;
+		
+	var itemSpan = $("<span/>");
 	
 	var listItem = $("<li/>").attr({
-		"id": id,
 		"class": listClass
-	});
+	}).appendTo(itemSpan);
 	
 	var preMessageBox = $("<span/>").attr({
-		"id": id,
 		"style": "width:1%;",
 		"class": "preMessageBox"
-	}).append(preMessageTitle).appendTo(listItem);
-	
+	}).append(preMessageTitle).appendTo(listItem);	
 	
 	var senderBox = new User(senderID,senderName).appendTo(listItem);
 	
 	var itsTime = new Date(timestamp);
 	
 	var timestampBox = $("<span/>").attr({
-		"id": id,
 		"class": "timestampBox"
 	}).append(itsTime.toString(dateFormat)).appendTo(listItem);
+		
+	var itsMessage = $("<li/>").attr({
+		 "class": msgBoxClass
+	 })	.append(MailItem(JSON.parse(mail)))
+	 	.insertAfter(listItem);
 	
 	if(allowShrink) {
+		itsMessage.hide();
+		
 		listItem.click(function() {		
-			toggleMessage();
-		});
-	}
-	
-	function toggleMessage() {
-		if(itsMessage == null) {
-			var msgBox = MailItem(JSON.parse(msg));
-			itsMessage = $("<li/>").attr({
-				 "id": id,
-				 "class": msgBoxClass
-			 }).append(msgBox).insertAfter(listItem);
-		} else {
 			itsMessage.toggle();
-		}
+		});
 	}	
 	
 	function updateView() {
@@ -55,58 +46,29 @@ var GenericItem = function(id,senderName,senderID,timestamp,msg,
 	
 	return {
 		appendTo: function(place) {
-			listItem.appendTo(place);
-			if(!allowShrink) {
-				toggleMessage();
-			}
+			itemSpan.appendTo(place);
 			updateView();
 			return this;
 		},
 		prependTo: function(place) {
-			listItem.prependTo(place);
-			if(!allowShrink) {
-				toggleMessage();
-			}
+			itemSpan.prependTo(place);
 			updateView();
 			return this;
 		},
 		insertAfter: function(place) {
-			listItem.insertAfter(place);
-			if(!allowShrink) {
-				toggleMessage();
-			}
+			itemSpan.insertAfter(place);
 			updateView();
 			return this;
 		},
 		getListItem : function() {
-			return listItem;
-		},
-		getId : function() {
-			return id;
+			return itemSpan;
 		},
 		destroy: function() {
 			message.destroy();
-			listItem.remove();
+			itemSpan.remove();
 			delete this;
 		}
 	};
 	
 	return this;
 };
-
-var menuItemSpinnerOpts = {
-		  lines: 10, // The number of lines to draw
-		  length: 4, // The length of each line
-		  width: 2, // The line thickness
-		  radius: 3, // The radius of the inner circle
-		  rotate: 0, // The rotation offset
-		  color: '#000', // #rgb or #rrggbb
-		  speed: 0.8, // Rounds per second
-		  trail: 60, // Afterglow percentage
-		  shadow: false, // Whether to render a shadow
-		  hwaccel: false, // Whether to use hardware acceleration
-		  className: 'spinner', // The CSS class to assign to the spinner
-		  zIndex: 2e9, // The z-index (defaults to 2000000000)
-		  top: 0, // Top position relative to parent in px
-		  left: 0 // Left position relative to parent in px
-		};

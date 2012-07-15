@@ -10,7 +10,7 @@ $(document).ready(function () {
 function getUserInformation() {
 	var request = new PostRequestHandler("eWolf","/json",handleNewData,null,0);
 
-	function handleNewData(data, parameters) {
+	function handleNewData(data, postData) {
 		console.log(data);
 		if (data.profile != null) {
 			if (data.profile.result == "success") {
@@ -31,7 +31,7 @@ function getUserInformation() {
 	
 	request.getData({
 		profile: {}
-	  }, null);
+	  });
 }
 
 function InitEWolf() {
@@ -45,8 +45,8 @@ function InitEWolf() {
 	menuList.addMenuItem(eWolf.data("userID"),"My Profile");
 	new Profile(eWolf.data("userID"),applicationFrame);
 	
-	menuList.addMenuItem("news_feed","News Feed");
-	new NewsFeed("news_feed",applicationFrame);
+//	menuList.addMenuItem("news_feed","News Feed");
+//	new NewsFeed("news_feed",applicationFrame);
 	
 	menuList.addMenuItem("messages","Messages");
 	new Inbox("messages",applicationFrame);

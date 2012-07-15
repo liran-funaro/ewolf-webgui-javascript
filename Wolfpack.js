@@ -3,7 +3,7 @@ var Wolfpack = function(name) {
 		"style": "width:1%;",
 		"class": "userBox"
 	}).text(name).click(function() {
-		eWolf.trigger("select",["__packid__"+name]);
+		eWolf.trigger("select",["__pack__"+name]);
 	});	
 		
 	return box;

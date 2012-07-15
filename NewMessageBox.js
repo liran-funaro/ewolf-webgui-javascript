@@ -84,8 +84,6 @@ var NewMessageBox = function(id,container) {
 				userID: userIdText.val(),
 				message: JSON.stringify(mailObject)
 			}
-		  }, {
-			  // No data to pass to handler
 		  });
 	});
 	
@@ -108,7 +106,7 @@ var NewMessageBox = function(id,container) {
 		"style": "color:red;"
 	}).appendTo(errorBox);
 	
-	function handleResponse(data,parameters) {
+	function handleResponse(data,postData) {
 		console.log(data);
 		if (data.sendMessage != null) {
 			if(data.sendMessage.result == "success") {

@@ -1,4 +1,9 @@
-var BasicRequestHandler = function(id,requestAddress,handleDataFunction,onComplete,refreshIntervalSec) {	
+var BasicRequestHandler = function(id,requestAddress,handleDataFunction,onComplete,refreshIntervalSec) {
+	
+	function trigger() {
+		eWolf.trigger('needRefresh.'+id,[id]);
+	}	
+	
 	return {
 		_timer: null,
 		_onPostComplete: function () {
@@ -9,8 +14,8 @@ var BasicRequestHandler = function(id,requestAddress,handleDataFunction,onComple
 			eWolf.trigger("loadingEnd",[id]);
 			
 			if(refreshIntervalSec > 0) {
-				timer = setTimeout("eWolf.trigger('needRefresh."+id+"'," +
-						"["+id+"])",refreshIntervalSec*1000);
+				clearTimeout(this._timer);
+				this._timer = setTimeout(trigger,refreshIntervalSec*1000);
 			}
 		},
 		getId : function() {
@@ -24,14 +29,14 @@ var BasicRequestHandler = function(id,requestAddress,handleDataFunction,onComple
 
 var PostRequestHandler = function(id,requestAddress,handleDataFunction,onComplete,refreshIntervalSec) {
 	var res = new BasicRequestHandler(id,requestAddress,handleDataFunction,onComplete,refreshIntervalSec);
-	res.getData = function (data, passToHandler) {
+	res.getData = function (data) {
 		clearTimeout(this._timer);
 		eWolf.trigger("loading",[id]);				
 		
 		$.post(	requestAddress,
 			JSON.stringify(data),
 			function(receivedData,textStatus) {
-				handleDataFunction(receivedData,/*textStatus,*/passToHandler);
+				handleDataFunction(receivedData,/*textStatus,*/data);
 			},
 			"json").complete(this._onPostComplete);
 	};
@@ -41,7 +46,7 @@ var PostRequestHandler = function(id,requestAddress,handleDataFunction,onComplet
 
 var JSONRequestHandler = function(id,requestAddress,handleDataFunction,onComplete,refreshIntervalSec) {
 	var res = new BasicRequestHandler(id,requestAddress,handleDataFunction,onComplete,refreshIntervalSec);
-	res.getData = function (data, passToHandler) {
+	res.getData = function (data) {
 		clearTimeout(this._timer);
 		eWolf.trigger("loading",[id]);				
 		
@@ -49,7 +54,7 @@ var JSONRequestHandler = function(id,requestAddress,handleDataFunction,onComplet
 				requestAddress,
 				data,
 				function(receivedData,textStatus) {
-					handleDataFunction(receivedData,/*textStatus,*/passToHandler);
+					handleDataFunction(receivedData,/*textStatus,*/data);
 				}).complete(this._onPostComplete);
 	};
 	

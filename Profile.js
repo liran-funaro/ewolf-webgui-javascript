@@ -2,7 +2,7 @@ var Profile = function (id,applicationFrame) {
 	var appContainer = new AppContainer(id,applicationFrame);
 	var frame = appContainer.getFrame();
 	
-	var request = new PostRequestHandler(id,"/json",handleNewData,null,3600);
+	var request = new PostRequestHandler(id,"/json",handleNewData,null,0);
 	
 	var title = $("<div/>").appendTo(frame);
 	
@@ -24,14 +24,17 @@ var Profile = function (id,applicationFrame) {
 	
 	var wolfpackslist = null;
 	
-	new NewsFeed(id,frame);
+	var feed = new NewsFeedList(id,{
+		newsOf:"user",
+		userID:id
+	}).appendTo(frame);
 	
 	var profileData = null;
 	var wolfpackData = null;
-	
-	getProfileData();
 
-	function handleNewData(data,parameters) {
+	getProfileData();
+	
+	function handleNewData(data,postData) {
 		console.log(data);
 		
 		if(data.profile != null) {
@@ -87,8 +90,9 @@ var Profile = function (id,applicationFrame) {
 		request.getData({
 			profile: userObj,
 			wolfpacks: userObj
-		  }, null);
+		  });
 	}
+
 	
 	eWolf.bind("refresh."+id,function(event,eventId) {
 		if(id == eventId) {
