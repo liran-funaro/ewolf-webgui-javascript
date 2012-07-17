@@ -1,11 +1,12 @@
-var GenericMailList = function(id,mailType,serverSettings,
+var GenericMailList = function(mailType,request,serverSettings,
 		listClass,msgBoxClass,preMessageTitle,allowShrink) {
 	var newestDate = null;
 	var oldestDate = null;
 	
 	var lastItem = null;
-	
-	var request = new PostRequestHandler(id,"/json",handleNewData,null,60);	
+
+	request.register(getData,new eWolfResonseHandler(mailType,
+			["mailList"],handleNewData));	
 	
 	var frame = $("<span/>");
 	
@@ -14,43 +15,24 @@ var GenericMailList = function(id,mailType,serverSettings,
 	}).appendTo(frame);
 	
 	var showMore = new ShowMore(frame,function() {
-		_updateFromServer(true);
+		request.request(_updateFromServer (true),handleNewData);
 	}).draw();
 	
-	eWolf.bind("refresh."+id,function(event,eventId) {
-		if(id == eventId) {
-			_updateFromServer(false);
-		}
-	});
-	
-	function handleNewData(data, parameters) {
-		console.log(data);
+	function handleNewData(data, textStatus, parameters) {
+		$.each(data.mailList, function(j, mailItem) {
+			_addItem(mailItem.senderID,mailItem.senderName,
+					mailItem.timestamp, mailItem.mail);
+		});
 		
-		var item = data[mailType];
-
-		if (item != null) {
-			if(item.result == "success") {
-				if(item.mailList != null) {
-					$.each(item.mailList, function(j, mailItem) {
-						_addItem(mailItem.senderID,mailItem.senderName,
-								mailItem.timestamp, mailItem.mail);
-					});
-					
-					if (parameters[mailType].newerThan == null &&
-							item.mailList.length < parameters[mailType].maxMessages) {
-						showMore.remove();
-					}
-					
-				} else {
-					console.log("No mailList parameter in response");
-				}				
-			} else {
-				console.log(item.result);
-			}
-		} else {
-			console.log("No " + mailType + " parameter in response");
-		}
+		if (parameters[mailType].newerThan == null &&
+				data.mailList.length < parameters[mailType].maxMessages) {
+			showMore.remove();
+		}		
 	}
+	
+	function getData () {
+		return _updateFromServer(false);
+	} 
 	
 	function _updateFromServer (getOlder) {		
 		var data = {};
@@ -65,7 +47,7 @@ var GenericMailList = function(id,mailType,serverSettings,
 		var postData = {};
 		postData[mailType] = data;
 		
-		request.getData(postData);
+		return postData;
 	}
 	
 	function _addItem (senderID,senderName,timestamp,mail) {
@@ -112,40 +94,22 @@ var GenericMailList = function(id,mailType,serverSettings,
 			return newestDate;
 		},
 		updateFromServer: function (getOlder) {		
-			return _updateFromServer(getOlder);
+			request.requestAll();
+			return this;
 		}
 	};
 };
 
-var mailObject = {
-		text: "hello liran",
-		attachment: [{
-			filename: "testfile.doc",
-			contentType: "document",
-			path: "http://www.google.com"
-		},
-		{
-			filename: "image.jpg",
-			contentType: "image/jpeg",
-			path: "https://www.cia.gov/library/publications/the-world-factbook/graphics/flags/large/is-lgflag.gif"					
-		}]
-};
-
-var NewsFeedList = function (id, serverSettings) {
+var NewsFeedList = function (request,serverSettings) {
 	$.extend(serverSettings,{maxMessages:15});
 	
-	var list = new GenericMailList(id,"newsFeed",serverSettings,
+	return new GenericMailList("newsFeed",request,serverSettings,
 			"postListItem","postBox","",false);
-	
-	list.addItem("model","Model",null,JSON.stringify(mailObject));	
-	list.addItem("cat","Cat",null,JSON.stringify(mailObject));
-	
-	return list;
 };
 
-var InboxList = function (id, serverSettings) {	
+var InboxList = function (request,serverSettings) {	
 	$.extend(serverSettings,{maxMessages:20});
 	
-	return new GenericMailList(id,"inbox",serverSettings,
+	return new GenericMailList("inbox",request,serverSettings,
 			"messageListItem","messageBox", ">> ",true);
 };

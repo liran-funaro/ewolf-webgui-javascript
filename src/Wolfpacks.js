@@ -1,11 +1,13 @@
-var Wolfpacks = function (menu,applicationFrame) {		
-	var menuList = menu.createNewMenuList("wolfpacks","Wolfpacks");
-	var request = new PostRequestHandler("wolfpacks","/json",handleWolfpacks,null,0);
+var Wolfpacks = function (menu,request,applicationFrame) {		
 	var wolfpackList = [];
-
-	request.getData( {
-		 wolfpacks:{}
-	} );
+	
+	var menuList = menu.createNewMenuList("wolfpacks","Wolfpacks");
+	
+	request.register(function() {
+		return {
+			 wolfpacks:{}
+		};
+	},handleWolfpacks);
 		
 	function addWolfpackApp(pack) {
 		var app = new WolfpackPage("__pack__"+pack,pack,applicationFrame);
@@ -13,9 +15,7 @@ var Wolfpacks = function (menu,applicationFrame) {
 		wolfpackList.push(app);
 	};
 	
-	function handleWolfpacks(data, postData) {
-		console.log(data);
-		
+	function handleWolfpacks(data, textStatus, postData) {		
 		if(data.wolfpacks != null) {
 			if(data.wolfpacks.result == "success") {
 				if(data.wolfpacks.wolfpacksList != null) {

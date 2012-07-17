@@ -4,16 +4,12 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn,addBtn) {
 	var lastSearch = null;
 	
 	function addSearchMenuItem(key) {
-		var app = new Profile(key,applicationFrame);
-		apps[key] = app;
-		
-		eWolf.one("loadingEnd",function(event,eventId) {
-			if(eventId == key) {
-				menuList.addMenuItem(key,app.getName());
+		var app = new Profile(key,null,applicationFrame)
+			.onReceiveName(function(name) {
+				menuList.addMenuItem(key,name);
 				eWolf.trigger("select",[key]);
-			}
-		});
-		
+			});
+		apps[key] = app;		
 	};
 	
 	function removeSearchMenuItem(key) {

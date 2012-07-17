@@ -2,6 +2,9 @@ var Inbox = function (id,applicationFrame) {
 	var appContainer = new AppContainer(id,applicationFrame);
 	var frame = appContainer.getFrame();
 	
+	var request = new PostRequestHandler(id,"/json",60)
+		.listenToRefresh();
+	
 	var titleDiv = $("<div/>").attr({
 		"class" : "eWolfTitle"
 	})	.append("Inbox")
@@ -15,7 +18,7 @@ var Inbox = function (id,applicationFrame) {
 		new NewMessageBox("__newmessage__"+id,frame);
 	});
 	
-	new InboxList(id,{}).appendTo(frame);	
+	new InboxList(request,{}).appendTo(frame);
 	
 	return {
 		getId : function() {

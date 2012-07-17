@@ -6,7 +6,7 @@ CSSTEMP=CSS/core.css.temp
 JSTRG=../ewolf-webgui/server_resources/www/core.mini.js
 CSSTRG=../ewolf-webgui/server_resources/www/core.mini.css
 
-cat *.js > $JSTRG
+cat src/*.js imported/*.js > $JSTRG
 cat CSS/*.css > $CSSTRG
 
 #rm $JSTRG
