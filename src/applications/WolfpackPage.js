@@ -5,7 +5,7 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 	var request = new PostRequestHandler(id,"/json",60)
 		.listenToRefresh()
 		.register(getWolfpacksMembersData,
-				new eWolfResonseHandler("wolfpackMembers",
+				new ResonseHandler("wolfpackMembers",
 						["membersList"],handleWolfpacksMembersData));
 		
 	var title = $("<div/>").appendTo(frame);

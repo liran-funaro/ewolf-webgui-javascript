@@ -18,15 +18,12 @@ function getUserInformation() {
 		.register(function() {
 			return {
 				profile: {}
-			}
-		},new eWolfResonseHandler("profile",
-					["id","name"],handleProfileData))	
-		.register(function() {
-			return {
-				wolfpacks: {}
-			}
-		},new eWolfResonseHandler("profile",
-				["id","name"],handleProfileData));
+			};
+		},new ResonseHandler("profile",
+					["id","name"],handleProfileData));
+	
+	new Wolfpacks(eWolf.sideMenu,request,eWolf.applicationFrame);
+	request.requestAll();
 	
 	function handleProfileData(data, textStatus, postData) {
 		document.title = "eWolf - " + data.name;
@@ -35,9 +32,7 @@ function getUserInformation() {
 		eWolf.data('userName',data.name);
 			
 		InitEWolf();			
-	}
-	
-	new Wolfpacks(sideMenu,applicationFrame);
+	}	
 }
 
 function InitEWolf() {

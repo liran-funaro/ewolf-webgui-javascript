@@ -15,13 +15,13 @@ var Profile = function (id,name,applicationFrame) {
 		};
 	$.extend(newsFeedObj,userObj);
 	
-	var handleProfileResonse = new eWolfResonseHandler("profile",
+	var handleProfileResonse = new ResonseHandler("profile",
 			["id","name"],handleProfileData);
 	
 	var request = new PostRequestHandler(id,"/json",60)
 		.listenToRefresh()
 		.register(getProfileData,handleProfileResonse)
-		.register(geWolfpacksData,new eWolfResonseHandler("wolfpacks",
+		.register(geWolfpacksData,new ResonseHandler("wolfpacks",
 				["wolfpacksList"],handleWolfpacksData));
 	
 	if(name == null) {

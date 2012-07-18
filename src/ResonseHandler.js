@@ -1,4 +1,4 @@
-var eWolfResonseHandler = function(category, requiredFields, handler) {
+var ResonseHandler = function(category, requiredFields, handler) {
 	return function(data, textStatus, postData) {
 		if (data[category] != null) {
 			if (data[category].result == "success") {

@@ -5,7 +5,7 @@ var GenericMailList = function(mailType,request,serverSettings,
 	
 	var lastItem = null;
 
-	request.register(getData,new eWolfResonseHandler(mailType,
+	request.register(getData,new ResonseHandler(mailType,
 			["mailList"],handleNewData));	
 	
 	var frame = $("<span/>");
