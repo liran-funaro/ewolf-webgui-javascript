@@ -1,8 +1,12 @@
 var User = function(id,name) {
 	return $("<span/>").attr({
 		"style": "width:1%;",
-		"class": "userBox"
+		"class": "selectableBox"
 	}).text(name).click(function() {
-		eWolf.trigger("search",[id]);
-	});	
+		if(id != eWolf.data("userID")) {
+			eWolf.trigger("search",[id,name]);
+		} else {
+			eWolf.trigger("select",[id]);
+		}
+	});
 };

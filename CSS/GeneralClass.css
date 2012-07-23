@@ -5,3 +5,15 @@
 	color:#af9c7c;
 	width:95%;
 }
+
+.selectableBox {
+	text-decoration:none;
+	color:inherit;
+	cursor:pointer;
+}
+
+.selectableBox:hover {
+	text-shadow: 0 0 0.3em grey;
+	text-decoration:underline;
+}
+

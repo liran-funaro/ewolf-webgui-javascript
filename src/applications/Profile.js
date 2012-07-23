@@ -1,4 +1,6 @@
 var Profile = function (id,name,applicationFrame) {
+	var obj = this;
+	
 	var appContainer = new AppContainer(id,applicationFrame);
 	var frame = appContainer.getFrame();
 	
@@ -28,25 +30,52 @@ var Profile = function (id,name,applicationFrame) {
 		request.request(getProfileData(),handleProfileResonse);
 	}		
 	
-	var title = $("<div/>").appendTo(frame);
+	var topTitle = new TitleArea(name).appendTo(frame);
 	
-	var nameTitle = $("<span/>").attr({
-		"class" : "eWolfTitle"
-	}).appendTo(title);
+	if(id != eWolf.data("userID")) {
+		topTitle.addFunction("Send message...", function (event) {
+			var box = new NewMessageBox(id,applicationFrame,id);
+			box.select();
+		});
+	}
 	
-	title.append("&nbsp;");
+	var idRow = $("<span/>").attr("class","idBox");
+	topTitle.appendAtTitleTextArea("&nbsp;");
+	topTitle.appendAtTitleTextArea(idRow);
 	
-	var idRow = $("<span/>").attr({
-		"class": "idBox"
-	}).appendTo(title);
+	var wolfpacksContainer = $("<span/>").attr("class","wolfpacksBox").hide();	
+	topTitle.appendAtBottomPart(wolfpacksContainer);
 	
-	title.append("&nbsp;&nbsp;&nbsp; ");
-	
-	var wolfpacksContainer = $("<span/>").attr({
-		"class":"wolfpacksBox"
-	}).appendTo(title);	
-	
+	wolfpacksContainer.append("Wolfpakcs: ");	
 	var wolfpackslist = null;
+	
+	function updateWolfpacksView(newWolfpackslist) {
+		if (wolfpackslist != null) {
+			wolfpackslist.remove();
+		}
+		
+		if(newWolfpackslist == null) {
+			wolfpacksContainer.hide();
+			topTitle.addFunction("Add to wolfpack...", function () {
+				// TODO: add to any wolfpack (not just wall-readers) 
+				request.request({
+					addWolfpackMember: {
+						wolfpackName: "wall-readers",
+						userID: id
+					}
+				},new ResonseHandler("addWolfpackMember",
+						[],function (data, textStatus, postData) {
+					request.requestAll();
+					eWolf.trigger("needRefresh.__pack__"+postData.addWolfpackMember.wolfpackName);
+				}));
+			});
+		} else {
+			wolfpackslist = newWolfpackslist;
+			wolfpacksContainer.append(wolfpackslist);
+			wolfpacksContainer.show();
+			topTitle.removeFunction("Add to wolfpack...");
+		}		
+	}	
 	
 	new NewsFeedList(request,newsFeedObj).appendTo(frame);
 	
@@ -54,7 +83,7 @@ var Profile = function (id,name,applicationFrame) {
 	var wolfpackData = null;
 	
 	function handleProfileData(data, textStatus, postData) {
-		nameTitle.html(new User(data.id,data.name));
+		topTitle.setTitle(new User(data.id,data.name));
 		idRow.html(data.id);
 		
 		name = data.name;
@@ -65,18 +94,20 @@ var Profile = function (id,name,applicationFrame) {
 	  }
 	
 	function handleWolfpacksData(data, textStatus, postData) {		
-		if(wolfpackslist != null) {
-			 wolfpackslist.remove();
-		 }
+		var newWolfpackslist = null;
 		 
-		 wolfpackslist = $("<span/>").appendTo(wolfpacksContainer);
+		if(data.wolfpacksList.length > 0) {
+			newWolfpackslist = $("<span/>").appendTo(wolfpacksContainer);
+			 
+			 $.each(data.wolfpacksList,function(i,pack) {
+				 newWolfpackslist.append(new Wolfpack(pack));
+				 if(i != data.wolfpacksList.length-1) {
+					 newWolfpackslist.append(", ");
+				 }
+			 });
+		}	 
 		 
-		 $.each(data.wolfpacksList,function(i,pack) {
-			 wolfpackslist.append(new Wolfpack(pack));
-			 if(i != data.wolfpacksList.length-1) {
-				 wolfpackslist.append(", ");
-			 }
-		 });				
+		updateWolfpacksView(newWolfpackslist);
 	  }
 	
 	function getProfileData() {		
@@ -91,44 +122,49 @@ var Profile = function (id,name,applicationFrame) {
 		  };
 	}
 	
-	return {
-		getID : function() {
-			if(profileData != null) {
-				return profileData.id;
-			} else {
-				return id;
-			}			
-		},
-		getName : function() {
-			if(profileData != null) {
-				return profileData.name;
-			} else {
-				return id;
-			}				
-		},
-		getWolfpacks : function() {
-			if(wolfpackData != null) {
-				return wolfpackData.wolfpacksList;
-			} else {
-				return [];
-			}			
-		},
-		isSelected : function() {
-			return appContainer.isSelected();
-		},
-		onReceiveName: function(nameHandler) {
-			if(name != null) {
-				nameHandler(name);
-			} else {
-				waitingForName.push(nameHandler);
-			}
-			
-			return this;
-		},		
-		destroy : function() {
-			eWolf.unbind("refresh."+id);
-			appContainer.destroy();
-			delete this;
-		}
+	this.getID = function() {
+		if(profileData != null) {
+			return profileData.id;
+		} else {
+			return id;
+		}			
 	};
+	
+	this.getName = function() {
+		if(profileData != null) {
+			return profileData.name;
+		} else {
+			return id;
+		}				
+	};
+	
+	this.getWolfpacks = function() {
+		if(wolfpackData != null) {
+			return wolfpackData.wolfpacksList;
+		} else {
+			return [];
+		}			
+	};
+	
+	this.isSelected = function() {
+		return appContainer.isSelected();
+	};
+	
+	this.onReceiveName = function(nameHandler) {
+		if(name != null) {
+			nameHandler(name);
+		} else {
+			waitingForName.push(nameHandler);
+		}
+		
+		return obj;
+	};
+	
+	this.destroy = function() {
+		eWolf.unbind("refresh."+id);
+		appContainer.destroy();
+		delete obj;
+	};
+	
+	return this;
 };

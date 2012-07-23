@@ -17,13 +17,17 @@ body {
 }
 
 button, input[type="button"] {
-	width:60px;
+	width:auto;
 	background-color:#ddd;
 	border:1px;
 	border-color:#666;
 	border-radius:13px;
 	height:30px;	
 	font-weight:bold;
+	padding-left:10px;
+	padding-right:10px;
+	margin-left:2px;
+	margin-right:2px;
 }
 
 button, input[type="button"]:hover {

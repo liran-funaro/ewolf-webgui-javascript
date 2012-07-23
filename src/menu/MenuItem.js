@@ -113,6 +113,10 @@ var MenuItem = function(id,title,messageText,topbarFrame) {
 		getId : function() {
 			return id;
 		},
+		renameTitle : function(newTitle) {
+			title = newTitle;
+			updateView();
+		},
 		destroy: function() {
 			message.destroy();
 			listItem.remove();

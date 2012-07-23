@@ -1,10 +1,8 @@
 var Wolfpack = function(name) {
-	var box = $("<span/>").attr({
+	return $("<span/>").attr({
 		"style": "width:1%;",
-		"class": "userBox"
+		"class": "selectableBox"
 	}).text(name).click(function() {
 		eWolf.trigger("select",["__pack__"+name]);
-	});	
-		
-	return box;
+	});
 };

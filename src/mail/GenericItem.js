@@ -1,7 +1,5 @@
 var GenericItem = function(senderID,senderName,timestamp,mail,
 		listClass,msgBoxClass,preMessageTitle,allowShrink) {
-	
-	var dateFormat = "dd/MM/yyyy (HH:mm)";
 		
 	var itemSpan = $("<span/>");
 	
@@ -14,13 +12,17 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 		"class": "preMessageBox"
 	}).append(preMessageTitle).appendTo(listItem);	
 	
-	var senderBox = new User(senderID,senderName).appendTo(listItem);
+	var isOnSender = false;
+	var senderBox = User(senderID,senderName)
+		.appendTo(listItem)
+		.hover(function() {
+			isOnSender = true;
+		}, function () {
+			isOnSender = false;
+		});
 	
-	var itsTime = new Date(timestamp);
 	
-	var timestampBox = $("<span/>").attr({
-		"class": "timestampBox"
-	}).append(itsTime.toString(dateFormat)).appendTo(listItem);
+	var timestampBox = TimestampBox(timestamp).appendTo(listItem);
 		
 	var itsMessage = $("<li/>").attr({
 		 "class": msgBoxClass
@@ -31,7 +33,9 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 		itsMessage.hide();
 		
 		listItem.click(function() {		
-			itsMessage.toggle();
+			if(!isOnSender){
+				itsMessage.toggle();
+			}				
 		});
 	}	
 	

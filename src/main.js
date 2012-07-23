@@ -22,7 +22,7 @@ function getUserInformation() {
 		},new ResonseHandler("profile",
 					["id","name"],handleProfileData));
 	
-	new Wolfpacks(eWolf.sideMenu,request,eWolf.applicationFrame);
+	eWolf.wolfpacks = new Wolfpacks(eWolf.sideMenu,request,eWolf.applicationFrame);
 	request.requestAll();
 	
 	function handleProfileData(data, textStatus, postData) {
@@ -48,14 +48,6 @@ function InitEWolf() {
 	
 	new SearchApp("search",eWolf.sideMenu,eWolf.applicationFrame,
 			$("#txtSearchBox"),$("#btnSearch"),$("#btnAdd"));
-	
-	
-	testZone();	
+		
 	//eWolf.trigger("select",["news_feed"]);
-}
-
-function testZone() {
-	$("#btnLoad").click(function() {
-		alert("Does nothing...");
-	});
 }

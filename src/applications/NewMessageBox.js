@@ -1,15 +1,13 @@
-var NewMessageBox = function(id,container) {
-	var request = new PostRequestHandler(id,"/json",handleResponse,null,0);
+var NewMessageBox = function(id,applicationFrame,sendTo) {
+	var obj = this;
+	var thisID = "__newmessage__"+id;
 	
-	var box = $("<div/>").attr({
-		"class": "newMessageBoxClass"
-	}).appendTo(container).animate({
-		opacity : 0.9
-	}, 350, function() {
-		// Animation complete.
-	});
+	var appContainer = new AppContainer(thisID,applicationFrame);
+	var frame = appContainer.getFrame();
 	
-	var base = $("<table/>").appendTo(box);
+	var request = new PostRequestHandler(thisID,"/json",0);
+	
+	var base = $("<table/>").appendTo(frame);
 	
 	var idRaw = $("<tr/>").appendTo(base);
 	$("<td/>").append("Send to:").appendTo(idRaw);
@@ -79,12 +77,12 @@ var NewMessageBox = function(id,container) {
 		
 		console.log(JSON.stringify(mailObject));
 		
-		request.getData({
+		request.request({
 			sendMessage: {
 				userID: userIdText.val(),
 				message: JSON.stringify(mailObject)
 			}
-		  });
+		  },handleResponse);
 	});
 	
 	btnBox.append("&nbsp;");
@@ -94,7 +92,7 @@ var NewMessageBox = function(id,container) {
 		"type": "button",
 		"value": "Cancel"
 	}).appendTo(btnBox).click(function() {
-		destroySelf();
+		obj.destroy();
 	});
 	
 	var errorRaw = $("<tr/>").appendTo(base);
@@ -107,10 +105,9 @@ var NewMessageBox = function(id,container) {
 	}).appendTo(errorBox);
 	
 	function handleResponse(data,postData) {
-		console.log(data);
 		if (data.sendMessage != null) {
 			if(data.sendMessage.result == "success") {
-				destroySelf();
+				obj.destroy();
 			} else {
 				errorMessage.html(data.sendMessage.result);
 			}
@@ -119,25 +116,31 @@ var NewMessageBox = function(id,container) {
 		}		
 	}
 	
-	function destroySelf() {
-		if(box != null) {
-			box.animate({
-				opacity : 0
-			}, 350, function() {
-				box.remove();
-				box = null;
-				delete this;
-			});;			
-		} else {
-			delete this;
-		}
-		
-	}
-
-	return {
-		destroy : function() {
-			destroySelf();
-		}
+	eWolf.bind("refresh",function(event,eventID) {
+		if(eventID == thisID) {
+			if(sendTo != null) {
+				userIdText.attr("value",sendTo);
+				window.setTimeout(function () {
+					messageText.focus();
+				}, 0);				
+			} else {
+				window.setTimeout(function () {
+					userIdText.focus();
+				}, 0);
+			}
+		}		
+	});
+	
+	this.select = function() {
+		eWolf.trigger("select",[thisID]);		
 	};
+	
+	this.destroy = function() {
+		eWolf.trigger("select",[id]);
+		appContainer.destroy();
+		delete obj;
+	};
+
+	return this;
 };
 

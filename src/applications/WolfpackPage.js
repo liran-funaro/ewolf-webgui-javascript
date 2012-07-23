@@ -8,22 +8,39 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 				new ResonseHandler("wolfpackMembers",
 						["membersList"],handleWolfpacksMembersData));
 		
-	var title = $("<div/>").appendTo(frame);
+	var topTitle = new TitleArea(new Wolfpack(wolfpackName))
+		.appendTo(frame)
+		.addFunction("Post", function() {
+			// TODO: post on wolfpack
+		})
+		.addFunction("Add member...", function() {
+			// TODO: add member
+		});
 	
-	$("<span/>").attr({
-		"class" : "eWolfTitle"
-	}).append(new Wolfpack(wolfpackName)).appendTo(title);
+	var members = $("<span/>").attr("class","wolfpacksBox").hide();
+	topTitle.appendAtBottomPart(members);
 	
-	title.append("&nbsp;&nbsp;&nbsp; ");
-	
-	var members = $("<span/>").appendTo(title);	
+	members.append("Members: ");
+	var membersList = null;
+		
+	function updateMembersView(newMembersList) {
+		if (membersList != null) {
+			membersList.remove();
+		}
+		
+		if(newMembersList == null) {
+			members.hide();
+		} else {
+			membersList = newMembersList;
+			members.append(membersList);
+			members.show();
+		}		
+	}	
 	
 	new NewsFeedList(request,{
 		newsOf:"wolfpack",
 		wolfpackName:wolfpackName
-	}).appendTo(frame);
-	
-	var membersList = null;
+	}).appendTo(frame);	
 	
 	function getWolfpacksMembersData() {
 		return {
@@ -36,18 +53,20 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 	function handleWolfpacksMembersData(data, textStatus, postData) {
 		list = data.membersList;
 
-		if (membersList != null) {
-			membersList.remove();
-		}
+		var newMembersList = null;
+		
+		if(list.length > 0) {
+			newMembersList = $("<span/>");
 
-		membersList = $("<span/>").appendTo(members);
-
-		$.each(list, function(i, member) {
-			membersList.append(new User(member.id, member.name));
-			if (i != list.length - 1) {
-				membersList.append(", ");
-			}
-		});
+			$.each(list, function(i, member) {
+				newMembersList.append(new User(member.id, member.name));
+				if (i != list.length - 1) {
+					newMembersList.append(", ");
+				}
+			});
+		}		
+		
+		updateMembersView(newMembersList);
 	}
 	
 	return {

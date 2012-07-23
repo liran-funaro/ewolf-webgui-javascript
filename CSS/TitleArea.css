@@ -1,0 +1,27 @@
+.titleArea {
+	background-color:rgba(256,256,256,0.65);
+	border-radius:13px;
+/* 	width:99%; */
+	font-style:italic;
+	padding-left:12px;
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-right:12px;
+	margin-right:5px;
+}
+
+.titleTable {
+	width:100%;
+}
+
+.titleTextArea {
+	text-align:left;
+}
+
+.titleFunctionsArea {
+	text-align:right;
+}
+
+.titleBottomPart {
+	margin-left:25px;
+}

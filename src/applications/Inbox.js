@@ -5,18 +5,12 @@ var Inbox = function (id,applicationFrame) {
 	var request = new PostRequestHandler(id,"/json",60)
 		.listenToRefresh();
 	
-	var titleDiv = $("<div/>").attr({
-		"class" : "eWolfTitle"
-	})	.append("Inbox")
-		.appendTo(frame);
-	
-	$("<input/>").attr({
-		"type": "button",
-		"value": "New Message...",
-		"class": "newMessageBotton"
-	}).appendTo(titleDiv).click(function() {
-		new NewMessageBox("__newmessage__"+id,frame);
-	});
+	new TitleArea("Inbox")
+		.appendTo(frame)
+		.addFunction("New Message...", function() {
+			var box = new NewMessageBox(id,applicationFrame);
+			box.select();
+		});
 	
 	new InboxList(request,{}).appendTo(frame);
 	

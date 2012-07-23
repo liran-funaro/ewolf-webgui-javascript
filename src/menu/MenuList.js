@@ -17,15 +17,20 @@ var MenuList = function(menu,id,title,topbarFrame) {
 	})	.appendTo(frame);
 	
 	return {
-		addMenuItem : function(id,title) {			 
-			var menuItem = new MenuItem(id,title,
-					"Click to show "+title.toLowerCase(),topbarFrame).appendTo(list);
-			
-			items[id] = menuItem;
-			
-			if(Object.keys(items).length > 0) {
-				frame.show();
+		addMenuItem : function(id,title) {
+			if(items[id] == null) {
+				var menuItem = new MenuItem(id,title,
+						"Click to show "+title.toLowerCase(),topbarFrame).appendTo(list);
+				
+				items[id] = menuItem;
+				
+				if(Object.keys(items).length > 0) {
+					frame.show();
+				}
+			} else {
+				console.log("[Menu Error] Item with id: "+ id +" already exist");
 			}
+			
 		},
 		removeMenuItem: function(removeId) {
 			if(items[removeId] != null) {
@@ -35,6 +40,11 @@ var MenuList = function(menu,id,title,topbarFrame) {
 			
 			if(Object.keys(items).length <= 0) {
 				frame.hide();
+			}
+		},
+		renameMenuItem : function(id,newTitle) {
+			if(items[id] != null) {
+				items[id].renameTitle(newTitle);
 			}
 		},
 		appendTo : function(container) {

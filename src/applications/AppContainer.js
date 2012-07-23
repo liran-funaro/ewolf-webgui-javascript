@@ -9,25 +9,30 @@ var AppContainer = function(id,container) {
 			.hide(0);
 		
 		eWolf.bind("select."+id,function(event,eventId) {
-			if(id == eventId) {				
-				frame.show(0);
-				frame.animate({
-					opacity : 1,
-				}, 700, function() {
-				});
+			if(id == eventId) {	
+				if(!selected) {
+					frame.show(0);
+					frame.animate({
+						opacity : 1,
+					}, 700, function() {
+					});
+					
+					selected = true;
+				}
 				
-				selected = true;
 				if(needRefresh) {
 					eWolf.trigger("refresh",[id]);
 				}
 			} else {
-				frame.animate({
-					opacity : 0,
-				}, 300, function() {
-					frame.hide(0);
-				});
-				
-				selected = false;
+				if(selected) {
+					frame.animate({
+						opacity : 0,
+					}, 300, function() {
+						frame.hide(0);
+					});
+					
+					selected = false;
+				}				
 			}			
 		});
 		
