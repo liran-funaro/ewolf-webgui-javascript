@@ -131,14 +131,19 @@ var NewMessageBox = function(id,applicationFrame,sendTo) {
 		}		
 	});
 	
+	eWolf.bind("select."+id,function(event,eventId) {
+		if(eventId != thisID) {
+			appContainer.destroy();
+			delete obj;
+		}
+	});
+	
 	this.select = function() {
-		eWolf.trigger("select",[thisID]);		
+		eWolf.trigger("select",[thisID]);
 	};
 	
 	this.destroy = function() {
 		eWolf.trigger("select",[id]);
-		appContainer.destroy();
-		delete obj;
 	};
 
 	return this;

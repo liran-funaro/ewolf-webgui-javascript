@@ -43,39 +43,29 @@ var Profile = function (id,name,applicationFrame) {
 	topTitle.appendAtTitleTextArea("&nbsp;");
 	topTitle.appendAtTitleTextArea(idRow);
 	
-	var wolfpacksContainer = $("<span/>").attr("class","wolfpacksBox").hide();	
-	topTitle.appendAtBottomPart(wolfpacksContainer);
+	var wolfpacksContainer = new CommaSeperatedList("Wolfpakcs");
+	topTitle.appendAtBottomPart(wolfpacksContainer.getList());
 	
-	wolfpacksContainer.append("Wolfpakcs: ");	
-	var wolfpackslist = null;
-	
-	function updateWolfpacksView(newWolfpackslist) {
-		if (wolfpackslist != null) {
-			wolfpackslist.remove();
-		}
-		
-		if(newWolfpackslist == null) {
-			wolfpacksContainer.hide();
-			topTitle.addFunction("Add to wolfpack...", function () {
-				// TODO: add to any wolfpack (not just wall-readers) 
-				request.request({
-					addWolfpackMember: {
-						wolfpackName: "wall-readers",
-						userID: id
-					}
-				},new ResonseHandler("addWolfpackMember",
-						[],function (data, textStatus, postData) {
-					request.requestAll();
-					eWolf.trigger("needRefresh.__pack__"+postData.addWolfpackMember.wolfpackName);
-				}));
-			});
-		} else {
-			wolfpackslist = newWolfpackslist;
-			wolfpacksContainer.append(wolfpackslist);
-			wolfpacksContainer.show();
-			topTitle.removeFunction("Add to wolfpack...");
-		}		
-	}	
+	if(id != eWolf.data("userID")) {
+		topTitle.addFunction("Add to wolfpack...", function () {
+			// TODO: add to any wolfpack (not just wall-readers) 
+			request.request({
+				addWolfpackMember: {
+					wolfpackName: "wall-readers",
+					userID: id
+				}
+			},new ResonseHandler("addWolfpackMember",
+					[],function (data, textStatus, postData) {
+				request.requestAll();
+				eWolf.trigger("needRefresh.__pack__"+postData.addWolfpackMember.wolfpackName);
+			}));
+		});
+	} else {
+		topTitle.addFunction("Post", function() {
+			// TODO: post on wolfpack
+			alert("This will post to a wolfpack");
+		});
+	}
 	
 	new NewsFeedList(request,newsFeedObj).appendTo(frame);
 	
@@ -94,20 +84,11 @@ var Profile = function (id,name,applicationFrame) {
 	  }
 	
 	function handleWolfpacksData(data, textStatus, postData) {		
-		var newWolfpackslist = null;
-		 
-		if(data.wolfpacksList.length > 0) {
-			newWolfpackslist = $("<span/>").appendTo(wolfpacksContainer);
-			 
-			 $.each(data.wolfpacksList,function(i,pack) {
-				 newWolfpackslist.append(new Wolfpack(pack));
-				 if(i != data.wolfpacksList.length-1) {
-					 newWolfpackslist.append(", ");
-				 }
-			 });
-		}	 
-		 
-		updateWolfpacksView(newWolfpackslist);
+		wolfpacksContainer.removeAll();		 
+
+		 $.each(data.wolfpacksList,function(i,pack) {
+			 wolfpacksContainer.addItem(new Wolfpack(pack));
+		 });
 	  }
 	
 	function getProfileData() {		

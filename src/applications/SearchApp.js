@@ -5,12 +5,11 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn) {
 	
 	function addSearchMenuItem(key,name) {
 		menuList.addMenuItem(key,name);
-		var app = new Profile(key,name,applicationFrame)
+		apps[key] = new Profile(key,name,applicationFrame)
 			.onReceiveName(function(newName) {
 				menuList.renameMenuItem(key,newName);
 				eWolf.trigger("select",[key]);
-			});
-		apps[key] = app;		
+			});	
 	};
 	
 	function removeSearchMenuItem(key) {

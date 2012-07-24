@@ -12,30 +12,15 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 		.appendTo(frame)
 		.addFunction("Post", function() {
 			// TODO: post on wolfpack
+			alert("This will post to this wolfpack");
 		})
 		.addFunction("Add member...", function() {
 			// TODO: add member
+			alert("This will add a member to a wolfpack");
 		});
 	
-	var members = $("<span/>").attr("class","wolfpacksBox").hide();
-	topTitle.appendAtBottomPart(members);
-	
-	members.append("Members: ");
-	var membersList = null;
-		
-	function updateMembersView(newMembersList) {
-		if (membersList != null) {
-			membersList.remove();
-		}
-		
-		if(newMembersList == null) {
-			members.hide();
-		} else {
-			membersList = newMembersList;
-			members.append(membersList);
-			members.show();
-		}		
-	}	
+	var members = new CommaSeperatedList("Members");
+	topTitle.appendAtBottomPart(members.getList());
 	
 	new NewsFeedList(request,{
 		newsOf:"wolfpack",
@@ -53,20 +38,11 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 	function handleWolfpacksMembersData(data, textStatus, postData) {
 		list = data.membersList;
 
-		var newMembersList = null;
-		
-		if(list.length > 0) {
-			newMembersList = $("<span/>");
+		members.removeAll();
 
-			$.each(list, function(i, member) {
-				newMembersList.append(new User(member.id, member.name));
-				if (i != list.length - 1) {
-					newMembersList.append(", ");
-				}
-			});
-		}		
-		
-		updateMembersView(newMembersList);
+		$.each(list, function(i, member) {
+			members.addItem(new User(member.id, member.name));
+		});
 	}
 	
 	return {

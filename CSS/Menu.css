@@ -91,6 +91,7 @@
 
 .toggleButton {
 	max-width:25px;
+	height:20px !important;
 }
 
 .toggleButtons {
