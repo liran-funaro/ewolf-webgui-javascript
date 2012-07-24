@@ -3,21 +3,26 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 	var frame = appContainer.getFrame();
 	
 	var request = new PostRequestHandler(id,"/json",60)
-		.listenToRefresh()
-		.register(getWolfpacksMembersData,
-				new ResonseHandler("wolfpackMembers",
-						["membersList"],handleWolfpacksMembersData));
-		
+		.listenToRefresh();
+				
 	var topTitle = new TitleArea(new Wolfpack(wolfpackName))
 		.appendTo(frame)
 		.addFunction("Post", function() {
 			// TODO: post on wolfpack
 			alert("This will post to this wolfpack");
-		})
-		.addFunction("Add member...", function() {
+		});
+	
+	if(wolfpackName != "wall-readers") {
+		request.register(getWolfpacksMembersData,
+				new ResonseHandler("wolfpackMembers",
+						["membersList"],handleWolfpacksMembersData));
+		topTitle.addFunction("Add member...", function() {
 			// TODO: add member
 			alert("This will add a member to a wolfpack");
 		});
+	} else {
+		topTitle.setTitle("News Feed");
+	}		
 	
 	var members = new CommaSeperatedList("Members");
 	topTitle.appendAtBottomPart(members.getList());

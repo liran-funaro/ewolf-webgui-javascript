@@ -12,9 +12,14 @@ var Wolfpacks = function (menu,request,applicationFrame) {
 	},new ResonseHandler("wolfpacks",["wolfpacksList"],handleWolfpacks));
 		
 	this.addWolfpack = function (pack) {
-		if(wolfpacks[pack] == null) {
+		if(wolfpacks[pack] == null) {		
+			if(pack != "wall-readers") {
+				menuList.addMenuItem("__pack__"+pack,pack);
+			}
+			
 			var app = new WolfpackPage("__pack__"+pack,pack,applicationFrame);
-			menuList.addMenuItem("__pack__"+pack,pack);
+			
+			
 			wolfpacks[pack] = app;
 		}		
 	};
@@ -32,6 +37,8 @@ var Wolfpacks = function (menu,request,applicationFrame) {
 				function(i,pack){
 			obj.addWolfpack(pack);
 		});
+		
+		eWolf.trigger("select",["__pack__wall-readers"]);
 	}	
 	
 	return this;

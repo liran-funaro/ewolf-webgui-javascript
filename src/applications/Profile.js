@@ -34,7 +34,7 @@ var Profile = function (id,name,applicationFrame) {
 	
 	if(id != eWolf.data("userID")) {
 		topTitle.addFunction("Send message...", function (event) {
-			var box = new NewMessageBox(id,applicationFrame,id);
+			var box = new NewMessageBox(id,applicationFrame,id,name);
 			box.select();
 		});
 	}
