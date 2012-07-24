@@ -63,12 +63,12 @@ var GenericMailList = function(mailType,request,serverSettings,
 		return this;
 	};
 
-	var responseHandler = new ResonseHandler(mailType,
+	var responseHandler = new ResponseHandler(mailType,
 			["mailList"],handleNewData);
-	request.register(this.updateFromServer ,responseHandler);
+	request.register(this.updateFromServer ,responseHandler.getHandler());
 	
 	var showMore = new ShowMore(frame,function() {
-		request.request(obj.updateFromServer (true),responseHandler);
+		request.request(obj.updateFromServer (true),responseHandler.getHandler());
 	}).draw();
 	
 	function handleNewData(data, textStatus, parameters) {

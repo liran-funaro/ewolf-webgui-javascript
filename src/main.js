@@ -19,8 +19,8 @@ function getUserInformation() {
 			return {
 				profile: {}
 			};
-		},new ResonseHandler("profile",
-					["id","name"],handleProfileData));
+		},new ResponseHandler("profile",
+					["id","name"],handleProfileData).getHandler());
 	
 	eWolf.wolfpacks = new Wolfpacks(eWolf.sideMenu,request,eWolf.applicationFrame);
 	request.requestAll();
@@ -40,11 +40,14 @@ function createMainApps() {
 	eWolf.mainApps.addMenuItem(eWolf.data("userID"),"My Profile");
 	new Profile(eWolf.data("userID"),eWolf.data('userName'),eWolf.applicationFrame);
 	
-	eWolf.mainApps.addMenuItem("__pack__wall-readers","News Feed");
+	eWolf.mainApps.addMenuItem("newsFeedApp","News Feed");
+	new WolfpackPage("newsFeedApp",null,eWolf.applicationFrame);
 	
 	eWolf.mainApps.addMenuItem("messages","Messages");
 	new Inbox("messages",eWolf.applicationFrame);
 	
 	new SearchApp("search",eWolf.sideMenu,eWolf.applicationFrame,
 			$("#txtSearchBox"),$("#btnSearch"),$("#btnAdd"));
+	
+	eWolf.trigger("select",["newsFeedApp"]);
 }

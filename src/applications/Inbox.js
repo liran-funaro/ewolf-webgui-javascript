@@ -8,7 +8,7 @@ var Inbox = function (id,applicationFrame) {
 	new TitleArea("Inbox")
 		.appendTo(frame)
 		.addFunction("New Message...", function() {
-			var box = new NewMessageBox(id,applicationFrame);
+			var box = new NewMessage(id,applicationFrame);
 			box.select();
 		});
 	

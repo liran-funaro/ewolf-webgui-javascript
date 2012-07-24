@@ -5,21 +5,27 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 	var request = new PostRequestHandler(id,"/json",60)
 		.listenToRefresh();
 				
-	var topTitle = new TitleArea(new Wolfpack(wolfpackName))
+	var topTitle = new TitleArea()
 		.appendTo(frame)
 		.addFunction("Post", function() {
-			// TODO: post on wolfpack
-			alert("This will post to this wolfpack");
+			new NewPost(id,applicationFrame,wolfpackName).select();
 		});
 	
-	if(wolfpackName != "wall-readers") {
+	var newsFeedRequestObj = {
+			newsOf:"wolfpack"	
+	};
+	
+	if(wolfpackName != null) {
 		request.register(getWolfpacksMembersData,
-				new ResonseHandler("wolfpackMembers",
-						["membersList"],handleWolfpacksMembersData));
+				new ResponseHandler("wolfpackMembers",
+						["membersList"],handleWolfpacksMembersData).getHandler());
 		topTitle.addFunction("Add member...", function() {
 			// TODO: add member
 			alert("This will add a member to a wolfpack");
 		});
+		
+		topTitle.setTitle(new Wolfpack(wolfpackName));
+		newsFeedRequestObj["wolfpackName"] = wolfpackName;
 	} else {
 		topTitle.setTitle("News Feed");
 	}		
@@ -27,10 +33,7 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 	var members = new CommaSeperatedList("Members");
 	topTitle.appendAtBottomPart(members.getList());
 	
-	new NewsFeedList(request,{
-		newsOf:"wolfpack",
-		wolfpackName:wolfpackName
-	}).appendTo(frame);	
+	new NewsFeedList(request,newsFeedRequestObj).appendTo(frame);	
 	
 	function getWolfpacksMembersData() {
 		return {

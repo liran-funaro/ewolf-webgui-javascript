@@ -17,24 +17,24 @@ var Profile = function (id,name,applicationFrame) {
 		};
 	$.extend(newsFeedObj,userObj);
 	
-	var handleProfileResonse = new ResonseHandler("profile",
+	var handleProfileResonse = new ResponseHandler("profile",
 			["id","name"],handleProfileData);
 	
 	var request = new PostRequestHandler(id,"/json",60)
 		.listenToRefresh()
-		.register(getProfileData,handleProfileResonse)
-		.register(geWolfpacksData,new ResonseHandler("wolfpacks",
-				["wolfpacksList"],handleWolfpacksData));
+		.register(getProfileData,handleProfileResonse.getHandler())
+		.register(geWolfpacksData,new ResponseHandler("wolfpacks",
+				["wolfpacksList"],handleWolfpacksData).getHandler());
 	
 	if(name == null) {
-		request.request(getProfileData(),handleProfileResonse);
+		request.request(getProfileData(),handleProfileResonse.getHandler());
 	}		
 	
 	var topTitle = new TitleArea(name).appendTo(frame);
 	
 	if(id != eWolf.data("userID")) {
 		topTitle.addFunction("Send message...", function (event) {
-			var box = new NewMessageBox(id,applicationFrame,id,name);
+			var box = new NewMessage(id,applicationFrame,id,name);
 			box.select();
 		});
 	}
@@ -54,16 +54,15 @@ var Profile = function (id,name,applicationFrame) {
 					wolfpackName: "wall-readers",
 					userID: id
 				}
-			},new ResonseHandler("addWolfpackMember",
+			},new ResponseHandler("addWolfpackMember",
 					[],function (data, textStatus, postData) {
 				request.requestAll();
 				eWolf.trigger("needRefresh.__pack__"+postData.addWolfpackMember.wolfpackName);
-			}));
+			}).getHandler());
 		});
 	} else {
 		topTitle.addFunction("Post", function() {
-			// TODO: post on wolfpack
-			alert("This will post to a wolfpack");
+			new NewPost(id,applicationFrame).select();
 		});
 	}
 	
