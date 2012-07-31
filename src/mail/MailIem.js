@@ -1,6 +1,7 @@
 var MailItem = function(item) {
-	var canvas = $("<div/>").append(item.text);
-	
+	var text = item.text.replace("<","&lt").replace(">","&gt").replace(/\n/g,"<br>");
+	var canvas = $("<div/>").html(text);
+
 	if(item.attachment != null) {
 		var imageCanvas = $("<div/>");
 

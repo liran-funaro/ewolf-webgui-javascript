@@ -1,6 +1,7 @@
 var ResponseHandler = function(category, requiredFields, handler) {
 	var errorHandler = null;
 	var completeHandler = null;
+	var badResponseHandler = null;
 	
 	function theHandler(data, textStatus, postData) {
 		if (data[category] != null) {
@@ -15,12 +16,12 @@ var ResponseHandler = function(category, requiredFields, handler) {
 				});
 
 				if (valid && handler) {
-					handler(data[category], textStatus, postData);
+					handler(data[category], textStatus, postData[category]);
 				}
 			} else {
 				console.log("Response unsuccesssful: " + data[category].result);
 				if(errorHandler) {
-					errorHandler(data[category].result, textStatus, postData);
+					errorHandler(data[category], textStatus, postData[category]);
 				}
 			}
 
@@ -28,13 +29,13 @@ var ResponseHandler = function(category, requiredFields, handler) {
 			var errorMsg = "No category: \"" + category + "\" in response";
 			console.log(errorMsg);
 			
-			if(errorHandler) {
-				errorHandler(errorMsg, textStatus, postData);
+			if(badResponseHandler) {
+				badResponseHandler(errorMsg, textStatus, postData[category]);
 			}
 		}
 		
 		if(completeHandler) {
-			completeHandler(data, textStatus, postData);
+			completeHandler(textStatus, postData[category]);
 		}		
 	};
 	
@@ -52,6 +53,10 @@ var ResponseHandler = function(category, requiredFields, handler) {
 		},		
 		complete: function (newCompleteHandler) {
 			completeHandler = newCompleteHandler;
+			return this;
+		},
+		badResponseHandler: function (newBadResponseHandler) {
+			badResponseHandler = newBadResponseHandler;
 			return this;
 		}
 	};

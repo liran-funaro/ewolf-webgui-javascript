@@ -4,7 +4,14 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn) {
 	var lastSearch = null;
 	
 	function addSearchMenuItem(key,name) {
-		menuList.addMenuItem(key,name);
+		var tempName;
+		if(name == null) {
+			tempName = "Search: "+key;
+		} else {
+			tempName = name;
+		}
+		
+		menuList.addMenuItem(key,tempName);
 		apps[key] = new Profile(key,name,applicationFrame)
 			.onReceiveName(function(newName) {
 				menuList.renameMenuItem(key,newName);
@@ -55,7 +62,7 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn) {
 	
 	searchBtn.click(function() {
 		var key = query.val();
-		searchUser(key,"Search: "+key);	
+		searchUser(key);	
 	});
 	
 	eWolf.bind("select."+id,function(event,eventId) {

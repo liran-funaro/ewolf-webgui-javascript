@@ -21,6 +21,12 @@
 /* 	margin-bottom:10%; */
 }
 
+.newMailAlt {
+	vertical-align:text-top;
+	text-align:right;
+	padding-top:6px;
+}
+
 .preMessageBox {
 	width:30px;
 	font-size:12px;

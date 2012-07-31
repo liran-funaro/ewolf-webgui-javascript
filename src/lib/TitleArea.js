@@ -68,5 +68,21 @@ var TitleArea = function (title) {
 		return this;
 	};
 	
+	this.hideFunction = function (functionName) {
+		if(functions[functionName] != null) {
+			functions[functionName].hide(200);
+		}
+		
+		return this;
+	};
+	
+	this.showFunction = function (functionName) {
+		if(functions[functionName] != null) {
+			functions[functionName].show(200);
+		}
+		
+		return this;
+	};
+	
 	return this;
 };

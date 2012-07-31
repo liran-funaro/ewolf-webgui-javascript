@@ -44,7 +44,7 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 		senderBox.text(senderName).shorten({width:w});
 	}	
 	
-	eWolf.bind("mainFrameResize", function(event,eventId) {
+	eWolf.bind("mainFrameResize,refresh",function(event,eventId) {
 		updateView();
 	});
 	

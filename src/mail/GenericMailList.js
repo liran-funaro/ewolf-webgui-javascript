@@ -71,14 +71,14 @@ var GenericMailList = function(mailType,request,serverSettings,
 		request.request(obj.updateFromServer (true),responseHandler.getHandler());
 	}).draw();
 	
-	function handleNewData(data, textStatus, parameters) {
+	function handleNewData(data, textStatus, postData) {
 		$.each(data.mailList, function(j, mailItem) {
 			obj.addItem(mailItem.senderID,mailItem.senderName,
 					mailItem.timestamp, mailItem.mail);
 		});
 		
-		if (parameters[mailType].newerThan == null &&
-				data.mailList.length < parameters[mailType].maxMessages) {
+		if (postData.newerThan == null &&
+				data.mailList.length < postData.maxMessages) {
 			showMore.remove();
 		}
 	}	

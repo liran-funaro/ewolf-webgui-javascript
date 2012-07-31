@@ -17,3 +17,18 @@
 	text-decoration:underline;
 }
 
+.aLink {
+	text-decoration:none;
+	color:inherit;
+	cursor:pointer;
+}
+
+.aLink:hover {
+	color:blue;
+	text-decoration:underline;
+}
+
+.errorArea {
+	color:red;
+	font-size:11px;
+}

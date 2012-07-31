@@ -1,6 +1,6 @@
 #!/bin/sh
 
-JSSRC="src/*.js src/imported/*.js src/menu/*.js src/mail/*.js src/applications/*.js"
+JSSRC="src/*.js src/lib/*.js src/imported/*.js src/menu/*.js src/mail/*.js src/applications/*.js"
 CSSSRC=CSS/*.css
 
 JSTEMP=core.js.temp

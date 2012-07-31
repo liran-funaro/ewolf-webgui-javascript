@@ -49,16 +49,19 @@ var Profile = function (id,name,applicationFrame) {
 	if(id != eWolf.data("userID")) {
 		topTitle.addFunction("Add to wolfpack...", function () {
 			// TODO: add to any wolfpack (not just wall-readers) 
-			request.request({
-				addWolfpackMember: {
-					wolfpackName: "wall-readers",
-					userID: id
-				}
-			},new ResponseHandler("addWolfpackMember",
-					[],function (data, textStatus, postData) {
-				request.requestAll();
-				eWolf.trigger("needRefresh.__pack__"+postData.addWolfpackMember.wolfpackName);
-			}).getHandler());
+//			request.request({
+//				addWolfpackMember: {
+//					wolfpackName: "wall-readers",
+//					userID: id
+//				}
+//			},new ResponseHandler("addWolfpackMember",
+//					[],function (data, textStatus, postData) {
+//				request.requestAll();
+//				eWolf.trigger("needRefresh.__pack__"+postData.wolfpackName);
+//			}).getHandler());
+			
+			new AddToWolfpack(id, frame,this, request, wolfpacksContainer.getItemNames());
+			return false;
 		});
 	} else {
 		topTitle.addFunction("Post", function() {
@@ -86,7 +89,7 @@ var Profile = function (id,name,applicationFrame) {
 		wolfpacksContainer.removeAll();		 
 
 		 $.each(data.wolfpacksList,function(i,pack) {
-			 wolfpacksContainer.addItem(new Wolfpack(pack));
+			 wolfpacksContainer.addItem(new Wolfpack(pack),pack);
 		 });
 	  }
 	
