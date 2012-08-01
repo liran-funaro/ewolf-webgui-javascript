@@ -13,7 +13,10 @@ var AddToWolfpack = function(id, frame, activator, request, packsAlreadyIn) {
 		});
 		
 		if(packsAlreadyIn.indexOf(pack) >= 0) {
-			box.attr("checked","checked");
+			box.attr({
+				"checked" : "checked",
+				"disabled" : true
+			});
 			box.data("isMember",true);
 		} else {
 			box.data("isMember",false);
