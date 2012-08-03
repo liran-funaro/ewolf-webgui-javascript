@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 JSSRC="src/*.js src/lib/*.js src/imported/*.js src/menu/*.js src/mail/*.js src/applications/*.js"
 CSSSRC=CSS/*.css

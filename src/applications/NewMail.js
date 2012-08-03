@@ -23,7 +23,7 @@ var NewMail = function(id,applicationFrame,title,
 	sendToQuery.appendTo(userIdCell);
 	
 	if(sendTo != null) {
-		sendToQuery.addTag(sendTo,true);
+		sendToQuery.addTagByQuery(sendTo,true);
 	}
 	
 	var msgRaw = $("<tr/>").appendTo(base);
@@ -32,18 +32,19 @@ var NewMail = function(id,applicationFrame,title,
 	var messageText = $("<textarea/>").attr({
 		"id": "textileMessage",
 		"placeholder": "What is on your mind...",
-		"style": "min-width:300px !important;height:300px  !important;"
+		"style": "min-width:300px !important;height:100px  !important;"
 	});
 	
 	$("<td/>").append(messageText).appendTo(msgRaw);
 	
+	var files = null;
 	if(allowAttachment) {
 		var attacheRaw = $("<tr/>").appendTo(base);
 		$("<td/>").attr("class","newMailAlt").append("Attachment:").appendTo(attacheRaw);
 		
 		var uploaderArea = $("<td/>").appendTo(attacheRaw);
-		/*var files = */new filedrag(uploaderArea);
-	}	
+		files = new FilesBox(uploaderArea);
+	}
 
 	var btnRaw = $("<tr/>").appendTo(base);
 	
@@ -78,15 +79,15 @@ var NewMail = function(id,applicationFrame,title,
 	}
 	
 	function send() {
-		if(sendToQuery.isEmpty()) {
+		if(sendToQuery.tagList.isEmpty()) {
 			errorMessage.html("Please select a destination(s)");
 			return false;
 		}
 		
-		sendToQuery.unmarkAll();
+		sendToQuery.tagList.unmarkAll();
 		
 		function updateSend() {
-			if(sendToQuery.unmarkedTagCount() > 0) {
+			if(sendToQuery.tagList.unmarkedTagCount() > 0) {
 				titleArea.removeFunction("Send");
 				titleArea.removeFunction("Cancel");
 				btnBox.hide();
@@ -96,23 +97,13 @@ var NewMail = function(id,applicationFrame,title,
 				btnBox.show();
 			}
 			
-			if(sendToQuery.isEmpty()) {
+			if(sendToQuery.tagList.isEmpty()) {
 				eWolf.trigger("needRefresh."+id,[id]);
 				obj.destroy();
 			}
 		}
 		
 		updateSend();
-		
-//		var uploader = new qq.FileUploaderBasic({
-//		    // path to server-side upload script
-//		    action: '/sfsupload',
-//		    params: {
-//		    	wolfpacks: "someWolfpack"
-//		    }
-//		});
-//		
-//		uploader._uploadFileList(files.getFiles());
 		
 		var msg = messageText.val();
 		var mailObject = {
@@ -133,24 +124,28 @@ var NewMail = function(id,applicationFrame,title,
 		
 		errorMessage.html("");
 		
-		sendToQuery.foreachTag(function(term) {			
+		sendToQuery.tagList.foreachTag(function(term) {			
 			var responseHandler = new ResponseHandler(handleResponseCategory,[],null);
 			
 			responseHandler.success(function(data, textStatus, postData) {
-				sendToQuery.removeTag(term);				
+				sendToQuery.tagList.removeTag(term);				
 				updateSend();
 			}).error(function(data, textStatus, postData) {
 				var errorMsg = "Failed to arrive at destination: " +
 						term + " with error: " + data.result;
 				errorMessage.append(errorMsg+"<br>");
 				
-				sendToQuery.markTag(term,errorMsg);				
+				sendToQuery.tagList.markTag(term,errorMsg);				
 				updateSend();
 			});
 			
-			request.request(
-					createRequestObj(term,mailString),
-					responseHandler.getHandler());
+//			request.request(
+//					createRequestObj(term,mailString),
+//					responseHandler.getHandler());
+			if(files) {
+				files.uploadFile(term);
+			}
+
 		});		
 	}
 	
@@ -201,8 +196,8 @@ var NewMessage = function(id,applicationFrame,sendToID,sendToName) {
 	}
 	
 	return new NewMail(id,applicationFrame,"New Message",
-			createNewMessageRequestObj,"sendMessage",true,
-			sendToName,new FriendsSearchList(300));
+			createNewMessageRequestObj,"sendMessage",false,
+			sendToName,new FriendsQueryTagList(300));
 };
 
 var NewPost = function(id,applicationFrame,wolfpack) {	
@@ -217,5 +212,5 @@ var NewPost = function(id,applicationFrame,wolfpack) {
 	
 	return new NewMail(id,applicationFrame,"New Post",
 			createNewPostRequestObj,"post",true,
-			wolfpack,new WolfpackSearchList(300));
+			wolfpack,new WolfpackQueryTagList(300));
 };

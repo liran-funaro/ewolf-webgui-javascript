@@ -8,7 +8,21 @@
 	margin-right:5px;
 	margin-top:5px;
 	margin-bottom:5px;
-	width:auto !important;
+	width:auto !important;	
+	position:relative;
+}
+
+.ui-progressbar {
+	position:absolute;
+	top:0;
+	left:0;
+	background-color:#999!important;
+	border-style: none!important; 
+	border-radius: 5px;
+	z-index:1;
+}
+
+.TagNoMultiRow {
 	display:inline-block;
 }
 
@@ -28,6 +42,7 @@
 	border-width: 0px 1px 0px 0px;
 	padding-right:5px;
 	margin-right:5px;
+	display:inline-block;
 }
 
 .TagDeleteClass:hover {

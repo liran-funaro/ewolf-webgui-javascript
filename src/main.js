@@ -36,7 +36,8 @@ function getUserInformation() {
 }
 
 function createMainApps() {
-		
+	eWolf.wolfpacks.addFriend(eWolf.data("userID"), eWolf.data("userName"));
+	
 	eWolf.mainApps.addMenuItem(eWolf.data("userID"),"My Profile");
 	new Profile(eWolf.data("userID"),eWolf.data('userName'),eWolf.applicationFrame);
 	

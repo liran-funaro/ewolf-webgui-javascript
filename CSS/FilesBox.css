@@ -3,6 +3,7 @@
 	padding: 0 10px;
 	margin: 1em 0;
 	border: 1px solid #999;
+	background-color:rgba(256,256,256,0.5);
 }
 
 #filedrag
@@ -31,6 +32,11 @@
 .filelistItem {
 	font-size:12px;
 }
+
+.filelistItemData {
+	font-size:10px;
+}
+
 
 h1, h2
 {
