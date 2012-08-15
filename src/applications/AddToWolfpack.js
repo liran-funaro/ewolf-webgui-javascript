@@ -78,6 +78,13 @@ var AddToWolfpack = function(id, frame, activator, request, packsAlreadyIn) {
 		}, 0);	
 	});
 	
+	function trimSpaces(s) {
+		s = s.replace(/(^\s*)|(\s*$)/gi,"");
+		s = s.replace(/[ ]{2,}/gi," ");
+		s = s.replace(/\n /,"\n");
+		return s;
+	}
+	
 	$("<hr/>").css({
 		"margin":"0"
 	}).appendTo(popUp);
@@ -95,7 +102,7 @@ var AddToWolfpack = function(id, frame, activator, request, packsAlreadyIn) {
 			if(itsBox.is(':checked') == true) {
 				if(itsBox.data("isMember") != true) {
 					if(itsBox.data("isNew") == true) {
-						var packName = itsBox.data("itsInput").val();
+						var packName = trimSpaces(itsBox.data("itsInput").val());
 						add.push(packName);
 						create.push(packName);
 					} else {
@@ -136,7 +143,7 @@ var AddToWolfpack = function(id, frame, activator, request, packsAlreadyIn) {
 			
 			request.request({
 				createWolfpack: {
-					wolfpackName: create
+					wolfpackNames: create
 				}
 			},responseHandler.getHandler());
 			
@@ -154,8 +161,8 @@ var AddToWolfpack = function(id, frame, activator, request, packsAlreadyIn) {
 				
 				request.request({
 					addWolfpackMember: {
-						wolfpackName: add,
-						userID: [id]
+						wolfpackNames: add,
+						userIDs: [id]
 					}
 				},response.getHandler());
 			}			

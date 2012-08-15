@@ -27,7 +27,13 @@
 }
 
 .TagErrorClass {
-	background-color:#F99  !important;
+	background-color:#F99 !important;
+	color:black !important;
+}
+
+.TagOKClass {
+	background-color:#9F9 !important;
+	color:black !important;
 }
 
 .TagNonRemoveable > .TagDeleteClass {
@@ -36,17 +42,18 @@
 
 .TagDeleteClass {
 	text-decoration:none;
-	color:#DDD;
+	color:black;
 	cursor:pointer;
 	border:1px solid #222;
 	border-width: 0px 1px 0px 0px;
 	padding-right:5px;
 	margin-right:5px;
 	display:inline-block;
+	opacity:0.5;
 }
 
 .TagDeleteClass:hover {
-	color:white;
+	opacity:1;
 }
 
 .seachListClass {

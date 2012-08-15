@@ -5,10 +5,11 @@ var eWolf = $(eWolfMaster);
 
 $(document).ready(function () {
 	new Loading($("#loadingFrame"));
+	eWolf.applicationFrame = $("#applicationFrame");
 	
 	eWolf.sideMenu = new SideMenu($("#menu"),$("#mainFrame"),$("#topbarID"));	
-	eWolf.applicationFrame = $("#applicationFrame");	
 	eWolf.mainApps = eWolf.sideMenu.createNewMenuList("mainapps","Main");
+	eWolf.wolfpacksMenuList = eWolf.sideMenu.createNewMenuList("wolfpacks","Wolfpacks");
 	
 	getUserInformation();
 });
@@ -22,7 +23,7 @@ function getUserInformation() {
 		},new ResponseHandler("profile",
 					["id","name"],handleProfileData).getHandler());
 	
-	eWolf.wolfpacks = new Wolfpacks(eWolf.sideMenu,request,eWolf.applicationFrame);
+	eWolf.wolfpacks = new Wolfpacks(eWolf.wolfpacksMenuList,request,eWolf.applicationFrame);
 	request.requestAll();
 	
 	function handleProfileData(data, textStatus, postData) {
@@ -31,7 +32,7 @@ function getUserInformation() {
 		eWolf.data('userID',data.id);
 		eWolf.data('userName',data.name);
 			
-		createMainApps();			
+		createMainApps();
 	}	
 }
 

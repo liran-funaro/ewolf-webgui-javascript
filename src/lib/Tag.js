@@ -1,7 +1,7 @@
 var Tag = function(id,onRemove,removable,multirow) {
 	var box = $("<p/>").attr({
 		"class" : "TagClass"
-	});	
+	});
 	
 	if(!removable) {
 		box.addClass("TagNonRemoveable");
@@ -11,14 +11,14 @@ var Tag = function(id,onRemove,removable,multirow) {
 		box.addClass("TagNoMultiRow");
 	}
 
-	var x = $("<div/>").attr({
+	$("<div/>").attr({
 		"class" : "TagDeleteClass"
 	}).append("&times;").appendTo(box).click(function() {
+		box.remove();
+		
 		if(onRemove) {
 			onRemove(id);
 		}
-		
-		box.remove();
 	});
 	
 	box.data("initProgressBar", function() {
@@ -33,7 +33,7 @@ var Tag = function(id,onRemove,removable,multirow) {
 		});
 		
 		progress.children("div").css({
-			'background': 'rgb(10,45,10)'
+			'background': '#001a00'
 		});
 		
 		box.children(":not(.ui-progressbar)").css({
@@ -43,6 +43,10 @@ var Tag = function(id,onRemove,removable,multirow) {
 		
 		box.data("setProgress", function (prec) {
 			progress.progressbar({ value: prec });
+		});
+		
+		box.data("removeProgressBar", function() {
+			progress.remove();
 		});
 	});	
 	

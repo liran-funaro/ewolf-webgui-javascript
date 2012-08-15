@@ -1,4 +1,4 @@
-var Wolfpacks = function (menu,request,applicationFrame) {
+var Wolfpacks = function (menuList,request,applicationFrame) {
 	var thisObj = this;
 	
 	var wolfpacksApps = {},
@@ -7,8 +7,6 @@ var Wolfpacks = function (menu,request,applicationFrame) {
 	
 	this.wolfpacksArray = [];
 	this.friendsNameArray = [];
-	
-	var menuList = menu.createNewMenuList("wolfpacks","Wolfpacks");
 	
 	request.register(function() {
 		return {

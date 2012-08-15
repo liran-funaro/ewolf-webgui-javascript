@@ -3,102 +3,51 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 	var thisObj = this;
 	this.frame = $("<span/>");
 	
-	var madeChanges = false;
+	madeChanges = false;	
 
-	addMembersQuery = new FriendsSearchList(400).appendTo(this.frame);
+	addMembersQuery = new FriendsQueryTagList(400).appendTo(this.frame);
 	
 	$.each(existingMemebers, function(i, item) {
-		addMembersQuery.addTag(item,false);
+		addMembersQuery.addTagByQuery(item,false);
 	});
 	
-	var applyBtn = $("<input/>").attr({
+	applyBtn = $("<input/>").attr({
 		"type": "button",
 		"value": "Apply"
-	}).click(apply).appendTo(this.frame);
+	}).appendTo(this.frame);
 	
-	var cancelBtn = $("<input/>").attr({
+	cancelBtn = $("<input/>").attr({
 		"type": "button",
 		"value": "Cancel"
-	}).click(cancel).appendTo(this.frame);
+	}).appendTo(this.frame);
 	
-	var errorMessage = $("<div/>").attr("class","errorArea").appendTo(this.frame);
+	errorMessage = $("<div/>").addClass("errorArea").appendTo(this.frame);
 	
-	function apply() {
-		if(addMembersQuery.removableTagCount() <= 0) {
+	responseHandler = new ResponseHandler("addWolfpackMember",[],null);
+	
+	this.apply = function() {
+		var itemsToAdd = addMembersQuery.tagList.match({removable:true});
+		
+		if(itemsToAdd.isEmpty()) {
 			errorMessage.html("Please add new members...");
-			return false;
-		}
-		
-		applyBtn.hide(200);
-		cancelBtn.hide(200);
-		
-		errorMessage.html("");
-		
-		var idsToAdd = [];
-		
-		addMembersQuery.foreachRemovableTag(function(term) {
-			idsToAdd.push(term);
-		});
-		
-		var responseHandler = new ResponseHandler("addWolfpackMember",[],null);
-		
-		responseHandler.success(function(data, textStatus, postData) {
-			madeChanges = true;
-			cancel();
-		});
-		
-		responseHandler.error(function(data, textStatus, postData) {
-			var errorMsg = null;
+		} else {
+			applyBtn.hide(200);
+			cancelBtn.hide(200);
 			
-			if(data.wolfpacksResult == null) {
-				console.log("No wolfpacksResult in response");
-			} else if(data.wolfpacksResult[0] != "success") {
-				errorMsg = "Error: " + data.wolfpacksResult[0];
-				errorMessage.append(errorMsg+"<br>");
-			}
+			errorMessage.html("");
 			
-			if(data.usersResult == null) {
-				console.log("No usersResult in response");
-			} else {
-				$.each(data.usersResult, function(i, item) {
-					if(item == "success") {
-						madeChanges = true;
-						sendToQuery.removeTag(postData.userID[i]);
-					} else {
-						var errorMsg = "Failed to add: " +
-								postData.userID[i] +
-								" with error: " + item;
-						errorMessage.append(errorMsg+"<br>");
-						
-						sendToQuery.markTag(item,errorMsg);	
-					}					
-				});
-			}
-			
-			if(errorMsg == null) {
-				errorMessage.append("Unknown error...<br>");
-			}			
-		});
+			request.request({
+				addWolfpackMember: {
+					wolfpackNames: [wolfpack],
+					userIDs: itemsToAdd.getData()
+				}
+			},responseHandler.getHandler());
+		}		
 		
-		responseHandler.complete(function (textStatus, postData) {
-			if(madeChanges) {
-				madeChanges = false;
-				eWolf.trigger("needRefresh."+fatherID);
-			}
-			
-			applyBtn.show(200);
-			cancelBtn.show(200);
-		});
-		
-		request.request({
-			addWolfpackMember: {
-				wolfpackName: [wolfpack],
-				userID: idsToAdd
-			}
-		},responseHandler.getHandler());
-	}
+		return thisObj;
+	};
 	
-	function cancel() {
+	this.cancel = function() {
 		if(onFinish != null) {
 			onFinish();
 		}
@@ -106,11 +55,69 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 		thisObj.frame.remove();
 		
 		if(madeChanges) {
+			madeChanges = false;
 			eWolf.trigger("needRefresh."+fatherID);
 		}
 		
 		delete thisObj;
-	}
+	};
+	
+	this.success = function(data, textStatus, postData) {
+		madeChanges = true;
+		this.cancel();
+	};
+	
+	this.error = function(data, textStatus, postData) {
+		var errorMsg = null;
+		
+		if(data.wolfpacksResult == null) {
+			console.log("No wolfpacksResult in response");
+		} else if(data.wolfpacksResult[0] != "success") {
+			errorMsg = "Error: " + data.wolfpacksResult[0];
+			errorMessage.append(errorMsg+"<br>");
+		}
+		
+		if(data.usersResult == null) {
+			console.log("No usersResult in response");
+		} else {
+			$.each(data.usersResult, function(i, result) {
+				var itemID = postData.userID[i];
+				var item = addMembersQuery.tagList.match({id:itemID});
+				
+				if(result == "success") {
+					madeChanges = true;
+					item.unremovable().markOK();
+				} else {
+					var errorMsg = "Failed to add: " + itemID +
+							" with error: " + result;
+					errorMessage.append(errorMsg+"<br>");
+					
+					item.markError(errorMsg);
+				}					
+			});
+		}
+		
+		if(errorMsg == null) {
+			errorMessage.append("Unknown error...<br>");
+		}			
+	};
+	
+	this.complete = function (textStatus, postData) {
+		if(madeChanges) {
+			madeChanges = false;
+			eWolf.trigger("needRefresh."+fatherID);
+		}
+		
+		applyBtn.show(200);
+		cancelBtn.show(200);
+	};
+	
+	applyBtn.click(this.apply);	
+	cancelBtn.click(this.cancel);
+	
+	responseHandler.success(this.success)	
+		.error(this.error)	
+		.complete(this.complete);
 	
 	return this;
 };

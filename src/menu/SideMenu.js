@@ -1,6 +1,8 @@
 var SideMenu = function(menu, mainFrame,topbarFrame) {
 	menu.data('menuObj', this);
 	mainFrame.data('menuObj', this);
+	var itemSpace = menu.children("#menuItemsSpace");
+	
 	var toggleButton = menu.children("#toggleButtons");
 
 	var hideBtn = toggleButton.children("#btnHideMenu")
@@ -61,24 +63,37 @@ var SideMenu = function(menu, mainFrame,topbarFrame) {
 
 	function menuOut() {
 		menu.stop();
+		itemSpace.stop();
 
 		menu.animate({
 			opacity : 0.25,
 			left : '-175px',
 		}, 200, function() {
-			// Animation complete.
+			itemSpace.animate({
+				opacity : 0
+			}, 200, function() {
+				// Animation complete
+			});
 		});
 	};
 
 	function menuIn() {
 		menu.stop();
+		itemSpace.stop();
 
 		menu.animate({
 			opacity : 0.7,
 			left : '-35px',
 		}, 200, function() {
-			// Animation complete.
+			// Animation complete
 		});
+		
+		itemSpace.animate({
+			opacity : 1,
+		}, 400, function() {
+			// Animation complete
+		});
+		
 	};
 
 	function mainFrameGrow() {
@@ -109,11 +124,11 @@ var SideMenu = function(menu, mainFrame,topbarFrame) {
 	
 	return {
 		append : function(item) {
-			menu.append(item);
+			itemSpace.append(item);
 		},
 		createNewMenuList : function(id, title) {
 			var menuLst = new MenuList(this,id,title,topbarFrame)
-							.appendTo(menu);
+							.appendTo(itemSpace);
 			menuLists.push(menuLst);
 			return menuLst;
 		}

@@ -17,16 +17,19 @@ var Loading = function(indicator) {
 	eWolf.bind("loadingEnd",stopLoading);
 
 
-	return {
-		listenToEvent : function(eventStart,eventEnd) {
-			eWolf.bind(eventStart,startLoading);	
-			eWolf.bind(eventEnd,stopLoading);
-		},
-		stopListenToEvent : function(eventStart,eventEnd) {
-			eWolf.unbind(eventStart,startLoading);	
-			eWolf.unbind(eventEnd,stopLoading);
-		}
+	this.listenToEvent = function(eventStart,eventEnd) {
+		eWolf.bind(eventStart,startLoading);	
+		eWolf.bind(eventEnd,stopLoading);
+		return this;
 	};
+	
+	this.stopListenToEvent = function(eventStart,eventEnd) {
+		eWolf.unbind(eventStart,startLoading);	
+		eWolf.unbind(eventEnd,stopLoading);
+		return this;
+	};
+	
+	return this;
 };
 
 var spinnerOpts = {

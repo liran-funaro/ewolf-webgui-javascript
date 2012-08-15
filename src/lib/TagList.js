@@ -1,108 +1,247 @@
-var TagList = function(multirow) {
-	var thisObj = this;
+var TagList = function(multirow,onRemoveTag) {
+	this.div = $("<div/>");
 	
-	var tagBox = $("<div/>");
-		
-	this.foreachTag = function (applyThis,withSelector) {
-		var selector = ".TagClass";
-		if(withSelector) {
-			selector += withSelector;
-		}
-		
-		tagBox.children(selector).each(function(i, thisTag) {
-			applyThis($(thisTag).attr("id"),$(thisTag).data("tagData"));
-		});
-		
+	this.appendTo = function(someFrame) {
+		this.div.appendTo(someFrame);
 		return this;
 	};
 	
-	this.foreachMarkedTag = function (applyThis) {
-		return thisObj.foreachTag(applyThis, ".TagErrorClass");
+	this.getTags = function(matches) {
+		var selector = ".TagClass";
+		
+		if(matches != null) {
+			if(matches.id != null) {
+				selector += "[id=\"" + matches.id + "\"]";
+			}
+			
+			if(matches.markedError == true) {
+				selector += ".TagErrorClass";
+			} else if(matches.markedError == false){
+				selector += ":not(.TagErrorClass)";
+			}
+			
+			if(matches.markedOK == true) {
+				selector += ".TagOKClass";
+			} else if(matches.markedOK == false){
+				selector += ":not(.TagOKClass)";
+			}
+			
+			if(matches.removable == true) {
+				selector += ":not(.TagNonRemoveable)";
+			} else if(matches.removable == false){
+				selector += ".TagNonRemoveable";
+			}
+		}		
+		
+		return this.div.children(selector);
 	};
 	
-	this.foreachUnMarkedTag = function (applyThis) {
-		return thisObj.foreachTag(applyThis, ":not(.TagErrorClass)");
+	this.match = function(matches) {
+		var tags = this.getTags(matches);
+		
+		return {
+			each: function (applyThis) {
+				tags.each(function(i, thisTag) {
+					var tag = $(thisTag);
+					applyThis(tag.attr("id"),tag.data("tagData"));
+				});
+				
+				return this;
+			},
+			unremovable: function () {
+				tags.addClass("TagNonRemoveable");
+				return this;
+			},
+			removable: function () {
+				tags.removeClass("TagNonRemoveable");
+				return this;
+			},			
+			markError: function (error) {
+				tags.addClass("TagErrorClass")
+					.removeClass("TagOKClass")
+					.attr("title",error);
+				return this;
+			},			
+			unmarkError: function () {
+				tags.removeClass("TagErrorClass")
+					.attr("title",null);
+				return this;
+			},			
+			markOK: function () {
+				tags.addClass("TagOKClass")
+					.removeClass("TagErrorClass")
+					.attr("title","Successful");
+				return this;
+			},			
+			unmarkOK: function () {
+				tags.removeClass("TagOKClass")
+					.attr("title",null);
+				return this;
+			},			
+			unmark: function () {
+				tags.removeClass("TagErrorClass")
+					.removeClass("TagOKClass")
+					.attr("title",null);
+				return this;
+			},			
+			remove: function () {
+				tags.remove();
+				return this;
+			},			
+			initProgressBar: function () {
+				tags.each(function(i, thisTag) {
+					 $(thisTag).data("initProgressBar")();
+				});
+				
+				return this;
+			},			
+			setProgress: function (prec) {
+				tags.each(function(i, thisTag) {
+					var func = $(thisTag).data("setProgress");
+					if(func) {
+						return func(prec);
+					}
+				});
+				
+				return this;
+			},			
+			removeProgressBar: function () {				
+				tags.each(function(i, thisTag) {
+					var func = $(thisTag).data("removeProgressBar");
+					if(func) {
+						return func();
+					}
+				});
+				
+				return this;					
+			},			
+			setOnRemoveTag: function(newOnRemove) {
+				tags.data("onRemove",newOnRemove);
+				return this;
+			},			
+			setData: function (tagData) {
+				tags.data("tagData",tagData);
+				return this;
+			},
+			count: function () {
+				return tags.length;
+			},
+			isEmpty: function () {
+				return tags.length == 0;
+			},
+			getData: function () {
+				result = [];
+				tags.each(function(i, thisTag) {
+					result.push($(thisTag).data("tagData"));
+				});
+				
+				return result;
+			}
+		};
 	};
 	
-	this.foreachRemovableTag = function (applyThis) {
-		return thisObj.foreachTag(applyThis, ":not(.TagNonRemoveable)");
-	};
-	
-	this.removeTag = function (id) {
-		var tagElement = tagBox.children(".TagClass[id=\""+id+"\"]");
-		if(tagElement.length > 0) {
-			tagElement.remove();
+	this.addTag = function(id,tagData,tagText,removable) {
+		if( this.match({id:id}).isEmpty()) {
+			var newTagItem = new Tag(id,onRemoveTag,removable,multirow)
+				.attr("id",id)
+				.data("tagData",tagData)
+				.append(tagText);
+		
+			this.div.append(newTagItem);
+			
 			return true;
-		}
+		}				
 		
 		return false;
 	};
 	
-	this.addTag = function(id,tagData,tagText,removable) {
-		if(tagBox.find(".TagClass[id=\""+id+"\"]").length != 0) {
-			return false;
-		}		
-		
-		var newTagItem = new Tag(id,null,removable,multirow)
-			.attr("id",id)
-			.data("tagData",tagData)
-			.append(tagText);
-		
-		tagBox.append(newTagItem);
-		
-		return true;
+	this.removeTag = function (id) {
+		this.match({id:id}).remove();
+		return this;
 	};
-	
-	this.appendTo = function(someFrame) {
-		tagBox.appendTo(someFrame);
+		
+	this.foreachTag = function (matches,applyThis) {
+		if(applyThis == null) {
+			applyThis =  matches;
+			matches = null;
+		}
+		
+		this.match(matches).each(applyThis);
+		
 		return this;
 	};
 	
-	this.markTag = function (tag,error) {
-		tagBox.children(".TagClass[id=\""+tag+"\"]")
-			.addClass("TagErrorClass")
-			.attr("title",error);
+	this.setTagUnremovable = function (id) {
+		this.match({id:id}).unremovable();
 		return this;
 	};
 	
-	this.unmarkTag = function (tag) {
-		tagBox.children(".TagClass[id=\""+tag+"\"]")
-			.removeClass("TagErrorClass")
-			.attr("title",null);
+	this.setTagRmovable = function (id) {
+		this.match({id:id}).removable();
+		return this;
+	};
+	
+	this.markTagError = function (id,error) {
+		this.match({id:id}).markError(error);
+		return this;
+	};	
+	
+	this.unmarkTagError = function (id) {
+		this.match({id:id}).unmarkError();
+		return this;
+	};
+	
+	this.markTagOK = function (id) {
+		this.match({id:id}).markOK();
+		return this;
+	};	
+	
+	this.unmarkTagOK = function (id) {
+		this.match({id:id}).unmarkOK();
 		return this;
 	};
 	
 	this.isEmpty = function() {
-		return (tagBox.children(".TagClass,.TagClass.TagErrorClass").length == 0);
+		return this.match().isEmpty();
 	};
 	
-	this.tagCount = function() {
-		return tagBox.children(".TagClass").length;
+	this.tagCount = function(matches) {
+		return this.match(matches).count();
 	};
 	
-	this.unmarkedTagCount = function() {
-		return tagBox.children(".TagClass:not(.TagErrorClass)").length;
-	};
-	
-	this.markedTagCount = function() {
-		return tagBox.children(".TagClass.TagErrorClass").length;
-	};
-	
-	this.removableTagCount = function () {
-		return tagBox.children(".TagClass:not(.TagNonRemoveable)").length;
-	};
-	
-	this.unmarkAll = function () {
-		tagBox.children(".TagClass").removeClass("TagErrorClass");
+	this.unmarkTags = function (matches) {
+		this.match(matches).unmark();
 		return this;
 	};
 	
-	this.initProgressBar = function (tag) {
-		tagBox.children(".TagClass[id=\""+tag+"\"]").data("initProgressBar")();
+	this.removeTags = function (matches) {
+		this.match(matches).remove();
+		return this;
 	};
 	
-	this.setProgress = function (tag, prec) {
-		tagBox.children(".TagClass[id=\""+tag+"\"]").data("setProgress")(prec);
+	this.initProgressBar = function (id) {
+		this.match({id:id}).initProgressBar();
+		return this;
+	};
+	
+	this.setProgress = function (id, prec) {
+		this.match({id:id}).setProgress(prec);
+		return this;
+	};
+	
+	this.removeProgressBar = function (id) {
+		this.match({id:id}).removeProgressBar();		
+		return this;
+	};
+	
+	this.setOnRemoveTag = function(id,newOnRemove) {
+		this.match({id:id}).setOnRemoveTag(newOnRemove);
+		return this;
+	};
+	
+	this.setTagData = function (id,tagData) {
+		this.match({id:id}).setData(tagData);
+		return this;
 	};
 	
 	return this;

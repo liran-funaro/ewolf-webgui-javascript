@@ -1,10 +1,9 @@
-var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,commitQuery) {
+var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
+		allowMultipleDestinations,commitQuery) {
 	var thisObj = this;
 	
-	var box = $("<div/>").attr("class","seachListClass");
-	
-	var queryBox = $("<div/>").appendTo(box);
-	this.tagList = new TagList(false).appendTo(box);
+	this.frame = $("<div/>").attr("class","seachListClass");	
+	var queryBox = $("<div/>").appendTo(this.frame);
 	
 	var query = $("<input/>").attr({
 		"type": "text",
@@ -17,7 +16,7 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,commitQue
 		"type": "button",
 		"value": "Add"
 	}).click(function() {
-		thisObj.addTag(query.val(),true);
+		thisObj.addTagByQuery(query.val(),true);
 	}).appendTo(queryBox).hide();
 	
 	query.autocomplete({
@@ -25,27 +24,34 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,commitQue
 		select: onSelectSendTo
 	}).keyup(function(event) {
 	    if(event.keyCode == 13 && query.val() != "") {
-	    	addTagByQueryAndUpdate(query.val());   	
-	    }
-	    
-	    if(query.val() == "") {
-	    	addBtn.hide(200);
+	    	thisObj.addTagByQuery(query.val(),true);   	
 	    } else {
-	    	addBtn.show(200);
-	    }
+	    	updateQuery();
+	    }	    
 	});
 	
 	function onSelectSendTo(event,ui) {		
-		addTagByQueryAndUpdate(ui.item.label);
+		thisObj.addTagByQuery(ui.item.label,true);
 		return false;
 	}
 	
-	function addTagByQueryAndUpdate(thisQuery) {
-		if(thisObj.addTagByQuery(thisQuery,true) == true) {
-    		query.val("");
-    		addBtn.hide(200);
+	function updateQuery (id) {	
+		if(query.val() == "") {
+			addBtn.hide(200);
+		} else {
+			addBtn.show(200);
+		}
+		
+		if(!allowMultipleDestinations) {
+			if(! thisObj.tagList.match().isEmpty()) {
+				queryBox.hide();
+			} else {
+				queryBox.show();
+			}
 		}
 	}
+	
+	this.tagList = new TagList(false,updateQuery).appendTo(this.frame);
 		
 	this.addTagByQuery = function(thisQuery,removable) {
 		var res = commitQuery(thisQuery);
@@ -55,11 +61,22 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,commitQue
 			return false;
 		}
 		
-		return thisObj.tagList.addTag(res.term,res.term,res.display,removable);
+		if(thisObj.tagList.addTag(res.term,res.term,res.display,removable)) {
+			query.val("");
+    		updateQuery();
+    		return true;
+		} else {
+			return false;
+		}		
 	};
 	
 	this.appendTo = function(someFrame) {
-		box.appendTo(someFrame);
+		this.frame.appendTo(someFrame);
+		return this;
+	};
+	
+	this.focus = function () {
+		query.focus();
 		return this;
 	};
 	
@@ -82,7 +99,7 @@ var FriendsQueryTagList = function (minWidth) {
 	}
 	
 	return new QueryTagList(minWidth,"Type user name or ID...",
-			eWolf.wolfpacks.friendsNameArray,sendToFuncReplace);
+			eWolf.wolfpacks.friendsNameArray,true,sendToFuncReplace);
 };
 
 var WolfpackQueryTagList = function (minWidth) {
@@ -99,5 +116,5 @@ var WolfpackQueryTagList = function (minWidth) {
 	}
 	
 	return new QueryTagList(minWidth,"Type wolfpack name...",
-			eWolf.wolfpacks.wolfpacksArray,sendToFuncReplace);
+			eWolf.wolfpacks.wolfpacksArray,false,sendToFuncReplace);
 };

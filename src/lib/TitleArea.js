@@ -1,10 +1,10 @@
-var TitleArea = function (title) {
-	var thisObj = this;
+var TitleArea = function (title) {	
+	this.frame = $("<div/>").attr("class","titleArea");
 	
-	var frame = $("<div/>").attr("class","titleArea");
-	
-	var topPart = $("<div/>").appendTo(frame);
-	var bottomPart = $("<div/>").attr("class","titleBottomPart").appendTo(frame);
+	var topPart = $("<div/>").appendTo(this.frame);
+	var bottomPart = $("<div/>")
+		.attr("class","titleBottomPart")
+		.appendTo(this.frame);
 	
 	var table = $("<table/>").attr("class","titleTable").appendTo(topPart);
 	
@@ -14,11 +14,11 @@ var TitleArea = function (title) {
 	var titleFunctionsArea = $("<td>")
 		.attr("class","titleFunctionsArea").appendTo(row);
 	
+	var functions = new FunctionsArea().appendTo(titleFunctionsArea);
+	
 	var theTitle = $("<span/>").attr({
 		"class" : "eWolfTitle"
-	}).appendTo(titleTextArea);
-	
-	var functions = {};
+	}).appendTo(titleTextArea);	
 	
 	this.setTitle = function (newTitle) {
 		if(newTitle != null) {
@@ -26,63 +26,47 @@ var TitleArea = function (title) {
 		}
 	};
 	
-	this.setTitle(title);
-	
 	this.appendTo = function (container) {
-		frame.appendTo(container);
-		return thisObj;
+		this.frame.appendTo(container);
+		return this;
 	};
 	
 	this.appendAtTitleTextArea = function (obj) {
 		titleTextArea.append(obj);
-		return thisObj;
+		return this;
 	};
 	
 	this.appendAtTitleFunctionsArea = function (obj) {
 		titleFunctionsArea.append(obj);
-		return thisObj;
+		return this;
 	};
 	
 	this.appendAtBottomPart = function (obj) {
 		bottomPart.append(obj);
-		return thisObj;
+		return this;
 	};
 	
 	this.addFunction = function (functionName,functionOp) {
-		if(functions[functionName] == null) {
-			functions[functionName] = $("<input/>").attr({
-				"type": "button",
-				"value": functionName
-			}).click(functionOp).appendTo(titleFunctionsArea);
-		}
-		
+		functions.addFunction(functionName,functionOp);
 		return this;
 	};
 	
 	this.removeFunction = function (functionName) {
-		if(functions[functionName] != null) {
-			functions[functionName].remove();
-			functions[functionName] = null;
-		}
-		
+		functions.removeFunction(functionName);
 		return this;
 	};
 	
 	this.hideFunction = function (functionName) {
-		if(functions[functionName] != null) {
-			functions[functionName].hide(200);
-		}
-		
+		functions.hideFunction(functionName);		
 		return this;
 	};
 	
 	this.showFunction = function (functionName) {
-		if(functions[functionName] != null) {
-			functions[functionName].show(200);
-		}
-		
+		functions.showFunction(functionName);
 		return this;
 	};
+	
+	this.setTitle(title);
 	
 	return this;
 };

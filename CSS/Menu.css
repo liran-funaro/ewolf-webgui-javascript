@@ -71,6 +71,18 @@
 	margin-right:10px;
 }
 
+#btnShowMenu, #btnHideMenu {
+	border:none;
+	min-height:0!important;
+	background-color:rgba(0,0,0,0.9);
+	color:white;
+	margin-right:2px;
+	padding-right:2px;
+	padding-left:2px;
+	position:relative;
+	top:-5px;
+}
+
 .refreshButton {
 	/*display:none;*/
 	width:18px !important;
