@@ -1,6 +1,6 @@
 var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 		onFinish,request) {
-	var thisObj = this;
+	var self = this;
 	this.frame = $("<span/>");
 	
 	madeChanges = false;	
@@ -44,7 +44,7 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 			},responseHandler.getHandler());
 		}		
 		
-		return thisObj;
+		return self;
 	};
 	
 	this.cancel = function() {
@@ -52,19 +52,19 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 			onFinish();
 		}
 		
-		thisObj.frame.remove();
+		self.frame.remove();
 		
 		if(madeChanges) {
 			madeChanges = false;
-			eWolf.trigger("needRefresh."+fatherID);
+			eWolf.trigger("needRefresh."+fatherID.replace("+","\\+"));
 		}
 		
-		delete thisObj;
+		delete self;
 	};
 	
 	this.success = function(data, textStatus, postData) {
 		madeChanges = true;
-		this.cancel();
+		self.cancel();
 	};
 	
 	this.error = function(data, textStatus, postData) {
@@ -105,7 +105,7 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 	this.complete = function (textStatus, postData) {
 		if(madeChanges) {
 			madeChanges = false;
-			eWolf.trigger("needRefresh."+fatherID);
+			eWolf.trigger("needRefresh."+fatherID.replace("+","\\+"));
 		}
 		
 		applyBtn.show(200);
@@ -115,7 +115,8 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 	applyBtn.click(this.apply);	
 	cancelBtn.click(this.cancel);
 	
-	responseHandler.success(this.success)	
+	responseHandler
+		.success(this.success)	
 		.error(this.error)	
 		.complete(this.complete);
 	

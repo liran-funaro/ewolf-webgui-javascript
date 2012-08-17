@@ -1,10 +1,10 @@
 var AddToWolfpack = function(id, frame, activator, request, packsAlreadyIn) {
-	var popUpApp = new PopUp(frame,activator);
-	var popUp = popUpApp.frame;
+	var self = this;
+	PopUp.call(this,frame,activator);
 	
 	var packList = $("<ul/>").attr({
 		"class": "packListSelect"
-	}).appendTo(popUp);	
+	}).appendTo(this.frame);	
 
 	$.each(eWolf.wolfpacks.wolfpacksArray,function(i,pack) {
 		var box = $("<input/>").attr({
@@ -87,87 +87,102 @@ var AddToWolfpack = function(id, frame, activator, request, packsAlreadyIn) {
 	
 	$("<hr/>").css({
 		"margin":"0"
-	}).appendTo(popUp);
+	}).appendTo(this.frame);
 	
-	$("<span/>").attr({
+	var applyBtn = $("<span/>").attr({
 		"class": "aLink applyLink"
-	}).append("Apply").appendTo(popUp).click(function() {
-		var add = [],
-			create = [],
-			remove = [];
-		
+	}).append("Apply").appendTo(this.frame);
+	
+	this.getSelection = function () {
+		var result = {
+			add : [],
+			create : [],
+			remove : []	
+		};
+	
 		$.each(packList.find("input"),function(i,item) {
 			var itsBox = $(item);
-
+	
 			if(itsBox.is(':checked') == true) {
 				if(itsBox.data("isMember") != true) {
 					if(itsBox.data("isNew") == true) {
 						var packName = trimSpaces(itsBox.data("itsInput").val());
-						add.push(packName);
-						create.push(packName);
+						result.add.push(packName);
+						result.create.push(packName);
 					} else {
-						add.push(itsBox.attr("value"));
+						result.add.push(itsBox.attr("value"));
 					}		
 				}
 			} else {
 				if(itsBox.data("isMember") == true) {
-					remove.push(itsBox.attr("value"));
+					result.remove.push(itsBox.attr("value"));
 				}
 			}
 		});
 		
-		popUpApp.destroy();
-			
-		if(create.length > 0) {			
+		return result;	
+	};
+	
+	this.createWolfpacks = function(wolfpacks,onComplete) {
+		if(wolfpacks.length > 0) {			
 			var responseHandler = new ResponseHandler("createWolfpack",[],null);
 			
 			responseHandler.success(function(data, textStatus, postData) {
-				$.each(create,function(i,pack) {
+				$.each(wolfpacks,function(i,pack) {
 					eWolf.wolfpacks.addWolfpack(pack);
 				});
-				
-				addToAllWolfpacks();
 			}).error(function(data, textStatus, postData) {				
 				if(data.wolfpacksResult == null) {
 					console.log("No wolfpacksResult in response");
 				} else {
-					$.each(data.wolfpacksResult, function(i,item) {
-						if(item == "success")
-							eWolf.wolfpacks.addWolfpack(postData.wolfpackName[i]);
+					$.each(data.wolfpacksResult, function(i,response) {
+						if(response.result == RESPONSE_RESULT.SUCCESS) {
+							eWolf.wolfpacks.addWolfpack(postData.wolfpackNames[i]);
+						}
 					});
 					
 				}
-				
-				addToAllWolfpacks();
-			});
+			}).complete(onComplete);
 			
 			request.request({
 				createWolfpack: {
-					wolfpackNames: create
+					wolfpackNames: wolfpacks
 				}
 			},responseHandler.getHandler());
 			
 		} else {
-			addToAllWolfpacks();
+			onComplete();
 		}
+	};
+	
+	this.addToAllWolfpacks = function (wolfpacks) {
+		if(wolfpacks.length > 0) {
+			var response = new ResponseHandler("addWolfpackMember",[],null);
+			
+			response.complete(function (textStatus, postData) {
+				eWolf.trigger("needRefresh."+id.replace("+","\\+"));
+			});			
+			
+			request.request({
+				addWolfpackMember: {
+					wolfpackNames: wolfpacks,
+					userIDs: [id]
+				}
+			},response.getHandler());
+		}
+	};
+	
+	this.apply = function() {
+		result = self.getSelection();
 		
-		function addToAllWolfpacks() {
-			if(add.length > 0) {
-				var response = new ResponseHandler("addWolfpackMember",[],null);
-				
-				response.complete(function (textStatus, postData) {
-					eWolf.trigger("needRefresh."+id);
-				});			
-				
-				request.request({
-					addWolfpackMember: {
-						wolfpackNames: add,
-						userIDs: [id]
-					}
-				},response.getHandler());
-			}			
-		}		
-	});
+		self.destroy();
+		
+		self.createWolfpacks(result.create, function () {
+			self.addToAllWolfpacks(result.add);
+		});
+	};
+	
+	applyBtn.click(this.apply);
 		
 	return this;
 };

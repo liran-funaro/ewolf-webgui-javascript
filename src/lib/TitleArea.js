@@ -1,4 +1,6 @@
-var TitleArea = function (title) {	
+var TitleArea = function (title) {
+	var self = this;
+	
 	this.frame = $("<div/>").attr("class","titleArea");
 	
 	var topPart = $("<div/>").appendTo(this.frame);
@@ -10,7 +12,7 @@ var TitleArea = function (title) {
 	
 	var row = $("<tr>").appendTo(table);
 	var titleTextArea = $("<td>")
-		.attr("class","titleTextArea").appendTo(row);
+		.addClass("titleTextArea").appendTo(row);
 	var titleFunctionsArea = $("<td>")
 		.attr("class","titleFunctionsArea").appendTo(row);
 	
@@ -18,52 +20,66 @@ var TitleArea = function (title) {
 	
 	var theTitle = $("<span/>").attr({
 		"class" : "eWolfTitle"
-	}).appendTo(titleTextArea);	
+	}).appendTo(titleTextArea);
+	
+	var titleExtraText = $("<span/>").appendTo(titleTextArea);
 	
 	this.setTitle = function (newTitle) {
 		if(newTitle != null) {
 			theTitle.html(newTitle);
 		}
+		
+		return self;
 	};
 	
 	this.appendTo = function (container) {
 		this.frame.appendTo(container);
-		return this;
+		return self;
 	};
 	
 	this.appendAtTitleTextArea = function (obj) {
-		titleTextArea.append(obj);
-		return this;
+		titleExtraText.append(obj);
+		return self;
 	};
 	
 	this.appendAtTitleFunctionsArea = function (obj) {
 		titleFunctionsArea.append(obj);
-		return this;
+		return self;
 	};
 	
 	this.appendAtBottomPart = function (obj) {
 		bottomPart.append(obj);
-		return this;
+		return self;
 	};
 	
 	this.addFunction = function (functionName,functionOp) {
 		functions.addFunction(functionName,functionOp);
-		return this;
+		return self;
 	};
 	
 	this.removeFunction = function (functionName) {
 		functions.removeFunction(functionName);
-		return this;
+		return self;
 	};
 	
 	this.hideFunction = function (functionName) {
 		functions.hideFunction(functionName);		
-		return this;
+		return self;
 	};
 	
 	this.showFunction = function (functionName) {
 		functions.showFunction(functionName);
-		return this;
+		return self;
+	};
+	
+	this.hideAll = function () {
+		functions.hideAll();
+		return self;
+	};
+	
+	this.showAll = function () {
+		functions.showAll();
+		return self;
 	};
 	
 	this.setTitle(title);

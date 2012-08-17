@@ -4,6 +4,7 @@ var FilesBox = function(uploaderArea) {
 	var fileselect;
 	var filedrag;
 	var filelist = null;
+	var errorBox = null;
 	
 	// file unique ID
 	var UID = 0;
@@ -30,6 +31,10 @@ var FilesBox = function(uploaderArea) {
 		filedrag[0].addEventListener("dragleave", FileDragHover, false);
 		filedrag[0].addEventListener("drop", FileSelectHandler, false);
 		filedrag[0].style.display = "block";
+		
+		errorBox = $("<div/>")
+			.addClass("errorArea")
+			.appendTo(uploaderArea);
 	}
 
 	// file drag hover
@@ -47,9 +52,20 @@ var FilesBox = function(uploaderArea) {
 		var files = e.target.files || e.dataTransfer.files;
 
 		// process all File objects
+		var emptyFile = false;
 		for ( var i = 0, f; f = files[i]; i++) {
-			filelist.addTag(UID, f, new FileItem(f), true);
-			UID += 1;
+			if(f.size != 0) {
+				filelist.addTag(UID, f, CreateFileItemBox(f), true);
+				UID += 1;
+			} else {
+				emptyFile = true;
+			}
+		}
+		
+		if(emptyFile) {
+			errorBox.html("Can't upload an empty file or a folder.");
+		} else {
+			errorBox.html("");
 		}
 	}
 	
@@ -99,7 +115,7 @@ var FilesBox = function(uploaderArea) {
 			xhr.addEventListener("load", function (evt) {
 				var obj = JSON.parse(xhr.responseText);
 				
-				if(obj.result != "success") {
+				if(obj.result != RESPONSE_RESULT.SUCCESS) {
 					thisObj.markError(id);
 				} else {
 					thisObj.markOK(id,{

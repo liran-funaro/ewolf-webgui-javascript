@@ -1,21 +1,19 @@
 var MenuItem = function(id,title,messageText,topbarFrame) {
+	var thisObj = this;
 	var isLoading = false;
 	var selected = false;	
-	var message = new MenuMessage(id+"Message","menuItemMessageClass",
-			messageText,topbarFrame);
+	var message = new MenuMessage(messageText,topbarFrame);
 	
-	var listItem = $("<li/>").attr({"id": id});
+	var listItem = $("<li/>");
 		
 	var aObj = $("<a/>").appendTo(listItem);
 	
 	var titleBox = $("<span/>").attr({
-		"id": id,
 		"style": "width:1%;"
 	}).appendTo(aObj);
 	
 	var refreshContainer = $("<div/>").attr({
-		"class": "refreshButtonArea",
-		"id": id,
+		"class": "refreshButtonArea"
 	})	.appendTo(aObj).hide();
 	
 	var loadingContainer = $("<div/>").attr({
@@ -24,7 +22,6 @@ var MenuItem = function(id,title,messageText,topbarFrame) {
 	})	.appendTo(aObj).hide();
 	
 	var refresh = $("<img/>").attr({
-		"id": id,
 		"src": "refresh.svg",
 		"class": "refreshButton"
 	})	.appendTo(refreshContainer);
@@ -37,17 +34,12 @@ var MenuItem = function(id,title,messageText,topbarFrame) {
 
 	refresh.click(function() {
 		if(isLoading == false) {
-			eWolf.trigger("refresh."+id,[id]);
+			eWolf.trigger("refresh."+id.replace("+","\\+"),[id]);
 		}	
 	});
 	
-	listItem.mouseover(function() {
-		message.show();
-	});
-
-	listItem.mouseout(function() {
-		message.hide();
-	});
+	listItem.mouseover(message.show);
+	listItem.mouseout(message.hide);
 	
 	function updateView() {
 		var w = 145;
@@ -101,27 +93,29 @@ var MenuItem = function(id,title,messageText,topbarFrame) {
 			isLoading = false;
 			updateView();
 			loadingContainer.data('spinner').stop();
-		}	
+		}
 	});
 	
-	return {
-		appendTo: function(place) {
-			listItem.appendTo(place);
-			updateView();
-			return this;
-		},
-		getId : function() {
-			return id;
-		},
-		renameTitle : function(newTitle) {
-			title = newTitle;
-			updateView();
-		},
-		destroy: function() {
-			message.destroy();
-			listItem.remove();
-			delete this;
-		}
+	this.appendTo = function(place) {
+		listItem.appendTo(place);
+		updateView();
+		return thisObj;
+	};
+	
+	this.getId = function() {
+		return id;
+	};
+	
+	this.renameTitle = function(newTitle) {
+		title = newTitle;
+		updateView();
+		return thisObj;
+	};
+	
+	this.destroy = function() {
+		message.destroy();
+		listItem.remove();
+		delete thisObj;
 	};
 	
 	return this;

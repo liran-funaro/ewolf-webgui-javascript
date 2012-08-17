@@ -1,11 +1,13 @@
-var BasicRequestHandler = function(id,requestAddress,refreshIntervalSec) {
+var BasicRequestHandler = function(id,requestAddress,
+		refreshIntervalSec) {
+	var self = this;
 	
 	var observersRequestFunction = [];
 	var observersHandleDataFunction = [];
 	var timer = null;
 	
 	function trigger() {
-		eWolf.trigger('needRefresh.'+id,[id]);
+		eWolf.trigger('needRefresh.'+id.replace("+","\\+"),[id]);
 	}
 	
 	function onPostComplete () {
@@ -16,91 +18,90 @@ var BasicRequestHandler = function(id,requestAddress,refreshIntervalSec) {
 			timer = setTimeout(trigger,refreshIntervalSec*1000);
 		}
 	}
+		
+	this.getId = function() {
+		return id;
+	};
 	
-	var _makeRequest = function(address,data,success) {
-		// Not implemented
-	};	
-
+	this.setRequestAddress = function(inputRequestAddress) {
+		requestAddress = inputRequestAddress;
+		return self;
+	};
 	
-	return {		
-		getId : function() {
-			return id;
-		},
-		setRequestAddress : function(inputRequestAddress) {
-			requestAddress = inputRequestAddress;
-			return this;
-		},
-		_makeRequest: function (address,data,success) {
-			// Not implemented
-		},
-		request: function(data,handleDataFunction) {
-			clearTimeout(timer);
-			eWolf.trigger("loading",[id]);
+	this._makeRequest = function (address,data,success) {
+		return self;
+	};
+	
+	this.request = function(data,handleDataFunction) {
+		clearTimeout(timer);
+		eWolf.trigger("loading",[id]);
+		
+		self._makeRequest(requestAddress,data,
+			function(receivedData,textStatus) {
+				handleDataFunction(receivedData,textStatus,data);
+			}).complete(onPostComplete);
+		
+		return self;
+	};
+	
+	this.requestAll = function() {
+		var data = {};
+		
+		$.each(observersRequestFunction, function(i, func) {
+			var res = func();
 			
-			this._makeRequest(requestAddress,data,
-				function(receivedData,textStatus) {
-					handleDataFunction(receivedData,textStatus,data);
-				}).complete(onPostComplete);
-			
-			return this;
-		},
-		requestAll: function() {
-			var data = {};
-			
-			$.each(observersRequestFunction, function(i, func) {
-				var res = func();
-				
-				if(res != null) {
-					$.extend(data,res);
-				}				
+			if(res != null) {
+				$.extend(data,res);
+			}				
+		});
+		
+		this.request(data,function(receivedData,textStatus,data) {
+			$.each(observersHandleDataFunction, function(i, func) {
+				func(receivedData,textStatus,data);			
 			});
-			
-			this.request(data,function(receivedData,textStatus,data) {
-				$.each(observersHandleDataFunction, function(i, func) {
-					func(receivedData,textStatus,data);			
-				});
-			});
-			
-			return this;
-		},
-		register: function(requestFunction,handleDataFunction) {
-			if(requestFunction != null && handleDataFunction != null) {
-				observersRequestFunction.push(requestFunction);
-				observersHandleDataFunction.push(handleDataFunction);
-			}
-			
-			return this;
-		},
-		listenToRefresh: function() {
-			var req = this;
-			eWolf.bind("refresh."+id,function(event,eventId) {
-				if(id == eventId) {
-					req.requestAll();
-				}
-			});
-			
-			return this;
+		});
+		
+		return self;
+	};
+	
+	this.register = function(requestFunction,handleDataFunction) {
+		if(requestFunction != null && handleDataFunction != null) {
+			observersRequestFunction.push(requestFunction);
+			observersHandleDataFunction.push(handleDataFunction);
 		}
 		
+		return self;
 	};
+	
+	this.listenToRefresh = function() {
+		eWolf.bind("refresh."+id,function(event,eventId) {
+			if(id == eventId) {
+				self.requestAll();
+			}
+		});
+		
+		return self;
+	};
+		
+	return this;
 };
 
 var PostRequestHandler = function(id,requestAddress,refreshIntervalSec) {
-	var res = new BasicRequestHandler(id,requestAddress,refreshIntervalSec);
+	BasicRequestHandler.call(this,id,requestAddress,refreshIntervalSec);
 	
-	res._makeRequest = function (address,data,success) {
+	this._makeRequest = function (address,data,success) {
 		return $.post(address,JSON.stringify(data),success,"json");
 	};
 	
-	return res;
+	return this;
 };
 
 var JSONRequestHandler = function(id,requestAddress,refreshIntervalSec) {
-	var res = new BasicRequestHandler(id,requestAddress,refreshIntervalSec);
+	BasicRequestHandler.call(this,id,requestAddress,refreshIntervalSec);
 	
-	res._makeRequest = function (address,data,success) {		
+	this._makeRequest = function (address,data,success) {		
 		return $.getJSON(address,data,success);
 	};
 	
-	return res;
+	return this;
 };

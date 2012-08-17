@@ -1,6 +1,6 @@
 var CommaSeperatedList = function(title) {
 	var list = $("<span/>")
-		.attr("class","wolfpacksBox")
+		.addClass("CommaSeperatedListItem")
 		.append(title+": ")
 		.hide();
 	

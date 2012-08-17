@@ -1,30 +1,16 @@
 var Inbox = function (id,applicationFrame) {
-	var appContainer = new AppContainer(id,applicationFrame);
-	var frame = appContainer.getFrame();
+	Application.call(this,id,applicationFrame);
 	
 	var request = new PostRequestHandler(id,"/json",60)
 		.listenToRefresh();
 	
 	new TitleArea("Inbox")
-		.appendTo(frame)
+		.appendTo(this.frame)
 		.addFunction("New Message...", function() {
-			var box = new NewMessage(id,applicationFrame);
-			box.select();
+			new NewMessage(id,applicationFrame).select();
 		});
 	
-	new InboxList(request,{}).appendTo(frame);
+	new InboxList(request,{}).appendTo(this.frame);
 	
-	return {
-		getId : function() {
-			return id;
-		},
-		isSelected : function() {
-			return appContainer.isSelected();
-		},
-		destroy : function() {
-			eWolf.unbind("refresh."+id);
-			appContainer.destroy();
-			delete this;
-		}
-	};
+	return this;
 };

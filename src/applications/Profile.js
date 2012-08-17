@@ -1,8 +1,7 @@
 var Profile = function (id,name,applicationFrame) {
-	var obj = this;
+	var self = this;
 	
-	var appContainer = new AppContainer(id,applicationFrame);
-	var frame = appContainer.getFrame();
+	Application.call(this,id,applicationFrame);
 	
 	var waitingForName = [];
 	
@@ -12,13 +11,9 @@ var Profile = function (id,name,applicationFrame) {
 		userObj.userID = id;
 	}
 	
-	var newsFeedObj = {
-			newsOf:"user"
-		};
-	$.extend(newsFeedObj,userObj);
-	
 	var handleProfileResonse = new ResponseHandler("profile",
-			["id","name"],handleProfileData);
+			["id","name"],handleProfileData)
+		.error(onProfileNotFound);
 	
 	var request = new PostRequestHandler(id,"/json",60)
 		.listenToRefresh()
@@ -26,41 +21,21 @@ var Profile = function (id,name,applicationFrame) {
 		.register(geWolfpacksData,new ResponseHandler("wolfpacks",
 				["wolfpacksList"],handleWolfpacksData).getHandler());
 	
-	if(name == null) {
-		request.request(getProfileData(),handleProfileResonse.getHandler());
-	}		
+	var topTitle = new TitleArea("Searching profile...").appendTo(this.frame);
 	
-	var topTitle = new TitleArea(name).appendTo(frame);
-	
-	if(id != eWolf.data("userID")) {
-		topTitle.addFunction("Send message...", function (event) {
-			var box = new NewMessage(id,applicationFrame,id,name);
-			box.select();
-		});
-	}
-	
-	var idRow = $("<span/>").attr("class","idBox");
-	topTitle.appendAtTitleTextArea("&nbsp;");
-	topTitle.appendAtTitleTextArea(idRow);
+	var idBox = $("<span/>").addClass("idBox");
+	topTitle.appendAtTitleTextArea(idBox);
 	
 	var wolfpacksContainer = new CommaSeperatedList("Wolfpakcs");
 	topTitle.appendAtBottomPart(wolfpacksContainer.getList());
 	
 	if(id != eWolf.data("userID")) {
+		topTitle.addFunction("Send message...", function (event) {
+			new NewMessage(id,applicationFrame,id,name).select();
+		});
+		
 		topTitle.addFunction("Add to wolfpack...", function () {
-			// TODO: add to any wolfpack (not just wall-readers) 
-//			request.request({
-//				addWolfpackMember: {
-//					wolfpackName: "wall-readers",
-//					userID: id
-//				}
-//			},new ResponseHandler("addWolfpackMember",
-//					[],function (data, textStatus, postData) {
-//				request.requestAll();
-//				eWolf.trigger("needRefresh.__pack__"+postData.wolfpackName);
-//			}).getHandler());
-			
-			new AddToWolfpack(id, frame,this, request, wolfpacksContainer.getItemNames());
+			new AddToWolfpack(id, self.frame, this, request, wolfpacksContainer.getItemNames());
 			return false;
 		});
 	} else {
@@ -69,27 +44,55 @@ var Profile = function (id,name,applicationFrame) {
 		});
 	}
 	
-	new NewsFeedList(request,newsFeedObj).appendTo(frame);
+	topTitle.hideAll();
 	
-	var profileData = null;
-	var wolfpackData = null;
+	var newsFeed = null;
 	
-	function handleProfileData(data, textStatus, postData) {
-		topTitle.setTitle(new User(data.id,data.name));
-		idRow.html(data.id);
+	if(name == null) {
+		request.request(getProfileData(),
+				handleProfileResonse.getHandler());
+	} else {
+		onProfileFound();
+	}
+	
+	function onProfileFound() {		
+		topTitle.setTitle(CreateUserBox(id,name));
+		idBox.html(id);
 		
-		name = data.name;
+		topTitle.showAll();
+		
+		if(newsFeed == null) {			
+			newsFeed = new ProfileNewsFeedList(request,id)
+				.appendTo(self.frame);
+		} 	
 		
 		while(waitingForName.length > 0) {
 			waitingForName.pop()(name);
 		}
-	  }
+	}
+	
+	function onProfileNotFound() {
+		topTitle.setTitle("Profile not found");
+		idBox.html();
+		
+		topTitle.hideAll();
+		
+		if(newsFeed != null) {			
+			newsFeed.destroy();
+			newsFeed = null;
+		} 
+	}
+	
+	function handleProfileData(data, textStatus, postData) {		
+		name = data.name;
+		onProfileFound();
+	}
 	
 	function handleWolfpacksData(data, textStatus, postData) {		
 		wolfpacksContainer.removeAll();		 
 
 		 $.each(data.wolfpacksList,function(i,pack) {
-			 wolfpacksContainer.addItem(new Wolfpack(pack),pack);
+			 wolfpacksContainer.addItem(CreateWolfpackBox(pack),pack);
 		 });
 	  }
 	
@@ -105,34 +108,6 @@ var Profile = function (id,name,applicationFrame) {
 		  };
 	}
 	
-	this.getID = function() {
-		if(profileData != null) {
-			return profileData.id;
-		} else {
-			return id;
-		}			
-	};
-	
-	this.getName = function() {
-		if(profileData != null) {
-			return profileData.name;
-		} else {
-			return id;
-		}				
-	};
-	
-	this.getWolfpacks = function() {
-		if(wolfpackData != null) {
-			return wolfpackData.wolfpacksList;
-		} else {
-			return [];
-		}			
-	};
-	
-	this.isSelected = function() {
-		return appContainer.isSelected();
-	};
-	
 	this.onReceiveName = function(nameHandler) {
 		if(name != null) {
 			nameHandler(name);
@@ -140,13 +115,7 @@ var Profile = function (id,name,applicationFrame) {
 			waitingForName.push(nameHandler);
 		}
 		
-		return obj;
-	};
-	
-	this.destroy = function() {
-		eWolf.unbind("refresh."+id);
-		appContainer.destroy();
-		delete obj;
+		return self;
 	};
 	
 	return this;

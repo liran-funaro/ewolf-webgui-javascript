@@ -1,5 +1,5 @@
 var PopUp = function(frame, activator) {
-	var thisObj = this;
+	var self = this;
 	
 	var pos = $(activator).position();
 
@@ -20,19 +20,19 @@ var PopUp = function(frame, activator) {
 	}).appendTo(frame).hide();
 	
 	function clickFunc() {
-		if(! thisObj.frame.is(":hover")) {
-			thisObj.destroy();
+		if(! self.frame.is(":hover")) {
+			self.destroy();
 		}		
 	};
 	
 	$(document).bind("click",clickFunc);
 	
 	this.destroy = function () {
-		thisObj.frame.hide(200,function() {
-			thisObj.frame.remove();
+		self.frame.hide(200,function() {
+			self.frame.remove();
 		});
 		 $(document).unbind("click",clickFunc);
-		 delete thisObj;
+		 delete self;
 	};
 	
 	this.frame.show(200);

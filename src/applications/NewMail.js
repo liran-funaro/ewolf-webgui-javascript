@@ -1,20 +1,30 @@
-var NewMail = function(id,applicationFrame,title,
+NEW_MAIL_DESCRIPTION_DAFAULTS = {
+	TITLE : "New Mail",
+	TO : "To",
+	CONTENT : "Content",
+	ATTACHMENT : "Attachment"
+};
+
+var NewMail = function(callerID,applicationFrame,options,		
 		createRequestObj,handleResponseCategory,
 		allowAttachment,sendTo,sendToQuery) {
-	var thisObj = this;
-	var thisID = "__newmessage__"+id;
+	var self = this;
+	var id = "__newmessage__"+callerID;
 	
-	var appContainer = new AppContainer(thisID,applicationFrame);
-	this.frame = appContainer.getFrame();
+	Application.call(this,id,applicationFrame);
 	
-	var request = new PostRequestHandler(thisID,"/json",0);
+	var settings = $.extend({}, NEW_MAIL_DESCRIPTION_DAFAULTS, options);
 		
-	var titleArea = new TitleArea(title).appendTo(this.frame);
+	var request = new PostRequestHandler(id,"/json",0);
+		
+	var titleArea = new TitleArea(settings.TITLE).appendTo(this.frame);
 	
 	var base = $("<table/>").appendTo(this.frame);
 	
 	var queryRaw = $("<tr/>").appendTo(base);
-	$("<td/>").attr("class","newMailAlt").append("To:").appendTo(queryRaw);	
+	$("<td/>").attr("class","newMailAlt")
+		.append(settings.TO+":")
+		.appendTo(queryRaw);	
 	var userIdCell = $("<td/>").appendTo(queryRaw);
 	
 	sendToQuery.appendTo(userIdCell);
@@ -24,12 +34,18 @@ var NewMail = function(id,applicationFrame,title,
 	}
 	
 	var msgRaw = $("<tr/>").appendTo(base);
-	$("<td/>").attr("class","newMailAlt").append("Content:").appendTo(msgRaw);
+	$("<td/>").attr("class","newMailAlt")
+		.append(settings.CONTENT+":")
+		.appendTo(msgRaw);
+	
+	var height = 300;
+	if(allowAttachment) {
+		height = 100;
+	}
 	
 	var messageText = $("<textarea/>").attr({
-		"id": "textileMessage",
 		"placeholder": "What is on your mind...",
-		"style": "min-width:300px !important;height:100px  !important;"
+		"style" : "min-width:300px !important;height:"+height+"px  !important"
 	});
 	
 	$("<td/>").append(messageText).appendTo(msgRaw);
@@ -37,7 +53,9 @@ var NewMail = function(id,applicationFrame,title,
 	var files = null;
 	if(allowAttachment) {
 		var attacheRaw = $("<tr/>").appendTo(base);
-		$("<td/>").attr("class","newMailAlt").append("Attachment:").appendTo(attacheRaw);
+		$("<td/>").attr("class","newMailAlt")
+			.append(settings.ATTACHMENT+":")
+			.appendTo(attacheRaw);
 		
 		var uploaderArea = $("<td/>").appendTo(attacheRaw);
 		files = new FilesBox(uploaderArea);
@@ -60,7 +78,7 @@ var NewMail = function(id,applicationFrame,title,
 	}).appendTo(errorBox);
 	
 	eWolf.bind("refresh",function(event,eventID) {
-		if(eventID == thisID) {
+		if(eventID == id) {
 			if(sendTo != null) {				
 				window.setTimeout(function () {
 					messageText.focus();
@@ -73,10 +91,9 @@ var NewMail = function(id,applicationFrame,title,
 		}
 	});
 	
-	eWolf.bind("select."+id,function(event,eventId) {
-		if(eventId != thisID) {
-			appContainer.destroy();
-			delete thisObj;
+	eWolf.bind("select."+callerID,function(event,eventId) {
+		if(eventId != id) {
+			self.destroy();
 		}
 	});
 		
@@ -99,12 +116,12 @@ var NewMail = function(id,applicationFrame,title,
 			buttons: {
 				"Send only to failed": function() {
 					$( this ).dialog( "close" );
-					thisObj.send(event,true);
+					self.send(event,true);
 				},
 				"Resend to all": function() {
 					$( this ).dialog( "close" );
 					sendToQuery.tagList.unmarkTags();
-					thisObj.send(event,true);
+					self.send(event,true);
 				},
 				Cancel: function() {
 					$( this ).dialog( "close" );
@@ -123,8 +140,8 @@ var NewMail = function(id,applicationFrame,title,
 			titleArea.showFunction("Cancel");
 			operations.showAll();
 		} else {			
-			eWolf.trigger("needRefresh."+id,[id]);
-			this.destroy();
+			eWolf.trigger("needRefresh."+callerID.replace("+","\\+"),[callerID]);
+			this.cancel();
 		}		
 	};
 	
@@ -142,21 +159,10 @@ var NewMail = function(id,applicationFrame,title,
 		}
 			
 		sendToQuery.tagList.unmarkTags({markedError:true});		
-		thisObj.updateSend();		
+		self.updateSend();		
 		errorMessage.html("");		
 		
-		thisObj.sendToAll();
-		
-//		mailObject.attachment.push({
-//			filename: "testfile.doc",
-//			contentType: "document",
-//			path: "http://www.google.com"
-//		});		
-//		mailObject.attachment.push({
-//			filename: "image.jpg",
-//			contentType: "image/jpeg",
-//			path: "https://www.cia.gov/library/publications/the-world-factbook/graphics/flags/large/is-lgflag.gif"					
-//		});	
+		self.sendToAll();
 	};
 	
 	this.sendToAll = function () {		
@@ -170,11 +176,11 @@ var NewMail = function(id,applicationFrame,title,
 				files.uploadFile(destId, function(success, uploadedFiles) {
 					if(success) {
 						mailObject.attachment = uploadedFiles;
-						thisObj.sendTo(destId,JSON.stringify(mailObject));
+						self.sendTo(destId,JSON.stringify(mailObject));
 					}		
 				});			
 			} else {
-				thisObj.sendTo(destId,JSON.stringify(mailObject));
+				self.sendTo(destId,JSON.stringify(mailObject));
 			}			
 		});	
 	};
@@ -184,14 +190,14 @@ var NewMail = function(id,applicationFrame,title,
 		
 		responseHandler.success(function(data, textStatus, postData) {
 			sendToQuery.tagList.markTagOK(destId);				
-			thisObj.updateSend();
+			self.updateSend();
 		}).error(function(data, textStatus, postData) {
 			var errorMsg = "Failed to arrive at destination: " +
 			destId + " with error: " + data.result;
 			errorMessage.append(errorMsg+"<br>");
 			
 			sendToQuery.tagList.markTagError(destId,errorMsg);
-			thisObj.updateSend();
+			self.updateSend();
 		});
 		
 		request.request(
@@ -200,19 +206,19 @@ var NewMail = function(id,applicationFrame,title,
 	};
 		
 	this.select = function() {
-		eWolf.trigger("select",[thisID]);
+		eWolf.trigger("select",[id]);
 	};
 	
-	this.destroy = function() {
-		eWolf.trigger("select",[id]);
+	this.cancel = function() {
+		eWolf.trigger("select",[callerID]);
 	};
 	
 	titleArea
 		.addFunction("Send", this.send)
-		.addFunction("Cancel",this.destroy);
+		.addFunction("Cancel",this.cancel);
 	operations
 		.addFunction("Send", this.send)
-		.addFunction("Cancel", this.destroy);
+		.addFunction("Cancel", this.cancel);
 
 	return this;
 };
@@ -227,9 +233,12 @@ var NewMessage = function(id,applicationFrame,sendToID,sendToName) {
 		  };
 	}
 	
-	return new NewMail(id,applicationFrame,"New Message",
-			createNewMessageRequestObj,"sendMessage",false,
-			sendToName,new FriendsQueryTagList(300));
+	NewMail.call(this,id,applicationFrame,{
+			TITLE : "New Message"
+		},createNewMessageRequestObj,"sendMessage",false,
+		sendToName,new FriendsQueryTagList(300));
+	
+	return this;
 };
 
 var NewPost = function(id,applicationFrame,wolfpack) {	
@@ -242,7 +251,12 @@ var NewPost = function(id,applicationFrame,wolfpack) {
 		  };
 	}	
 	
-	return new NewMail(id,applicationFrame,"New Post",
-			createNewPostRequestObj,"post",true,
+	NewMail.call(this,id,applicationFrame,{
+			TITLE : "New Post",
+			TO : "Post to",
+			CONTENT: "Post"
+		},createNewPostRequestObj,"post",true,
 			wolfpack,new WolfpackQueryTagList(300));
+	
+	return this;
 };

@@ -1,5 +1,5 @@
 var Wolfpacks = function (menuList,request,applicationFrame) {
-	var thisObj = this;
+	var self = this;
 	
 	var wolfpacksApps = {},
 		friendsMapByName = {},
@@ -26,10 +26,10 @@ var Wolfpacks = function (menuList,request,applicationFrame) {
 			var app = new WolfpackPage("__pack__"+pack,pack,applicationFrame);			
 			
 			wolfpacksApps[pack] = app;
-			thisObj.wolfpacksArray.push(pack);
+			self.wolfpacksArray.push(pack);
 		}
 		
-		return thisObj;
+		return self;
 	};
 	
 	this.removeWolfpack = function(pack) {
@@ -44,27 +44,29 @@ var Wolfpacks = function (menuList,request,applicationFrame) {
 			}
 		}
 		
-		return thisObj;
+		return self;
 	};
 	
 	this.addFriend = function(userID,userName) {
-		friendsMapByName[userName] = userID;
-		friendsMapByID[userID] = userName;
-		thisObj.friendsNameArray.push(userName);
+		if(friendsMapByName[userName] == null) {
+			friendsMapByName[userName] = userID;
+			friendsMapByID[userID] = userName;
+			self.friendsNameArray.push(userName);
+		}		
 		
-		return thisObj;
+		return self;
 	};
 	
 	this.removeFriend = function(userID,userName) {
 		friendsMapByName[userName] = null;
 		friendsMapByID[userID] = null;
 		
-		var idx = thisObj.friendsNameArray.indexOf(userName);
+		var idx = self.friendsNameArray.indexOf(userName);
 		if(idx != -1){
-			thisObj.friendsNameArray.splice(idx, 1);
+			self.friendsNameArray.splice(idx, 1);
 		}
 		
-		return thisObj;
+		return self;
 	};
 	
 	this.getFriendID = function (userName) {
@@ -77,13 +79,13 @@ var Wolfpacks = function (menuList,request,applicationFrame) {
 		
 	function handleWolfpacks(data, textStatus, postData) {
 		$.each(data.wolfpacksList, function(i,pack){
-			thisObj.addWolfpack(pack);
+			self.addWolfpack(pack);
 		});
 	}
 	
 	function handleMembers(data, textStatus, postData) {
 		$.each(data.membersList, function(i,userObj){
-			thisObj.addFriend(userObj.id,userObj.name);
+			self.addFriend(userObj.id,userObj.name);
 		});
 	}
 	

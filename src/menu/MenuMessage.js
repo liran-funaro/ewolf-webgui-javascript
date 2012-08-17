@@ -1,30 +1,32 @@
-var MenuMessage = function(id,itemclass,text,container) {
+var MenuMessage = function(text,container) {
+	var thisObj = this;	
 	var message = null;
 	
-	return {
-		show : function() {
-			if(message == null) {
-				message = $("<div/>").attr({
-					"id": id,
-					"class": itemclass
-				}).text(text).appendTo(container);
-			} else {
-				message.show();
-			}
-		},
-		hide : function() {
-			if(message != null) {
-				message.remove();
-				message = null;
-			}
-		},
-		destroy : function() {
-			if(message != null) {
-				message.remove();
-				message = null;
-				delete this;
-			}
+	this.show = function() {
+		if(message == null) {
+			message = $("<div/>").attr({
+				"class": "menuItemMessageClass"
+			}).text(text).appendTo(container);
+		} else {
+			message.show();
 		}
 	};
+	
+	this.hide = function() {
+		if(message != null) {
+			message.remove();
+			message = null;
+		}
+	};
+	
+	this.destroy = function() {
+		if(message != null) {
+			message.remove();
+			message = null;
+			delete thisObj;
+		}
+	};
+	
+	return this;
 };
 

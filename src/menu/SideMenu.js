@@ -1,45 +1,32 @@
 var SideMenu = function(menu, mainFrame,topbarFrame) {
-	menu.data('menuObj', this);
-	mainFrame.data('menuObj', this);
+	var thisObj = this;
+	
 	var itemSpace = menu.children("#menuItemsSpace");
 	
 	var toggleButton = menu.children("#toggleButtons");
 
-	var hideBtn = toggleButton.children("#btnHideMenu")
-			.data('menuObj', this).click(function() {
-				hideMenu();
-			}),
-		showBtn = toggleButton.children("#btnShowMenu")
-			.data('menuObj', this).click(function() {
-				showMenu();
-			}),
-		pinBtn = toggleButton.children("#btnPin")
-			.data('menuObj', this).click(function() {
-				pinMenu();
-			}),
-		unpinBtn = toggleButton.children("#btnUnPin")
-			.data('menuObj', this).click(function() {
-				unpinMenu();
-			}),
-
+	var hideBtn = toggleButton.children("#btnHideMenu"),
+		showBtn = toggleButton.children("#btnShowMenu"),
+		pinBtn = toggleButton.children("#btnPin"),
+		unpinBtn = toggleButton.children("#btnUnPin"),
 		menuLists = [];
 	
-	function showMenu() {
+	this.showMenu = function (){
 		showBtn.hide();
-		menuIn();
-		mainFrameShrink();
+		thisObj.menuIn();
+		thisObj.mainFrameShrink();
 		hideBtn.show();
 	};
 
-	function hideMenu() {
+	this.hideMenu = function () {
 		hideBtn.hide();
-		menuOut();
-		mainFrameGrow();
+		thisObj.menuOut();
+		thisObj.mainFrameGrow();
 		showBtn.show();
 	};
 
-	function pinMenu() {
-		mainFrameShrink();
+	this.pinMenu = function () {
+		thisObj.mainFrameShrink();
 		pinBtn.hide();
 		unpinBtn.show();
 		hideBtn.show();
@@ -47,21 +34,16 @@ var SideMenu = function(menu, mainFrame,topbarFrame) {
 		menu.unbind("mouseout");
 	};
 
-	function unpinMenu() {
-		mainFrameGrow();
+	this.unpinMenu = function () {
+		thisObj.mainFrameGrow();
 		unpinBtn.hide();
 		pinBtn.show();
 		hideBtn.hide();
-		menu.mouseover(function() {
-			menuIn();
-		});
-
-		menu.mouseout(function() {
-			menuOut();
-		});
+		menu.mouseover(thisObj.menuIn);
+		menu.mouseout(thisObj.menuOut);
 	};
 
-	function menuOut() {
+	this.menuOut = function () {
 		menu.stop();
 		itemSpace.stop();
 
@@ -77,7 +59,7 @@ var SideMenu = function(menu, mainFrame,topbarFrame) {
 		});
 	};
 
-	function menuIn() {
+	this.menuIn = function () {
 		menu.stop();
 		itemSpace.stop();
 
@@ -96,7 +78,7 @@ var SideMenu = function(menu, mainFrame,topbarFrame) {
 		
 	};
 
-	function mainFrameGrow() {
+	this.mainFrameGrow = function () {
 		mainFrame.stop();
 
 		mainFrame.animate({
@@ -107,7 +89,7 @@ var SideMenu = function(menu, mainFrame,topbarFrame) {
 		});
 	};
 
-	function mainFrameShrink() {
+	this.mainFrameShrink = function () {
 		mainFrame.stop();
 
 		mainFrame.animate({
@@ -122,15 +104,21 @@ var SideMenu = function(menu, mainFrame,topbarFrame) {
 		eWolf.trigger("mainFrameResize",["window"]);
 	});
 	
-	return {
-		append : function(item) {
-			itemSpace.append(item);
-		},
-		createNewMenuList : function(id, title) {
-			var menuLst = new MenuList(this,id,title,topbarFrame)
-							.appendTo(itemSpace);
-			menuLists.push(menuLst);
-			return menuLst;
-		}
+	this.append = function(item) {
+		itemSpace.append(item);
 	};
+	
+	this.createNewMenuList = function(id, title) {
+		var menuLst = new MenuList(id,title,topbarFrame)
+			.appendTo(itemSpace);
+		menuLists.push(menuLst);
+		return menuLst;
+	};
+	
+	hideBtn.click(this.hideMenu);
+	showBtn.click(this.showMenu);
+	pinBtn.click(this.pinMenu);
+	unpinBtn.click(this.unpinMenu);
+	
+	return this;
 };

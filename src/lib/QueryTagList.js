@@ -94,7 +94,7 @@ var FriendsQueryTagList = function (minWidth) {
 		
 		return {
 			term: id,
-			display: new User(id,query)
+			display: CreateUserBox(id,query)
 		};
 	}
 	
@@ -108,7 +108,7 @@ var WolfpackQueryTagList = function (minWidth) {
 		if(idx != -1) {
 			return {
 				term: pack,
-				display: new Wolfpack(pack)
+				display: CreateWolfpackBox(pack)
 			};
 		} else {
 			return null;

@@ -1,6 +1,6 @@
 var GenericItem = function(senderID,senderName,timestamp,mail,
 		listClass,msgBoxClass,preMessageTitle,allowShrink) {
-		
+	var thisObj = this;
 	var itemSpan = $("<span/>");
 	
 	var listItem = $("<li/>").attr({
@@ -13,7 +13,7 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 	}).append(preMessageTitle).appendTo(listItem);	
 	
 	var isOnSender = false;
-	var senderBox = User(senderID,senderName)
+	var senderBox = CreateUserBox(senderID,senderName)
 		.appendTo(listItem)
 		.hover(function() {
 			isOnSender = true;
@@ -22,11 +22,11 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 		});
 	
 	
-	var timestampBox = TimestampBox(timestamp).appendTo(listItem);
+	var timestampBox = CreateTimestampBox(timestamp).appendTo(listItem);
 		
 	var itsMessage = $("<li/>").attr({
 		 "class": msgBoxClass
-	 })	.append(MailItem(JSON.parse(mail)))
+	 })	.append(CreateMailItemBox(JSON.parse(mail)))
 	 	.insertAfter(listItem);
 	
 	if(allowShrink) {
@@ -48,30 +48,32 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 		updateView();
 	});
 	
-	return {
-		appendTo: function(place) {
-			itemSpan.appendTo(place);
-			updateView();
-			return this;
-		},
-		prependTo: function(place) {
-			itemSpan.prependTo(place);
-			updateView();
-			return this;
-		},
-		insertAfter: function(place) {
-			itemSpan.insertAfter(place);
-			updateView();
-			return this;
-		},
-		getListItem : function() {
-			return itemSpan;
-		},
-		destroy: function() {
-			message.destroy();
-			itemSpan.remove();
-			delete this;
-		}
+	this.appendTo = function(place) {
+		itemSpan.appendTo(place);
+		updateView();
+		return thisObj;
+	};
+	
+	this.prependTo = function(place) {
+		itemSpan.prependTo(place);
+		updateView();
+		return thisObj;
+	};
+	
+	this.insertAfter = function(place) {
+		itemSpan.insertAfter(place);
+		updateView();
+		return thisObj;
+	};
+	
+	this.getListItem = function() {
+		return itemSpan;
+	};
+	
+	this.destroy = function() {
+		message.destroy();
+		itemSpan.remove();
+		delete thisObj;
 	};
 	
 	return this;

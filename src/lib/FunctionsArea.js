@@ -1,11 +1,13 @@
-var FunctionsArea = function () {	
+var FunctionsArea = function () {
+	var self = this;
+	
 	this.frame = $("<div/>");
 	
 	var functions = {};
 	
 	this.appendTo = function (container) {
-		this.frame.appendTo(container);
-		return this;
+		self.frame.appendTo(container);
+		return self;
 	};
 	
 	this.addFunction = function (functionName,functionOp) {
@@ -16,7 +18,7 @@ var FunctionsArea = function () {
 			}).click(functionOp).appendTo(this.frame);
 		}
 		
-		return this;
+		return self;
 	};
 	
 	this.removeFunction = function (functionName) {
@@ -25,7 +27,7 @@ var FunctionsArea = function () {
 			functions[functionName] = null;
 		}
 		
-		return this;
+		return self;
 	};
 	
 	this.hideFunction = function (functionName) {
@@ -33,7 +35,7 @@ var FunctionsArea = function () {
 			functions[functionName].hide(200);
 		}
 		
-		return this;
+		return self;
 	};
 	
 	this.showFunction = function (functionName) {
@@ -41,27 +43,23 @@ var FunctionsArea = function () {
 			functions[functionName].show(200);
 		}
 		
-		return this;
+		return self;
 	};
 	
-	this.hideAll = function (functionName) {
-		$.each(functions, function(funcName,funcBtn) {
-			if(funcBtn != null) {
-				funcBtn.hide(200);
-			}			
-		});
+	this.hideAll = function () {
+		for(var functionName in functions) {
+			self.hideFunction(functionName);
+		}
 		
-		return this;
+		return self;
 	};
 	
-	this.showAll = function (functionName) {
-		$.each(functions, function(funcName,funcBtn) {
-			if(funcBtn != null) {
-				funcBtn.show(200);
-			}			
-		});
+	this.showAll = function () {
+		for(var functionName in functions) {
+			self.showFunction(functionName);
+		}
 		
-		return this;
+		return self;
 	};
 	
 	return this;

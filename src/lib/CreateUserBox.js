@@ -1,4 +1,4 @@
-var User = function(id,name) {
+function CreateUserBox(id,name) {
 	var link = $("<a/>").attr({
 		"style": "width:1%;",
 		"class": "selectableBox",
@@ -35,4 +35,4 @@ var User = function(id,name) {
 	link.text(name);
 
 	return link;
-};
+}

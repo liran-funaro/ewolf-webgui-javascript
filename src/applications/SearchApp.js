@@ -1,7 +1,25 @@
-var SearchApp = function(id,menu,applicationFrame,query,searchBtn) {
+var SearchApp = function(id,menu,applicationFrame,container) {
+	var self = this;
+	
 	var menuList = menu.createNewMenuList("search","Searches");
 	var apps = new Object();
 	var lastSearch = null;
+	
+	this.frame = $("<div/>")
+		.addClass("title-bar")
+		.appendTo(container);
+	
+	var query = $("<input/>").attr({
+		"type" : "text",
+		"placeholder" : "Search",
+		"autocomplete" : "off",
+		"spellcheck" : "false"
+	}).appendTo(this.frame);
+
+	var searchBtn = $("<input/>").attr({
+		"type" : "button",
+		"value" : "Search"
+	}).appendTo(this.frame).hide();
 	
 	function addSearchMenuItem(key,name) {
 		var tempName;
@@ -15,8 +33,9 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn) {
 		apps[key] = new Profile(key,name,applicationFrame)
 			.onReceiveName(function(newName) {
 				menuList.renameMenuItem(key,newName);
-				eWolf.trigger("select",[key]);
 			});	
+		
+		eWolf.trigger("select",[key]);
 	};
 	
 	function removeSearchMenuItem(key) {
@@ -35,7 +54,11 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn) {
 		}
 	}
 	
-	function searchUser(key,name) {
+	this.search = function (key,name) {
+		if(key == null) {
+			key = query.val();
+		}
+		
 		if(key != null && key != "") {
 			if(key == eWolf.data("userID") || apps[key] != null) {
 				eWolf.trigger("select",[key]);
@@ -48,21 +71,12 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn) {
 				addSearchMenuItem(key,name);
 			}			
 		}
-	}
-	
-//	addBtn.click(function() {
-//		var key = query.val();
-//		if(key != "") {
-//			if(key != eWolf.data("userID")) {
-//				addSearchMenuItem(key,"Show "+key);
-//			}
-//			eWolf.trigger("select",[key]);
-//		}
-//	});
+		
+		return self;
+	};
 	
 	searchBtn.click(function() {
-		var key = query.val();
-		searchUser(key);	
+		self.search(query.val());	
 	});
 	
 	eWolf.bind("select."+id,function(event,eventId) {
@@ -84,22 +98,15 @@ var SearchApp = function(id,menu,applicationFrame,query,searchBtn) {
 	    
 	    if(query.val() == "") {
 	    	searchBtn.hide(200);
-//	    	addBtn.hide(200);
 	    } else {
 	    	searchBtn.show(200);
-//	    	addBtn.show(200);
 	    }
 	});
 		
 	
 	eWolf.bind("search",function(event,key,name) {
-		searchUser(key,name);
+		self.search(key,name);
 	});
-
 	
-	return {
-		search: function (key,name) {
-			searchUser(key,name);
-		}
-	};
+	return this;
 };

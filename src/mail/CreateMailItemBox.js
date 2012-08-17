@@ -1,13 +1,12 @@
-var MailItem = function(item) {
-	var text = item.text.replace("<","&lt").replace(">","&gt").replace(/\n/g,"<br>");
+function CreateMailItemBox(mailObj) {
+	var text = mailObj.text.replace("<","&lt").replace(">","&gt").replace(/\n/g,"<br>");
 	var canvas = $("<div/>").html(text);
 
-	if(item.attachment != null) {
+	if(mailObj.attachment != null) {
 		var imageCanvas = $("<div/>");
-
 		var attachCanvas = $("<ul/>");
 		
-		$.each(item.attachment, function(i, attach) {
+		$.each(mailObj.attachment, function(i, attach) {
 			if(attach.contentType.substring(0,5) == "image") {
 				var aObj = $("<a/>").attr({
 					href: attach.path,
@@ -42,4 +41,4 @@ var MailItem = function(item) {
 	}	
 	
 	return canvas;
-};
+}

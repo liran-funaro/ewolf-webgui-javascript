@@ -1,24 +1,23 @@
 var ShowMore = function (frame,onClick) {
+	var thisObj = this;
 	var element = null;
 	
-	return {
-		remove : function() {
-			if(element != null) {
-				element.remove();
-			}
-			
-			return this;
-		},
-		draw : function() {
-			this.remove();
-			
-			element = $("<div/>").attr({
-				"class": "showMoreClass"
-			}).append("Show More...").click(onClick);
-			
-			frame.append(element);
-			
-			return this;
+	this.remove = function() {
+		if(element != null) {
+			element.remove();
 		}
+		
+		return thisObj;
+	};
+	
+	this.draw = function() {
+		thisObj.remove();
+		
+		element = $("<div/>").addClass("showMoreClass")
+			.append("Show More...")
+			.click(onClick)
+			.appendTo(frame);
+		
+		return thisObj;
 	};
 };

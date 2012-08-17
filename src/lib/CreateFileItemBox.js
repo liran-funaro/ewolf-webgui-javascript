@@ -1,4 +1,4 @@
-var FileItem = function(file) {
+function CreateFileItemBox(file) {
 	var left = $("<div/>").css({
 		"text-align" : "left",
 		"display": "inline-block"
@@ -21,4 +21,4 @@ var FileItem = function(file) {
 	return $("<div/>").css({
 		"display": "inline-block"
 	}).append(left).append(right);
-};
+}

@@ -7,7 +7,8 @@ $(document).ready(function () {
 	new Loading($("#loadingFrame"));
 	eWolf.applicationFrame = $("#applicationFrame");
 	
-	eWolf.sideMenu = new SideMenu($("#menu"),$("#mainFrame"),$("#topbarID"));	
+	eWolf.sideMenu = new SideMenu($("#menu"),$("#mainFrame"),$("#topbarID"));
+	eWolf.welcome = eWolf.sideMenu.createNewMenuList("welcome","Welcome");
 	eWolf.mainApps = eWolf.sideMenu.createNewMenuList("mainapps","Main");
 	eWolf.wolfpacksMenuList = eWolf.sideMenu.createNewMenuList("wolfpacks","Wolfpacks");
 	
@@ -49,7 +50,11 @@ function createMainApps() {
 	new Inbox("messages",eWolf.applicationFrame);
 	
 	new SearchApp("search",eWolf.sideMenu,eWolf.applicationFrame,
-			$("#txtSearchBox"),$("#btnSearch"),$("#btnAdd"));
+			$("#topbarID"));
+	
+	// Welcome
+	eWolf.welcome.addMenuItem("login_welcome_screen","Login");
+	new Login("login_welcome_screen",eWolf.applicationFrame);
 	
 	eWolf.trigger("select",["newsFeedApp"]);
 }
