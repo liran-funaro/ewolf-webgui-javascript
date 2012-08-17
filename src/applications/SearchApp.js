@@ -1,4 +1,4 @@
-var SearchApp = function(id,menu,applicationFrame,container) {
+var SearchApp = function(menu,applicationFrame,container) {
 	var self = this;
 	
 	var menuList = menu.createNewMenuList("search","Searches");
@@ -79,7 +79,7 @@ var SearchApp = function(id,menu,applicationFrame,container) {
 		self.search(query.val());	
 	});
 	
-	eWolf.bind("select."+id,function(event,eventId) {
+	eWolf.bind("select",function(event,eventId) {
 		if(eventId != lastSearch && eventId != "__newmessage__"+lastSearch) {
 			removeLastSearch();
 		}

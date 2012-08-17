@@ -93,8 +93,10 @@ var GenericMailList = function(mailType,request,serverSettings,
 
 var NewsFeedList = function (request,serverSettings) {
 	$.extend(serverSettings,{maxMessages:2});
+
+	var pow = "<img src='wolf-paw.svg' height='18px' style='padding-right:5px;'></img>";
 	GenericMailList.call(this,"newsFeed",request,serverSettings,
-			"postListItem","postBox","",false);
+			"postListItem","postBox",pow,false);
 	
 	return this;
 };
@@ -129,6 +131,7 @@ var ProfileNewsFeedList = function (request,profileID) {
 
 var InboxList = function (request,serverSettings) {	
 	$.extend(serverSettings,{maxMessages:2});
+	
 	GenericMailList.call(this,"inbox",request,serverSettings,
 			"messageListItem","messageBox", ">> ",true);
 	
