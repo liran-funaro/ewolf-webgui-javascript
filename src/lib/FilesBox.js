@@ -1,5 +1,5 @@
 var FilesBox = function(uploaderArea) {
-	var thisObj = this;
+	var self = this;
 	
 	var fileselect;
 	var filedrag;
@@ -22,7 +22,7 @@ var FilesBox = function(uploaderArea) {
 			.append("drop files here")
 			.appendTo(uploaderArea);
 
-		filelist = new TagList(true).appendTo(uploaderArea);
+		filelist = new TagList(true,null,true).appendTo(uploaderArea);
 
 		fileselect[0].addEventListener("change", FileSelectHandler, false);
 
@@ -55,8 +55,10 @@ var FilesBox = function(uploaderArea) {
 		var emptyFile = false;
 		for ( var i = 0, f; f = files[i]; i++) {
 			if(f.size != 0) {
-				filelist.addTag(UID, f, CreateFileItemBox(f), true);
+				var itemBox = CreateFileItemBox(f.name,f.type,f.size,f);
+				var thisUID = UID;
 				UID += 1;
+				filelist.addTag(thisUID, f, itemBox, true);
 			} else {
 				emptyFile = true;
 			}
@@ -68,7 +70,7 @@ var FilesBox = function(uploaderArea) {
 			errorBox.html("");
 		}
 	}
-	
+		
 	this.markError = function (id) {
 		filelist.match({id:id})
 			.removeProgressBar()
@@ -90,76 +92,97 @@ var FilesBox = function(uploaderArea) {
 		}		
 	};
 	
-	this.uploadFile = function(wolfpackName,onComplete) {
+	this.getCallbackAddress = function (wolfpackName, fileName, fileType) {
+		return  "/sfsupload?" + "wolfpackName=" + wolfpackName
+			+ "&fileName=" + fileName
+			+ "&contentType=" + fileType;
+	};
+	
+	this.initProgress = function (id) {
+		filelist.initProgressBar(id);
+	};
+	
+	this.showProgress = function (id,percentComplete) {
+		filelist.setProgress(id,percentComplete);
+	};
+	
+	this.uploadFileViaXML = function (id,file,wolfpackName,
+			onSuccess,onError,onComplete) {
+		var xhr = new XMLHttpRequest();
+		
+		self.initProgress(id);
+		
+		/* event listners */
+		xhr.upload.addEventListener("progress", function(evt) {			
+			if (evt.lengthComputable) {
+				var percentComplete = Math.round(evt.loaded * 100
+						/ evt.total);
+				self.showProgress(id, percentComplete);
+			}
+		}, false);
+		
+		xhr.addEventListener("load", function (evt) {
+			var response = JSON.parse(xhr.responseText);
+			if(response.result != RESPONSE_RESULT.SUCCESS) {
+				onError(response);
+			} else {
+				onSuccess(response);
+			}
+			
+			onComplete(response);
+		}, false);
+		
+		xhr.addEventListener("error", function (evt) {
+			var response = JSON.parse(xhr.responseText);
+			onError(response);
+			onComplete(response);
+		}, false);
+		
+		xhr.addEventListener("abort", function (evt) {
+			var response = JSON.parse(xhr.responseText);
+			onError(response);
+			onComplete(response);
+		}, false);
+		
+		filelist.setOnRemoveTag(id, function(id) {
+			xhr.abort();
+		});
+
+		xhr.open("POST",self.getCallbackAddress(wolfpackName,
+				file.name, file.type));
+		xhr.send(file);
+	};
+	
+	this.uploadFile = this.uploadFileViaXML;
+	
+	this.uploadAllFiles = function(wolfpackName,onComplete) {
 		if(!filelist || filelist.match({markedOK:false}).isEmpty()) {
 			onComplete(true,[]);
 			return this;
 		}
 		
-		filelist.match({markedOK:false}).each(function(id,file) {
-			var xhr = new XMLHttpRequest();
-
-			filelist.initProgressBar(id);
-			
-			/* event listners */
-			xhr.upload.addEventListener("progress", function(evt) {
-				if (evt.lengthComputable) {
-					var percentComplete = Math.round(evt.loaded * 100
-							/ evt.total);
-					filelist.setProgress(id,percentComplete);
-				} else {
-					// TODO: waiting animation
-				}
-			}, false);
-			
-			xhr.addEventListener("load", function (evt) {
-				var obj = JSON.parse(xhr.responseText);
-				
-				if(obj.result != RESPONSE_RESULT.SUCCESS) {
-					thisObj.markError(id);
-				} else {
-					thisObj.markOK(id,{
-						filename: file.name,
-						contentType: file.type,
-						path: obj.path
-					});
+		function onCompleteOneFile() {
+			if(filelist.match({markedOK:false,markedError:false}).isEmpty()) {
+				var success = false;
+				if(filelist.match({markedError:true}).isEmpty()) {
+					success = true;
 				}
 				
-				isComplete();
-			}, false);
-			
-			xhr.addEventListener("error", function (evt) {
-				thisObj.markError(id);
-				isComplete();
-			}, false);
-			
-			xhr.addEventListener("abort", function (evt) {
-				thisObj.markError(id);
-				isComplete();
-			}, false);
-			
-			filelist.setOnRemoveTag(id, function(id) {
-				xhr.abort();
-			});
-			
-			function isComplete() {
-				if(filelist.match({markedOK:false,markedError:false}).isEmpty()) {
-					var success = false;
-					if(filelist.match({markedError:true}).isEmpty()) {
-						success = true;
-					}
-					
-					return onComplete(success,thisObj.getUploadedFiles());
-				}				
+				return onComplete(success,self.getUploadedFiles());
 			}
-
-			var addr = "/sfsupload?" + "wolfpackName=" + wolfpackName
-					+ "&fileName=" + file.name 
-					+ "&contentType=" + file.type;
-
-
-			xhr.open("POST", addr);
-			xhr.send(file);
+		}
+		
+		filelist.match({markedOK:false}).each(function(id,file) {			
+			self.uploadFile(id, file, wolfpackName, function(response) {
+				self.markOK(id,{
+					filename: file.name,
+					contentType: file.type,
+					size: file.size,
+					path: response.path
+				});
+			},function(response) {
+				self.markError(id);
+			},onCompleteOneFile);
 		});
 		
 		return this;

@@ -1,5 +1,7 @@
-var Wolfpacks = function (menuList,request,applicationFrame) {
+var Wolfpacks = function (menuList,applicationFrame) {
 	var self = this;
+	
+	var request = new PostRequestHandler("eWolf","/json",0);
 	
 	var wolfpacksApps = {},
 		friendsMapByName = {},
@@ -19,7 +21,19 @@ var Wolfpacks = function (menuList,request,applicationFrame) {
 			wolfpackMembers:{}
 		};
 	},new ResponseHandler("wolfpackMembers",["membersList"],handleMembers).getHandler());
-		
+	
+	function handleWolfpacks(data, textStatus, postData) {
+		$.each(data.wolfpacksList, function(i,pack){
+			self.addWolfpack(pack);
+		});
+	}
+	
+	function handleMembers(data, textStatus, postData) {
+		$.each(data.membersList, function(i,userObj){
+			self.addFriend(userObj.id,userObj.name);
+		});
+	}
+	
 	this.addWolfpack = function (pack) {
 		if(wolfpacksApps[pack] == null) {		
 			menuList.addMenuItem("__pack__"+pack,pack);			
@@ -76,18 +90,10 @@ var Wolfpacks = function (menuList,request,applicationFrame) {
 	this.getFriendName = function (userID) {
 		return friendsMapByID[userID];
 	};
-		
-	function handleWolfpacks(data, textStatus, postData) {
-		$.each(data.wolfpacksList, function(i,pack){
-			self.addWolfpack(pack);
-		});
-	}
 	
-	function handleMembers(data, textStatus, postData) {
-		$.each(data.membersList, function(i,userObj){
-			self.addFriend(userObj.id,userObj.name);
-		});
-	}
+	this.requestWolfpacks = function() {
+		request.requestAll();
+	};	
 	
 	return this;
 };

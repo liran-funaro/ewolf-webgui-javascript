@@ -1,8 +1,3 @@
-var eWolfMaster = new function() {
-};
-
-var eWolf = $(eWolfMaster);
-
 IDENTIFIERS = {
 	LOADING_FRAME : "loadingFrame",
 	APPLICATION_FRAME : "applicationFrame",
@@ -19,67 +14,95 @@ IDENTIFIERS = {
 	LOGIN_APP_ID : "__login_welcome_screen__"
 };
 
+var eWolfMaster = new function() {
+	var self = this;
+	
+	this.userID = null;
+	this.userName = null;
+	
+	this.init = function() {
+		new Loading($("#"+IDENTIFIERS.LOADING_FRAME));
+		self.applicationFrame = $("#"+IDENTIFIERS.APPLICATION_FRAME);
+		
+		self.sideMenu = new SideMenu($("#"+IDENTIFIERS.MENU_FRAME),
+				$("#"+IDENTIFIERS.MAIN_FRAME),
+				$("#"+IDENTIFIERS.TOPBAR_FRAME));
+		
+		self.welcome = self.sideMenu.createNewMenuList(
+				IDENTIFIERS.WELCOME_MENU_ID,"Welcome");
+		
+		self.mainApps = self.sideMenu.createNewMenuList(
+				IDENTIFIERS.MAINAPPS_MENU_ID,"Main");
+		
+		self.wolfpacksMenuList = self.sideMenu.createNewMenuList(
+				IDENTIFIERS.WOLFPACKS_MENU_ID,"Wolfpacks");
+		
+		// Welcome
+		self.welcome.addMenuItem(IDENTIFIERS.LOGIN_APP_ID,"Login");
+		new Login(IDENTIFIERS.LOGIN_APP_ID,self.applicationFrame);
+		
+		//self.getUserInformation();
+		eWolf.trigger("select",[IDENTIFIERS.LOGIN_APP_ID]);
+	};
+	
+	this.getUserInformation = function () {
+		var responseHandler = new ResponseHandler("profile",
+				["id","name"]);
+		
+		var request = new PostRequestHandler("eWolf","/json",0)
+			.register(function() {
+				return {
+					profile: {}
+				};
+			},responseHandler.getHandler());
+		
+		function onLoggedIn(data, textStatus, postData) {
+			document.title = "eWolf - " + data.name;
+			
+			self.userID = data.id;
+			self.userName = data.name;
+			eWolf.data('userID',data.id);
+			eWolf.data('userName',data.name);
+				
+			self.createMainApps();
+		}
+		
+		function onNotLoggedIn(data, textStatus, postData) {
+			eWolf.trigger("select",[IDENTIFIERS.LOGIN_APP_ID]);
+		}
+		
+		responseHandler.success(onLoggedIn);	
+		responseHandler.error(onNotLoggedIn).badResponseHandler(onNotLoggedIn);
+		
+		request.requestAll();
+	};
+	
+	this.createMainApps = function () {
+		self.welcome.hideMenu();
+		
+		self.wolfpacks = new Wolfpacks(self.wolfpacksMenuList,self.applicationFrame);
+		self.wolfpacks.addFriend(self.userID, self.userName);
+		self.wolfpacks.requestWolfpacks();
+		
+		self.mainApps.addMenuItem(self.userID,"My Profile");
+		new Profile(self.userID,self.userName,
+				self.applicationFrame);
+		
+		self.mainApps.addMenuItem(IDENTIFIERS.NEWSFEED_APP_ID,"News Feed");
+		new WolfpackPage(IDENTIFIERS.NEWSFEED_APP_ID,null,self.applicationFrame);
+		
+		self.mainApps.addMenuItem(IDENTIFIERS.INBOX_APP_ID,"Messages");
+		new Inbox(IDENTIFIERS.INBOX_APP_ID,self.applicationFrame);
+		
+		new SearchApp(self.sideMenu,
+				self.applicationFrame,$("#"+IDENTIFIERS.TOPBAR_FRAME));
+		
+		eWolf.trigger("select",[IDENTIFIERS.NEWSFEED_APP_ID]);
+	};
+};
+
+var eWolf = $(eWolfMaster);
+
 $(document).ready(function () {
-	new Loading($("#"+IDENTIFIERS.LOADING_FRAME));
-	eWolf.applicationFrame = $("#"+IDENTIFIERS.APPLICATION_FRAME);
-	
-	eWolf.sideMenu = new SideMenu($("#"+IDENTIFIERS.MENU_FRAME),
-			$("#"+IDENTIFIERS.MAIN_FRAME),
-			$("#"+IDENTIFIERS.TOPBAR_FRAME));
-	
-	eWolf.welcome = eWolf.sideMenu.createNewMenuList(
-			IDENTIFIERS.WELCOME_MENU_ID,"Welcome");
-	
-	eWolf.mainApps = eWolf.sideMenu.createNewMenuList(
-			IDENTIFIERS.MAINAPPS_MENU_ID,"Main");
-	
-	eWolf.wolfpacksMenuList = eWolf.sideMenu.createNewMenuList(
-			IDENTIFIERS.WOLFPACKS_MENU_ID,"Wolfpacks");
-	
-	getUserInformation();
+	eWolfMaster.init();
 });
-
-function getUserInformation() {
-	var request = new PostRequestHandler("eWolf","/json",0)
-		.register(function() {
-			return {
-				profile: {}
-			};
-		},new ResponseHandler("profile",
-					["id","name"],handleProfileData).getHandler());
-	
-	eWolf.wolfpacks = new Wolfpacks(eWolf.wolfpacksMenuList,request,eWolf.applicationFrame);
-	request.requestAll();
-	
-	function handleProfileData(data, textStatus, postData) {
-		document.title = "eWolf - " + data.name;
-			
-		eWolf.data('userID',data.id);
-		eWolf.data('userName',data.name);
-			
-		createMainApps();
-	}	
-}
-
-function createMainApps() {
-	eWolf.wolfpacks.addFriend(eWolf.data("userID"), eWolf.data("userName"));
-	
-	eWolf.mainApps.addMenuItem(eWolf.data("userID"),"My Profile");
-	new Profile(eWolf.data("userID"),eWolf.data('userName'),
-			eWolf.applicationFrame);
-	
-	eWolf.mainApps.addMenuItem(IDENTIFIERS.NEWSFEED_APP_ID,"News Feed");
-	new WolfpackPage(IDENTIFIERS.NEWSFEED_APP_ID,null,eWolf.applicationFrame);
-	
-	eWolf.mainApps.addMenuItem(IDENTIFIERS.INBOX_APP_ID,"Messages");
-	new Inbox(IDENTIFIERS.INBOX_APP_ID,eWolf.applicationFrame);
-	
-	new SearchApp(eWolf.sideMenu,
-			eWolf.applicationFrame,$("#"+IDENTIFIERS.TOPBAR_FRAME));
-	
-	// Welcome
-	eWolf.welcome.addMenuItem(IDENTIFIERS.LOGIN_APP_ID,"Login");
-	new Login(IDENTIFIERS.LOGIN_APP_ID,eWolf.applicationFrame);
-	
-	eWolf.trigger("select",[IDENTIFIERS.NEWSFEED_APP_ID]);
-}

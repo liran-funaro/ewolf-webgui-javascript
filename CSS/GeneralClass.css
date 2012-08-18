@@ -31,4 +31,6 @@
 .errorArea {
 	color:red;
 	font-size:11px;
+	padding-left: 10px;
+	vertical-align:middle;
 }

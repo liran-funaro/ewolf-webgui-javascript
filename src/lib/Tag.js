@@ -1,7 +1,5 @@
-var Tag = function(id,onRemove,removable,multirow) {
-	var box = $("<p/>").attr({
-		"class" : "TagClass"
-	});
+var Tag = function(id,onRemove,removable,multirow,withImage) {
+	var box = $("<p/>").addClass("TagClass");
 	
 	if(!removable) {
 		box.addClass("TagNonRemoveable");
@@ -11,15 +9,20 @@ var Tag = function(id,onRemove,removable,multirow) {
 		box.addClass("TagNoMultiRow");
 	}
 
-	$("<div/>").attr({
-		"class" : "TagDeleteClass"
-	}).append("&times;").appendTo(box).click(function() {
-		box.remove();
+	$("<div/>").addClass("TagDeleteClass")
+		.append("&times;")
+		.appendTo(box)
+		.click(function() {
+			box.remove();
 		
-		if(onRemove) {
-			onRemove(id);
-		}
-	});
+			if(onRemove) {
+				onRemove(id);
+			}
+		});
+	
+	if(withImage) {
+		box.addClass("TagWithImage");
+	}
 	
 	box.data("initProgressBar", function() {
 		var progress = $("<div/>").appendTo(box);

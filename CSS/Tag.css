@@ -10,6 +10,8 @@
 	margin-bottom:5px;
 	width:auto !important;	
 	position:relative;
+/* 	height:auto !important; */
+	vertical-align:middle;
 }
 
 .ui-progressbar {
@@ -40,6 +42,11 @@
 	display:none;
 }
 
+.TagWithImage > .TagDeleteClass {
+	vertical-align:middle;
+	line-height:50px;
+}
+
 .TagDeleteClass {
 	text-decoration:none;
 	color:black;
@@ -48,8 +55,8 @@
 	border-width: 0px 1px 0px 0px;
 	padding-right:5px;
 	margin-right:5px;
-	display:inline-block;
 	opacity:0.5;
+	display:inline-block;	
 }
 
 .TagDeleteClass:hover {

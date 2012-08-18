@@ -132,12 +132,10 @@ var NewMail = function(callerID,applicationFrame,options,
 	
 	this.updateSend = function() {
 		if(sendToQuery.tagList.tagCount({markedError:false,markedOK:false}) > 0) {
-			titleArea.hideFunction("Send");
-			titleArea.hideFunction("Cancel");
+			titleArea.hideAll();
 			operations.hideAll();
 		} else if(sendToQuery.tagList.tagCount({markedError:true})) {
-			titleArea.showFunction("Send");
-			titleArea.showFunction("Cancel");
+			titleArea.showAll();
 			operations.showAll();
 		} else {			
 			eWolf.trigger("needRefresh."+callerID.replace("+","\\+"),[callerID]);
@@ -173,11 +171,15 @@ var NewMail = function(callerID,applicationFrame,options,
 		
 		sendToQuery.tagList.foreachTag({markedOK:false},function(destId) {
 			if(allowAttachment && files) {
-				files.uploadFile(destId, function(success, uploadedFiles) {
+				files.uploadAllFiles(destId, function(success, uploadedFiles) {
 					if(success) {
 						mailObject.attachment = uploadedFiles;
 						self.sendTo(destId,JSON.stringify(mailObject));
-					}		
+					} else {
+						errorMessage.html("Some of the files failed to upload...<br>Message did not sent.");
+						titleArea.showAll();
+						operations.showAll();
+					}
 				});			
 			} else {
 				self.sendTo(destId,JSON.stringify(mailObject));

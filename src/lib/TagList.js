@@ -1,4 +1,4 @@
-var TagList = function(multirow,onRemoveTag) {
+var TagList = function(multirow,onRemoveTag,withImages) {
 	this.div = $("<div/>");
 	
 	this.appendTo = function(someFrame) {
@@ -142,7 +142,8 @@ var TagList = function(multirow,onRemoveTag) {
 	
 	this.addTag = function(id,tagData,tagText,removable) {
 		if( this.match({id:id}).isEmpty()) {
-			var newTagItem = new Tag(id,onRemoveTag,removable,multirow)
+			var newTagItem = new Tag(id,onRemoveTag,removable,
+					multirow,withImages)
 				.attr("id",id)
 				.data("tagData",tagData)
 				.append(tagText);

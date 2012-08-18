@@ -1,15 +1,12 @@
 var MenuList = function(id,title,topbarFrame) {
-	var thisObj = this;
+	var self = this;
 	
 	var items = [];
 	
-	var frame = $("<div/>").attr({
-		"class" : "menuList"
-	}).hide();
+	var frame = $("<div/>").addClass("menuList").hide();
 	
-	$("<div/>").attr({
-		"class" : "menuListTitle"
-	})	.append(title)
+	$("<div/>").addClass("menuListTitle")
+		.append(title)
 		.appendTo(frame);
 
 	var list = $("<ul/>").appendTo(frame);	
@@ -48,9 +45,19 @@ var MenuList = function(id,title,topbarFrame) {
 		}
 	};
 	
+	this.hideMenu = function () {
+		frame.hide();
+	};
+	
+	this.showMenu = function () {
+		if(Object.keys(items).length > 0) {
+			frame.show();
+		}
+	};
+	
 	this.appendTo = function(container) {
 		frame.appendTo(container);
-		return thisObj;
+		return self;
 	};
 	
 	return this;
