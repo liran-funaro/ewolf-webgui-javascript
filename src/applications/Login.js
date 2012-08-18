@@ -132,24 +132,11 @@ var SignUpArea = function(id) {
 		self.clearAll();
 	}
 	
-	signup.addFunction("Sign Up",function() {
-		var error = false;
-		
-		if(fullName.val() == "") {
-			error = true;
-		}
-		
-		if(username.val() == "") {
-			error = true;
-		}
-		
-		if(password.val() == "") {
-			error = true;
-		} else if(password.val() != verifyPassword.val()) {
-			error = true;
-		}
-		
-		if(error) {
+	signup.addFunction("Sign Up",function() {		
+		if(		fullName.val() == "" ||
+				username.val() == "" ||
+				password.val() == "" ||
+				password.val() != verifyPassword.val()) {
 			self.showErrors();
 		} else {
 			new PostRequestHandler(id, "/json", 0).request({
@@ -238,22 +225,55 @@ var SignUpArea = function(id) {
 	};
 	
 	this.clearAll = function() {
-		fullName.val("");
-		fullNameError.val("");
+		fullNameError.animate({
+			"opacity" : "0"
+		},500,function() {
+			fullNameError.val("");	
+		});
 		
-		username.val("");
-		usernameError.val("");
+		fullName.val("");			
+		fullName.css({
+			"background-color" : ""
+		});
 		
-		password.val("");
-		passwordError.val("");
+		usernameError.animate({
+			"opacity" : "0"
+		},500,function() {
+			usernameError.val("");	
+		});
+		
+		username.val("");			
+		username.css({
+			"background-color" : ""
+		});
+		
+		passwordError.animate({
+			"opacity" : "0"
+		},500,function() {
+			passwordError.val("");	
+		});
+		
+		password.val("");			
+		password.css({
+			"background-color" : ""
+		});
 		
 		verifyPassword.val("");
+		verifyPassword.css({
+			"background-color" : ""
+		});
 	};
 	
 	this.appendTo = function (someFrame) {
 		signup.appendTo(someFrame);
 		return self;
 	};
+	
+	eWolf.bind("refresh."+id,function(event,eventID) {
+		if(id == eventID) {
+			self.clearAll();
+		}
+	});
 	
 	return this;
 };

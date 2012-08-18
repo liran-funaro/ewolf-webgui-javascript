@@ -41,8 +41,8 @@ var eWolfMaster = new function() {
 		self.welcome.addMenuItem(IDENTIFIERS.LOGIN_APP_ID,"Login");
 		new Login(IDENTIFIERS.LOGIN_APP_ID,self.applicationFrame);
 		
-		//self.getUserInformation();
-		eWolf.trigger("select",[IDENTIFIERS.LOGIN_APP_ID]);
+		self.getUserInformation();
+		//eWolf.trigger("select",[IDENTIFIERS.LOGIN_APP_ID]);
 	};
 	
 	this.getUserInformation = function () {
