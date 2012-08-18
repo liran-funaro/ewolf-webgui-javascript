@@ -116,9 +116,8 @@ var eWolf = new function() {
 	};
 	
 	this.onHashChange = function() {
-		var selected = null;
 		if(window.location.hash && window.location.hash != "") {
-			selected = window.location.hash.replace("#", "");
+			var selected = window.location.hash.replace("#", "");
 			
 			var found = false;
 			

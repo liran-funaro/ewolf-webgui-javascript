@@ -7,7 +7,6 @@
 		obj = '<object '
 				+'width="' + vidWidth + '" ' 
 				+ 'height="' + vidHeight + '" '
-				//+ 'id="' + playerID + '" '
 				+ '>'
 					+ '<param name="movie" value="http://www.youtube.com/v/[vid]&hl=en&fs=1"></param>'
 					+ '<param name="allowFullScreen" value="true"></param>'
@@ -32,6 +31,7 @@
 
 		links.each(function(i, link) {
 			var vid = $(link).attr("href").match(/((\?v=)(\w[\w|-]*))/g); // end up with ?v=oHg5SJYRHA0
+			that.append("<br>");
 			if (vid.length != 0) {
 				var ytid = vid[0].replace(/\?v=/, ''); // end up with oHg5SJYRHA0
 				var player = obj.replace(/\[vid\]/g, ytid).replace(/\[UID\]/g, UID);
@@ -47,7 +47,7 @@
 	};
 	
 	$.fn.stopAllYouTubePlayers = function() {
-		var players = $("embed[id^="+playerID+"]");
+		var players = this.find("embed[id^="+playerID+"]");
 		if(players && players.length > 0) {
 			players.each(function(i, p) {
 				p.stopVideo();
