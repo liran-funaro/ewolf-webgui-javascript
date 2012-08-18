@@ -1,8 +1,7 @@
-var MenuItem = function(id,title,messageText,topbarFrame) {
+var MenuItem = function(id,title,topbarFrame) {
 	var thisObj = this;
 	var isLoading = false;
 	var selected = false;	
-	var message = new MenuMessage(messageText,topbarFrame);
 	
 	var listItem = $("<li/>");
 		
@@ -28,7 +27,7 @@ var MenuItem = function(id,title,messageText,topbarFrame) {
 	
 	listItem.click(function() {
 		if(selected == false) {
-			eWolf.trigger("select",[id]);
+			eWolf.selectApp(id);
 		}	
 	});
 
@@ -37,9 +36,6 @@ var MenuItem = function(id,title,messageText,topbarFrame) {
 			eWolf.trigger("refresh."+id.replace("+","\\+"),[id]);
 		}	
 	});
-	
-	listItem.mouseover(message.show);
-	listItem.mouseout(message.hide);
 	
 	function updateView() {
 		var w = 145;
@@ -113,7 +109,6 @@ var MenuItem = function(id,title,messageText,topbarFrame) {
 	};
 	
 	this.destroy = function() {
-		message.destroy();
 		listItem.remove();
 		delete thisObj;
 	};

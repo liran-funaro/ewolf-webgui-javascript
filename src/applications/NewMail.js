@@ -1,28 +1,36 @@
-NEW_MAIL_DESCRIPTION_DAFAULTS = {
-	TITLE : "New Mail",
-	TO : "To",
-	CONTENT : "Content",
-	ATTACHMENT : "Attachment"
+NEWMAIL_CONSTANTS = {
+	NEWMAIL_APP_ID_PREFIX : "mailto:",
+	NEW_MAIL_DAFAULTS : {
+			TITLE : "New Mail",
+			TO : "To",
+			CONTENT : "Content",
+			ATTACHMENT : "Attachment"
+		}
 };
 
 var NewMail = function(callerID,applicationFrame,options,		
 		createRequestObj,handleResponseCategory,
 		allowAttachment,sendTo,sendToQuery) {
 	var self = this;
-	var id = "__newmessage__"+callerID;
+	$.extend(this,NEWMAIL_CONSTANTS);
+	
+	var id = self.NEWMAIL_APP_ID_PREFIX+callerID;
 	
 	Application.call(this,id,applicationFrame);
 	
-	var settings = $.extend({}, NEW_MAIL_DESCRIPTION_DAFAULTS, options);
+	var settings = $.extend({}, self.NEW_MAIL_DAFAULTS, options);
 		
 	var request = new PostRequestHandler(id,"/json",0);
 		
 	var titleArea = new TitleArea(settings.TITLE).appendTo(this.frame);
 	
-	var base = $("<table/>").appendTo(this.frame);
+	var base = $("<table/>")
+		.addClass("newMainTable")
+		.appendTo(this.frame);
 	
 	var queryRaw = $("<tr/>").appendTo(base);
-	$("<td/>").attr("class","newMailAlt")
+	$("<td/>")
+		.addClass("newMailAlt")
 		.append(settings.TO+":")
 		.appendTo(queryRaw);	
 	var userIdCell = $("<td/>").appendTo(queryRaw);
@@ -34,26 +42,32 @@ var NewMail = function(callerID,applicationFrame,options,
 	}
 	
 	var msgRaw = $("<tr/>").appendTo(base);
-	$("<td/>").attr("class","newMailAlt")
+	$("<td/>")
+		.addClass("newMailAlt")
 		.append(settings.CONTENT+":")
 		.appendTo(msgRaw);
 	
-	var height = 300;
+	var height = 350;
 	if(allowAttachment) {
-		height = 100;
+		height = 200;
 	}
 	
-	var messageText = $("<textarea/>").attr({
-		"placeholder": "What is on your mind...",
-		"style" : "min-width:300px !important;height:"+height+"px  !important"
+	var messageText = $("<div/>")
+		.addClass("textarea-div")
+		.attr({
+//		"placeholder": "What is on your mind...",
+		"style" : "min-height:"+height+"px;",
+		"contentEditable" : "true"
 	});
 	
-	$("<td/>").append(messageText).appendTo(msgRaw);
+	$("<td/>").append(messageText)
+		.appendTo(msgRaw);
 	
 	var files = null;
 	if(allowAttachment) {
 		var attacheRaw = $("<tr/>").appendTo(base);
-		$("<td/>").attr("class","newMailAlt")
+		$("<td/>")
+			.addClass("newMailAlt")
 			.append(settings.ATTACHMENT+":")
 			.appendTo(attacheRaw);
 		
@@ -77,7 +91,7 @@ var NewMail = function(callerID,applicationFrame,options,
 		"class": "errorArea"
 	}).appendTo(errorBox);
 	
-	eWolf.bind("refresh",function(event,eventID) {
+	eWolf.bind("refresh."+id,function(event,eventID) {
 		if(eventID == id) {
 			if(sendTo != null) {				
 				window.setTimeout(function () {
@@ -164,7 +178,8 @@ var NewMail = function(callerID,applicationFrame,options,
 	};
 	
 	this.sendToAll = function () {		
-		var msg = messageText.val();
+		var msg = messageText.html();
+
 		var mailObject = {
 				text: msg
 		};
@@ -206,13 +221,9 @@ var NewMail = function(callerID,applicationFrame,options,
 				createRequestObj(destId,data),
 				responseHandler.getHandler());
 	};
-		
-	this.select = function() {
-		eWolf.trigger("select",[id]);
-	};
 	
 	this.cancel = function() {
-		eWolf.trigger("select",[callerID]);
+		eWolf.selectApp(callerID);
 	};
 	
 	titleArea

@@ -16,7 +16,8 @@ var LoginArea = function(id) {
 	var login = new TitleArea("Login").appendTo(this.frame);
 	login.addFunction("Login",function() {
 		// TODO: Login
-		eWolfMaster.getUserInformation();
+		eWolf.sendToProfile = {};
+		eWolf.getUserInformation();
 	});
 	
 	var username = $("<input/>").attr({
@@ -32,7 +33,7 @@ var LoginArea = function(id) {
 	var base = $("<table/>");
 	
 	var usernameRaw = $("<tr/>").appendTo(base);
-	$("<td/>").addClass("newMailAlt")
+	$("<td/>").addClass("loginFieldDescription")
 		.append("Username:")
 		.appendTo(usernameRaw);	
 	$("<td/>")
@@ -40,7 +41,7 @@ var LoginArea = function(id) {
 		.appendTo(usernameRaw);
 	
 	var passwordRaw = $("<tr/>").appendTo(base);
-	$("<td/>").addClass("newMailAlt")
+	$("<td/>").addClass("loginFieldDescription")
 		.append("Password:")
 		.appendTo(passwordRaw);	
 	$("<td/>")
@@ -91,7 +92,7 @@ var SignUpArea = function(id) {
 	var base = $("<table/>");
 	
 	var fullNameRaw = $("<tr/>").appendTo(base);
-	$("<td/>").addClass("newMailAlt")
+	$("<td/>").addClass("loginFieldDescription")
 		.append("Full Name:")
 		.appendTo(fullNameRaw);	
 	$("<td/>")
@@ -100,7 +101,7 @@ var SignUpArea = function(id) {
 		.appendTo(fullNameRaw);
 	
 	var usernameRaw = $("<tr/>").appendTo(base);
-	$("<td/>").addClass("newMailAlt")
+	$("<td/>").addClass("loginFieldDescription")
 		.append("Username:")
 		.appendTo(usernameRaw);	
 	$("<td/>")
@@ -109,7 +110,7 @@ var SignUpArea = function(id) {
 		.appendTo(usernameRaw);
 	
 	var passwordRaw = $("<tr/>").appendTo(base);
-	$("<td/>").addClass("newMailAlt")
+	$("<td/>").addClass("loginFieldDescription")
 		.append("Password:")
 		.appendTo(passwordRaw);	
 	$("<td/>")
@@ -118,7 +119,7 @@ var SignUpArea = function(id) {
 		.appendTo(passwordRaw);
 	
 	var passwordRaw = $("<tr/>").appendTo(base);
-	$("<td/>").addClass("newMailAlt")
+	$("<td/>").addClass("loginFieldDescription")
 		.append("Verify Password:")
 		.appendTo(passwordRaw);	
 	$("<td/>")
@@ -128,7 +129,7 @@ var SignUpArea = function(id) {
 	signup.appendAtBottomPart(base);
 	
 	function handleSignUp(data, textStatus, postData) {
-		eWolfMaster.getUserInformation();
+		eWolf.getUserInformation();
 		self.clearAll();
 	}
 	

@@ -120,7 +120,7 @@ var ProfileNewsFeedList = function (request,profileID) {
 		newsOf:"user"
 	};
 	
-	if(profileID != eWolf.data("userID")) {
+	if(profileID != eWolf.userID) {
 		newsFeedRequestObj.userID = profileID;
 	}
 	

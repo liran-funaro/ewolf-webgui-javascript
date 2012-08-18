@@ -27,10 +27,7 @@
 	width:750px;
 }
 
-.menuItemMessageClass {
-	background-color:white;
-	opacity: 0.8;
-	border-radius:13px;
+.logoutLink {
 	padding:1px 12px 1px 12px;	
 	font-size:12px;
 	color:black;
@@ -46,7 +43,19 @@
 	width:160px;
 	font-size:40px;
 	font-weight:bold;
-	color:#af9c7c;
+	color:black;
+}
+
+.main-eWolf-title A:link {
+	text-decoration: none;	
+	color:black;
+}
+
+.main-eWolf-title A:visited {
+	color:black;
+}
+.main-eWolf-title A:active {
+	color:black;
 }
 
 .title-bar {

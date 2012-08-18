@@ -4,6 +4,7 @@ var BasicRequestHandler = function(id,requestAddress,
 	
 	var observersRequestFunction = [];
 	var observersHandleDataFunction = [];
+	var onCompleteAll = null;
 	var timer = null;
 	
 	function trigger() {
@@ -17,6 +18,10 @@ var BasicRequestHandler = function(id,requestAddress,
 			clearTimeout(timer);
 			timer = setTimeout(trigger,refreshIntervalSec*1000);
 		}
+		
+		if(onCompleteAll) {
+			onCompleteAll();
+		}		
 	}
 		
 	this.getId = function() {
@@ -81,6 +86,11 @@ var BasicRequestHandler = function(id,requestAddress,
 		});
 		
 		return self;
+	};
+	
+	this.complete = function(newOnCompleteAll) {
+		onCompleteAll = newOnCompleteAll;
+		return this;
 	};
 		
 	return this;

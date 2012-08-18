@@ -1,7 +1,8 @@
 function CreateMailItemBox(mailObj) {
-	var text = mailObj.text.replace("<","&lt").replace(">","&gt").replace(/\n/g,"<br>");
+	var text = mailObj.text;
 	var canvas = $("<div/>").html(text);
 	canvas.linkify();
+	canvas.addYouTubeEmbeded();
 
 	if(mailObj.attachment != null) {
 		var imageCanvas = $("<div/>");

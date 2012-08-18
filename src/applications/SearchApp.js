@@ -1,7 +1,13 @@
+SEARCHAPP_CONSTANTS = {
+	SEARCH_PROFILE_PREFIX : "profile:",
+	SEARCH_MENU_ITEM_ID : "__seach_menu_id__"
+};
+
 var SearchApp = function(menu,applicationFrame,container) {
 	var self = this;
+	$.extend(this,SEARCHAPP_CONSTANTS);
 	
-	var menuList = menu.createNewMenuList("search","Searches");
+	var menuList = menu.createNewMenuList(this.SEARCH_MENU_ITEM_ID,"Search");
 	var apps = new Object();
 	var lastSearch = null;
 	
@@ -29,21 +35,25 @@ var SearchApp = function(menu,applicationFrame,container) {
 			tempName = name;
 		}
 		
-		menuList.addMenuItem(key,tempName);
-		apps[key] = new Profile(key,name,applicationFrame)
+		var searchAppKey = self.SEARCH_PROFILE_PREFIX + key;
+		menuList.addMenuItem(searchAppKey,tempName);
+		apps[searchAppKey] = new Profile(searchAppKey,key,name,
+				applicationFrame)
 			.onReceiveName(function(newName) {
-				menuList.renameMenuItem(key,newName);
+				menuList.renameMenuItem(searchAppKey,newName);
 			});	
 		
-		eWolf.trigger("select",[key]);
+		eWolf.selectApp(searchAppKey);
 	};
 	
-	function removeSearchMenuItem(key) {
-		if(apps[key] != null) {
-			apps[key].destroy();
-			delete apps[key];
-			apps[key] = null;
-			menuList.removeMenuItem(key);
+	function removeSearchMenuItem(searchKey) {
+		var searchAppKey = self.SEARCH_PROFILE_PREFIX + searchKey;
+		
+		if(apps[searchAppKey] != null) {
+			apps[searchAppKey].destroy();
+			delete apps[searchAppKey];
+			apps[searchAppKey] = null;
+			menuList.removeMenuItem(searchAppKey);
 		}
 	}
 	
@@ -60,8 +70,12 @@ var SearchApp = function(menu,applicationFrame,container) {
 		}
 		
 		if(key != null && key != "") {
-			if(key == eWolf.data("userID") || apps[key] != null) {
-				eWolf.trigger("select",[key]);
+			var searchAppKey = self.SEARCH_PROFILE_PREFIX + key;
+			
+			if(key == eWolf.userID) {
+				eWolf.selectApp(eWolf.MYPROFILE_APP_ID);
+			} else if(apps[searchAppKey] != null) {
+				eWolf.selectApp(searchAppKey);
 			} else {
 				removeLastSearch();
 				lastSearch = key;
@@ -80,7 +94,10 @@ var SearchApp = function(menu,applicationFrame,container) {
 	});
 	
 	eWolf.bind("select",function(event,eventId) {
-		if(eventId != lastSearch && eventId != "__newmessage__"+lastSearch) {
+		var lastSearchAppKey = self.SEARCH_PROFILE_PREFIX + lastSearch;
+		var lastSearchNewMailAppKey = NEWMAIL_CONSTANTS.NEWMAIL_APP_ID_PREFIX
+			+ lastSearchAppKey;
+		if(eventId != lastSearchAppKey && eventId != lastSearchNewMailAppKey) {
 			removeLastSearch();
 		}
 	});

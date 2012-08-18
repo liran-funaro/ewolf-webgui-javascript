@@ -13,8 +13,7 @@ var MenuList = function(id,title,topbarFrame) {
 	
 	this.addMenuItem = function(id,title) {
 		if(items[id] == null) {
-			var menuItem = new MenuItem(id,title,
-					"Click to show "+title.toLowerCase(),topbarFrame)
+			var menuItem = new MenuItem(id,title,topbarFrame)
 					.appendTo(list);
 			
 			items[id] = menuItem;
@@ -24,8 +23,7 @@ var MenuList = function(id,title,topbarFrame) {
 			}
 		} else {
 			console.log("[Menu Error] Item with id: "+ id +" already exist");
-		}
-		
+		}		
 	};
 	
 	this.removeMenuItem = function(removeId) {

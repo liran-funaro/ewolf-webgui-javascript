@@ -4,11 +4,7 @@ function CreateUserBox(id,name) {
 		"class": "selectableBox",
 		"title": id
 	}).click(function() {
-		if(id != eWolf.data("userID")) {
-			eWolf.trigger("search",[id,name]);
-		} else {
-			eWolf.trigger("select",[id]);
-		}
+		eWolf.trigger("search",[id,name]);
 	});
 	
 	if (id == null && name != null) {

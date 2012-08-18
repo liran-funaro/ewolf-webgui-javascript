@@ -1,4 +1,4 @@
-var AddToWolfpack = function(id, frame, activator, request, packsAlreadyIn) {
+var AddToWolfpack = function(id, userID, frame, activator, request, packsAlreadyIn) {
 	var self = this;
 	PopUp.call(this,frame,activator);
 	
@@ -166,7 +166,7 @@ var AddToWolfpack = function(id, frame, activator, request, packsAlreadyIn) {
 			request.request({
 				addWolfpackMember: {
 					wolfpackNames: wolfpacks,
-					userIDs: [id]
+					userIDs: [userID]
 				}
 			},response.getHandler());
 		}

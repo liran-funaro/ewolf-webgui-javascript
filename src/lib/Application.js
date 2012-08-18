@@ -4,7 +4,6 @@ var Application = function(id,container) {
 	var needRefresh = true;
 	
 	this.frame = $("<div/>").attr({
-		"id": id+"ApplicationFrame",
 		"class": "applicationContainer"
 	})	.appendTo(container)
 		.hide();
@@ -33,6 +32,8 @@ var Application = function(id,container) {
 				});
 				
 				selected = false;
+				
+				self.frame.stopAllYouTubePlayers();
 			}				
 		}			
 	});
@@ -51,6 +52,9 @@ var Application = function(id,container) {
 		}
 	});
 	
+	eWolf.bind("destroy."+id,function(event,eventId) {
+		self.destroy();
+	});	
 	
 	this.getFrame = function() {
 		return self.frame;
@@ -64,10 +68,17 @@ var Application = function(id,container) {
 		return selected;
 	};
 	
+	this.select = function() {
+		//eWolf.selectApp(id);
+		eWolf.trigger("select",[id]);
+		return self;
+	};
+	
 	this.destroy = function() {
 		eWolf.unbind("select."+id);
 		eWolf.unbind("refresh."+id);
 		eWolf.unbind("needRefresh."+id);
+		eWolf.unbind("destroy."+id);
 		self.frame.remove();
 		delete self;
 	};

@@ -1,4 +1,4 @@
-var Profile = function (id,name,applicationFrame) {
+var Profile = function (id,userID,userName,applicationFrame) {
 	var self = this;
 	
 	Application.call(this,id,applicationFrame);
@@ -7,8 +7,8 @@ var Profile = function (id,name,applicationFrame) {
 	
 	var userObj = {};
 	
-	if(id != eWolf.data("userID")) {
-		userObj.userID = id;
+	if(userID != eWolf.userID) {
+		userObj.userID = userID;
 	}
 	
 	var handleProfileResonse = new ResponseHandler("profile",
@@ -29,13 +29,13 @@ var Profile = function (id,name,applicationFrame) {
 	var wolfpacksContainer = new CommaSeperatedList("Wolfpakcs");
 	topTitle.appendAtBottomPart(wolfpacksContainer.getList());
 	
-	if(id != eWolf.data("userID")) {
+	if(userID != eWolf.userID) {
 		topTitle.addFunction("Send message...", function (event) {
-			new NewMessage(id,applicationFrame,id,name).select();
+			new NewMessage(id,applicationFrame,userID,userName).select();
 		});
 		
 		topTitle.addFunction("Add to wolfpack...", function () {
-			new AddToWolfpack(id, self.frame, this, request, wolfpacksContainer.getItemNames());
+			new AddToWolfpack(id, userID,self.frame, this, request, wolfpacksContainer.getItemNames());
 			return false;
 		});
 	} else {
@@ -48,7 +48,7 @@ var Profile = function (id,name,applicationFrame) {
 	
 	var newsFeed = null;
 	
-	if(name == null) {
+	if(userName == null) {
 		request.request(getProfileData(),
 				handleProfileResonse.getHandler());
 	} else {
@@ -56,18 +56,18 @@ var Profile = function (id,name,applicationFrame) {
 	}
 	
 	function onProfileFound() {		
-		topTitle.setTitle(CreateUserBox(id,name));
-		idBox.html(id);
+		topTitle.setTitle(CreateUserBox(userID,userName));
+		idBox.html(userID);
 		
 		topTitle.showAll();
 		
 		if(newsFeed == null) {			
-			newsFeed = new ProfileNewsFeedList(request,id)
+			newsFeed = new ProfileNewsFeedList(request,userID)
 				.appendTo(self.frame);
 		} 	
 		
 		while(waitingForName.length > 0) {
-			waitingForName.pop()(name);
+			waitingForName.pop()(userName);
 		}
 	}
 	
@@ -84,7 +84,7 @@ var Profile = function (id,name,applicationFrame) {
 	}
 	
 	function handleProfileData(data, textStatus, postData) {		
-		name = data.name;
+		userName = data.name;
 		onProfileFound();
 	}
 	
@@ -109,8 +109,8 @@ var Profile = function (id,name,applicationFrame) {
 	}
 	
 	this.onReceiveName = function(nameHandler) {
-		if(name != null) {
-			nameHandler(name);
+		if(userName != null) {
+			nameHandler(userName);
 		} else {
 			waitingForName.push(nameHandler);
 		}

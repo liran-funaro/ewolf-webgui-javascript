@@ -1,5 +1,10 @@
+WOLFPACK_CONSTANTS = {
+	WOLFPACK_APP_PREFIX : "wolfpack:"
+};
+
 var Wolfpacks = function (menuList,applicationFrame) {
 	var self = this;
+	$.extend(this,WOLFPACK_CONSTANTS);
 	
 	var request = new PostRequestHandler("eWolf","/json",0);
 	
@@ -35,9 +40,10 @@ var Wolfpacks = function (menuList,applicationFrame) {
 	}
 	
 	this.addWolfpack = function (pack) {
-		if(wolfpacksApps[pack] == null) {		
-			menuList.addMenuItem("__pack__"+pack,pack);			
-			var app = new WolfpackPage("__pack__"+pack,pack,applicationFrame);			
+		if(wolfpacksApps[pack] == null) {
+			var packID = self.WOLFPACK_APP_PREFIX+pack;
+			menuList.addMenuItem(packID,pack);			
+			var app = new WolfpackPage(packID,pack,applicationFrame);			
 			
 			wolfpacksApps[pack] = app;
 			self.wolfpacksArray.push(pack);
@@ -91,7 +97,8 @@ var Wolfpacks = function (menuList,applicationFrame) {
 		return friendsMapByID[userID];
 	};
 	
-	this.requestWolfpacks = function() {
+	this.requestWolfpacks = function(onReady) {
+		request.complete(onReady);
 		request.requestAll();
 	};	
 	
