@@ -13,7 +13,7 @@
 	cursor:pointer;
 }
 
-.selectableBox:hover {
+.selectableBoxHovered:hover {
 	text-shadow: 0 0 0.3em grey;
 	text-decoration:underline;
 }
@@ -42,4 +42,6 @@
 	font-style:italic;
 	font-weight:normal !important;
 	padding-left:5px;
+	word-wrap:break-word;
+	white-space:pre-line;
 }

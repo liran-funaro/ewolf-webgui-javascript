@@ -95,7 +95,7 @@ var eWolf = new function() {
 		self.logout = new Logout("Logout",eWolf.topBarFrame);
 		
 		self.wolfpacks = new Wolfpacks(self.wolfpacksMenuList,self.applicationFrame);
-		self.wolfpacks.addFriend(self.userID, self.userName);
+		self.wolfpacks.addKnownUsers(self.userID, self.userName);
 		
 		self.mainApps.addMenuItem(self.MYPROFILE_APP_ID,"My Profile");
 		self.profileApp = new Profile(self.MYPROFILE_APP_ID,self.userID,

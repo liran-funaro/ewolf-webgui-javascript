@@ -20,25 +20,41 @@ var SearchApp = function(menu,applicationFrame,container) {
 		"placeholder" : "Search",
 		"autocomplete" : "off",
 		"spellcheck" : "false"
+	}).css({
+		"width" : "400px"
+	}).autocomplete({
+		source: eWolf.wolfpacks.knownUsersFullDescriptionArray,
+		select: onSelectAutocomplete
 	}).appendTo(this.frame);
+	
+	eWolf.bind("foundNewUser",function(event,id,name,fullDescription) {
+		query.autocomplete("destroy").autocomplete({
+			source: eWolf.wolfpacks.knownUsersFullDescriptionArray,
+			select: onSelectAutocomplete
+		});
+	});
+	
+	function onSelectAutocomplete(event,ui) {
+		self.search(ui.item.label);
+		return false;
+	}
 
 	var searchBtn = $("<input/>").attr({
 		"type" : "button",
 		"value" : "Search"
 	}).appendTo(this.frame).hide();
 	
-	function addSearchMenuItem(key,name) {
+	function addSearchMenuItem(id,name) {
 		var tempName;
 		if(name == null) {
-			tempName = "Search: "+key;
+			tempName = "Search: " + id;
 		} else {
 			tempName = name;
 		}
 		
-		var searchAppKey = self.SEARCH_PROFILE_PREFIX + key;
+		var searchAppKey = self.SEARCH_PROFILE_PREFIX + id;
 		menuList.addMenuItem(searchAppKey,tempName);
-		apps[searchAppKey] = new Profile(searchAppKey,key,name,
-				applicationFrame)
+		apps[searchAppKey] = new Profile(searchAppKey,id,name,applicationFrame)
 			.onReceiveName(function(newName) {
 				menuList.renameMenuItem(searchAppKey,newName);
 			});	
@@ -69,7 +85,24 @@ var SearchApp = function(menu,applicationFrame,container) {
 			key = query.val();
 		}
 		
-		if(key != null && key != "") {
+		if(name == "") {
+			name == null;
+		}
+		
+		if(key != null && key != "") {				
+			if(!name) {
+				name = eWolf.wolfpacks.getUserName(key);
+			}
+
+			if(!name) {
+				var fullDescID = eWolf.wolfpacks.getUserFromFullDescription(key);
+				
+				if(fullDescID) {
+					key = fullDescID;
+					name = eWolf.wolfpacks.getUserName(key);
+				}
+			}
+			
 			var searchAppKey = self.SEARCH_PROFILE_PREFIX + key;
 			
 			if(key == eWolf.userID) {
@@ -79,9 +112,6 @@ var SearchApp = function(menu,applicationFrame,container) {
 			} else {
 				removeLastSearch();
 				lastSearch = key;
-				if(name == "") {
-					name = null;
-				}
 				addSearchMenuItem(key,name);
 			}			
 		}

@@ -92,7 +92,7 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 			members.removeAll();
 
 			$.each(list, function(i, member) {
-				members.addItem(CreateUserBox(member.id, member.name),member.name);
+				members.addItem(CreateUserBox(member.id, member.name),member.id);
 			});
 		}
 		

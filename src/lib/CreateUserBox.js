@@ -1,51 +1,50 @@
 function CreateUserBox(id,name,showID) {
+	if(id == null) {
+		return null;
+	}
+	
 	var link = $("<a/>").attr({
 		"style": "width:1%;",
-		"class": "selectableBox",
-		"title": id
+		"class": "selectableBox selectableBoxHovered",
 	}).click(function() {
-		eWolf.trigger("search",[id,name]);
+			eWolf.trigger("search",[id,name]);
 	});
+	
+	var nameBox = $("<span/>").appendTo(link);
 	
 	var idBox = null;
 	
 	if(showID) {
 		idBox = $("<span/>")
-			.addClass("idBox");
+			.addClass("idBox")
+			.appendTo(link);
+		
+		nameBox.addClass("selectableBoxHovered");
+		link.removeClass("selectableBoxHovered");
 	}
 	
 	function fillInformation() {
-		link.attr({
+		nameBox.attr({
 			"title": id
 		}).text(name);
 		
 		if(idBox) {
-			idBox.html(id).appendTo(link);
+			idBox.html(id);
 		}		
 	}
 	
-	if (id == null && name != null) {
-		id = eWolf.wolfpacks.getFriendID(name);
-		if(!id) {
-			return null;
+	if (!name) {
+		var fullDescID = eWolf.wolfpacks.getUserFromFullDescription(id);
+		
+		if(fullDescID) {
+			id = fullDescID;
 		}
-	} else if (id != null && name == null) {
-		name = eWolf.wolfpacks.getFriendName(id);
-		if(!name) {			
-			var request = new PostRequestHandler(id,"/json",0).request({
-						profile: {
-							userID: id
-						}
-					  },
-					new ResponseHandler("profile",["name"],
-							function(data, textStatus, postData) {
-						name = data.name;
-						fillInformation();
-					}).getHandler());
-		}
-	} else if (id == null && name == null) {
-		return null;
-	} 
+		
+		name = eWolf.wolfpacks.getUserName(id,function(receivedName) {
+			name = receivedName;
+			fillInformation();	
+		});
+	}
 	
 	fillInformation();	
 

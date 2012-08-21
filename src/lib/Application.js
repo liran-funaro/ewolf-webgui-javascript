@@ -69,7 +69,6 @@ var Application = function(id,container) {
 	};
 	
 	this.select = function() {
-		//eWolf.selectApp(id);
 		eWolf.trigger("select",[id]);
 		return self;
 	};

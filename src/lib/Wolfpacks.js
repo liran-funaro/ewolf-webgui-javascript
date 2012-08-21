@@ -9,12 +9,12 @@ var Wolfpacks = function (menuList,applicationFrame) {
 	var request = new PostRequestHandler("eWolf","/json",0);
 	
 	var wolfpacksApps = {},
-		friendsMapByName = {},
-		friendsMapByID = {},
+		knownUsersMapByID = {},
 		UID = 100;
 	
 	this.wolfpacksArray = [];
-	this.friendsNameArray = [];
+	this.knownUsersFullDescriptionArray = [];
+	this.knownUsersIDArray = [];
 	
 	request.register(function() {
 		return {
@@ -36,7 +36,7 @@ var Wolfpacks = function (menuList,applicationFrame) {
 	
 	function handleMembers(data, textStatus, postData) {
 		$.each(data.membersList, function(i,userObj){
-			self.addFriend(userObj.id,userObj.name);
+			self.addKnownUsers(userObj.id,userObj.name);
 		});
 	}
 	
@@ -55,6 +55,15 @@ var Wolfpacks = function (menuList,applicationFrame) {
 		return self;
 	};
 	
+	this.getWolfpackAppID = function(pack) {
+		var app = wolfpacksApps[pack];
+		if(app) {
+			return app.getId();
+		} else {
+			return null;
+		}
+	};
+	
 	this.removeWolfpack = function(pack) {
 		if(wolfpacksApps[pack] != null) {
 			menuList.removeMenuItem("__pack__"+pack);
@@ -70,34 +79,44 @@ var Wolfpacks = function (menuList,applicationFrame) {
 		return self;
 	};
 	
-	this.addFriend = function(userID,userName) {
-		if(friendsMapByName[userName] == null) {
-			friendsMapByName[userName] = userID;
-			friendsMapByID[userID] = userName;
-			self.friendsNameArray.push(userName);
+	this.addKnownUsers = function(userID,userName) {
+		if(knownUsersMapByID[userID] == null) {
+			knownUsersMapByID[userID] = userName;
+			var fullDesc = userName+" ("+userID+")";
+			self.knownUsersFullDescriptionArray.push(fullDesc);
+			self.knownUsersIDArray.push(userID);
+			
+			eWolf.trigger("foundNewUser",[userID,userName,fullDesc]);
 		}		
 		
 		return self;
 	};
 	
-	this.removeFriend = function(userID,userName) {
-		friendsMapByName[userName] = null;
-		friendsMapByID[userID] = null;
-		
-		var idx = self.friendsNameArray.indexOf(userName);
+	this.getUserFromFullDescription = function (fullDescription) {
+		var idx = self.knownUsersFullDescriptionArray.indexOf(fullDescription);
 		if(idx != -1){
-			self.friendsNameArray.splice(idx, 1);
+			return self.knownUsersIDArray[idx];
+		} else {
+			return null;
+		}
+	};
+	
+	this.getUserName = function (userID, onReady) {
+		var itsName = knownUsersMapByID[userID];
+		if(!itsName && onReady) {
+			var request = new PostRequestHandler(userID,"/json",0).request({
+						profile: {
+							userID: userID
+						}
+					  },
+					new ResponseHandler("profile",["name"],
+							function(data, textStatus, postData) {
+						self.addKnownUsers(userID,data.name);
+						onReady(data.name);
+					}).getHandler());
 		}
 		
-		return self;
-	};
-	
-	this.getFriendID = function (userName) {
-		return friendsMapByName[userName];
-	};
-	
-	this.getFriendName = function (userID) {
-		return friendsMapByID[userID];
+		return itsName;
 	};
 	
 	this.requestWolfpacks = function(onReady) {

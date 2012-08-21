@@ -23,9 +23,6 @@ var Profile = function (id,userID,userName,applicationFrame) {
 	
 	var topTitle = new TitleArea("Searching profile...").appendTo(this.frame);
 	
-	var idBox = $("<span/>").addClass("idBox");
-	topTitle.appendAtTitleTextArea(idBox);
-	
 	var wolfpacksContainer = new CommaSeperatedList("Wolfpakcs");
 	topTitle.appendAtBottomPart(wolfpacksContainer.getList());
 	
@@ -57,7 +54,7 @@ var Profile = function (id,userID,userName,applicationFrame) {
 	
 	function onProfileFound() {		
 		topTitle.setTitle(CreateUserBox(userID,userName,true));
-		//idBox.html(userID);
+		eWolf.wolfpacks.addKnownUsers(userID,userName);
 		
 		topTitle.showAll();
 		
@@ -73,7 +70,6 @@ var Profile = function (id,userID,userName,applicationFrame) {
 	
 	function onProfileNotFound() {
 		topTitle.setTitle("Profile not found");
-		idBox.html();
 		
 		topTitle.hideAll();
 		
