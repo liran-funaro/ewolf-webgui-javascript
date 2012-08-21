@@ -10,7 +10,8 @@ var Wolfpacks = function (menuList,applicationFrame) {
 	
 	var wolfpacksApps = {},
 		friendsMapByName = {},
-		friendsMapByID = {};
+		friendsMapByID = {},
+		UID = 100;
 	
 	this.wolfpacksArray = [];
 	this.friendsNameArray = [];
@@ -41,7 +42,9 @@ var Wolfpacks = function (menuList,applicationFrame) {
 	
 	this.addWolfpack = function (pack) {
 		if(wolfpacksApps[pack] == null) {
-			var packID = self.WOLFPACK_APP_PREFIX+pack;
+			var packID = self.WOLFPACK_APP_PREFIX + pack + "_" + UID;
+			UID += 1;
+			packID = packID.replace(/[^a-zA-Z0-9_:]/g,'_');
 			menuList.addMenuItem(packID,pack);			
 			var app = new WolfpackPage(packID,pack,applicationFrame);			
 			

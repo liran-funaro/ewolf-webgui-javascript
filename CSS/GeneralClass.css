@@ -35,3 +35,11 @@
 	padding-left: 10px;
 	vertical-align:middle;
 }
+
+.idBox {
+	font-size:10px;
+	color:#444;
+	font-style:italic;
+	font-weight:normal !important;
+	padding-left:5px;
+}

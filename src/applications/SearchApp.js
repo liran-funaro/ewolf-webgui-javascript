@@ -102,6 +102,14 @@ var SearchApp = function(menu,applicationFrame,container) {
 		}
 	});
 	
+	query.bind('input propertychange',function() {
+		 if(query.val() == "") {
+	    	searchBtn.hide(200);
+	    } else {
+	    	searchBtn.show(200);
+	    }
+	});
+	
 	query.keyup(function(event){
 	    if(event.keyCode == 13 && query.val() != ""){
 //	    	if(event.shiftKey) {
@@ -111,13 +119,7 @@ var SearchApp = function(menu,applicationFrame,container) {
 //	    	}
 	    	
 	    	searchBtn.click();
-	    }
-	    
-	    if(query.val() == "") {
-	    	searchBtn.hide(200);
-	    } else {
-	    	searchBtn.show(200);
-	    }
+	    }   
 	});
 		
 	

@@ -53,6 +53,10 @@ var eWolf = new function() {
 	};
 	
 	this.getUserInformation = function () {
+		if(self.loginApp) {
+			self.loginApp.destroy();
+		}
+		
 		var responseHandler = new ResponseHandler("profile",
 				["id","name"]);
 		
@@ -68,10 +72,6 @@ var eWolf = new function() {
 			
 			self.userID = data.id;
 			self.userName = data.name;
-			
-			if(self.loginApp) {
-				self.loginApp.destroy();
-			}
 				
 			self.createMainApps();
 		}
@@ -121,8 +121,8 @@ var eWolf = new function() {
 			
 			var found = false;
 			
-			$.each($(self).data("events").select, function(i,handler) {
-				if(handler.namespace == selected) {
+			$.each($(self).data("events").select, function(i,handler) {				
+				if(handler.type == "select" && handler.namespace == selected) {
 					found = true;
 					return false;
 				}
@@ -157,7 +157,7 @@ var eWolf = new function() {
 			window.location.hash = newHash;
 		} else {
 			self.onHashChange();
-		}				
+		}
 	};
 	
 	this.bind = function (arg0,arg1) {

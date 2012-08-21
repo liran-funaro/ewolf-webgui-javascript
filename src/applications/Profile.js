@@ -56,8 +56,8 @@ var Profile = function (id,userID,userName,applicationFrame) {
 	}
 	
 	function onProfileFound() {		
-		topTitle.setTitle(CreateUserBox(userID,userName));
-		idBox.html(userID);
+		topTitle.setTitle(CreateUserBox(userID,userName,true));
+		//idBox.html(userID);
 		
 		topTitle.showAll();
 		

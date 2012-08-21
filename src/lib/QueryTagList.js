@@ -30,18 +30,20 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 	    }	    
 	});
 	
-	function onSelectSendTo(event,ui) {		
-		thisObj.addTagByQuery(ui.item.label,true);
-		return false;
-	}
-	
-	function updateQuery (id) {	
+	query.bind('input propertychange',function() {
 		if(query.val() == "") {
 			addBtn.hide(200);
 		} else {
 			addBtn.show(200);
 		}
-		
+	});
+	
+	function onSelectSendTo(event,ui) {		
+		thisObj.addTagByQuery(ui.item.label,true);
+		return false;
+	}
+	
+	function updateQuery (id) {			
 		if(!allowMultipleDestinations) {
 			if(! thisObj.tagList.match().isEmpty()) {
 				queryBox.hide();

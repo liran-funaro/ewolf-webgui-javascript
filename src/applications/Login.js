@@ -89,6 +89,8 @@ var SignUpArea = function(id) {
 	
 	var passwordError = $("<span/>").addClass("errorArea");
 	
+	var signUpError = $("<span/>").addClass("errorArea");
+	
 	var base = $("<table/>");
 	
 	var fullNameRaw = $("<tr/>").appendTo(base);
@@ -126,11 +128,26 @@ var SignUpArea = function(id) {
 		.append(verifyPassword)
 		.appendTo(passwordRaw);
 	
+	var signUpErrorRow = $("<tr/>").appendTo(base);
+	$("<td/>").addClass("loginFieldDescription")
+		.appendTo(signUpErrorRow);	
+	$("<td/>")
+		.append(signUpError)
+		.appendTo(signUpErrorRow);
+	
 	signup.appendAtBottomPart(base);
 	
 	function handleSignUp(data, textStatus, postData) {
+		eWolf.sendToProfile = {};
 		eWolf.getUserInformation();
-		self.clearAll();
+	}
+	
+	function errorHandler(data, textStatus, postData) {
+		signUpError.html(data.errorMessage);
+	}
+	
+	function badRequestHandler(data, textStatus, postData) {
+		signUpError.html("Server Error. Could not sign up.");
 	}
 	
 	signup.addFunction("Sign Up",function() {		
@@ -140,14 +157,18 @@ var SignUpArea = function(id) {
 				password.val() != verifyPassword.val()) {
 			self.showErrors();
 		} else {
+			var handler = new ResponseHandler("createAccount",[])
+				.success(handleSignUp)
+				.error(errorHandler)
+				.badResponseHandler(badRequestHandler);
+			
 			new PostRequestHandler(id, "/json", 0).request({
 				createAccount : {
 					name : fullName.val(),
 					username : username.val(),
 					password : password.val()
 				}
-			}, new ResponseHandler("createAccount", 
-					[],handleSignUp).getHandler());
+			}, handler.getHandler());
 		}
 	});
 	
