@@ -236,7 +236,7 @@ var NewMail = function(callerID,applicationFrame,options,
 	return this;
 };
 
-var NewMessage = function(id,applicationFrame,sendToID,sendToName) {	
+var NewMessage = function(id,applicationFrame,sendToID) {
 	function createNewMessageRequestObj(to,msg) {
 		return {
 			sendMessage: {
@@ -249,7 +249,7 @@ var NewMessage = function(id,applicationFrame,sendToID,sendToName) {
 	NewMail.call(this,id,applicationFrame,{
 			TITLE : "New Message"
 		},createNewMessageRequestObj,"sendMessage",false,
-		sendToName,new FriendsQueryTagList(300));
+		sendToID,new FriendsQueryTagList(300));
 	
 	return this;
 };

@@ -28,7 +28,7 @@ var Profile = function (id,userID,userName,applicationFrame) {
 	
 	if(userID != eWolf.userID) {
 		topTitle.addFunction("Send message...", function (event) {
-			new NewMessage(id,applicationFrame,userID,userName).select();
+			new NewMessage(id,applicationFrame,userID).select();
 		});
 		
 		topTitle.addFunction("Add to wolfpack...", function () {
