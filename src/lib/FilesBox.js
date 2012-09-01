@@ -2,7 +2,7 @@ var FilesBox = function(uploaderArea) {
 	var self = this;
 	
 	var fileselect;
-	var filedrag;
+	var filedrag = null;
 	var filelist = null;
 	var errorBox = null;
 	
@@ -29,30 +29,21 @@ var FilesBox = function(uploaderArea) {
 		// file drop
 		filedrag[0].addEventListener("dragover", FileDragHover, false);
 		filedrag[0].addEventListener("dragleave", FileDragHover, false);
-		filedrag[0].addEventListener("drop", FileSelectHandler, false);
-		filedrag[0].style.display = "block";
+		filedrag[0].addEventListener("drop", FileDropHandler, false);		
 		
 		errorBox = $("<div/>")
 			.addClass("errorArea")
 			.appendTo(uploaderArea);
 	}
-
-	// file drag hover
-	function FileDragHover(e) {
-		e.stopPropagation();
-		e.preventDefault();
-		e.target.className = (e.type == "dragover" ? "fileDragBoxHover" : "fileDragBox");
-	}
-
-	function FileSelectHandler(e) {
-		// cancel event and hover styling
-		FileDragHover(e);
-
-		// fetch FileList object
-		var files = e.target.files || e.dataTransfer.files;
-
+	
+	this.addFiles = function (files) {
+		if(!files) {
+			return;
+		}
+		
 		// process all File objects
 		var emptyFile = false;
+		
 		for ( var i = 0, f; f = files[i]; i++) {
 			if(f.size != 0) {
 				var itemBox = CreateFileItemBox(f.name,f.type,f.size,f);
@@ -69,6 +60,27 @@ var FilesBox = function(uploaderArea) {
 		} else {
 			errorBox.html("");
 		}
+	};
+	
+	function FileDragHover(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		
+		if(e.type == "dragover") {
+			filedrag.addClass("fileDragBoxHover");
+		} else {
+			filedrag.removeClass("fileDragBoxHover");
+		}
+	}
+	
+	function FileDropHandler(e) {
+		// cancel event and hover styling
+		FileDragHover(e);
+		self.addFiles(e.dataTransfer.files);
+	}
+
+	function FileSelectHandler(e) {
+		self.addFiles(e.target.files);
 	}
 		
 	this.markError = function (id) {
