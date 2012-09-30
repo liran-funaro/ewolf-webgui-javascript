@@ -62,5 +62,15 @@ var FunctionsArea = function () {
 		return self;
 	};
 	
+	this.hideFunctionArea = function() {
+		self.frame.hide(0);		
+		return self;
+	};
+	
+	this.showFunctionArea = function() {
+		self.frame.show(0);		
+		return self;
+	};
+	
 	return this;
 };

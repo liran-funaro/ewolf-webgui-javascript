@@ -20,8 +20,6 @@ var NewMail = function(callerID,applicationFrame,options,
 	
 	var settings = $.extend({}, self.NEW_MAIL_DAFAULTS, options);
 		
-	var request = new PostRequestHandler(id,"/json",0);
-		
 	var titleArea = new TitleArea(settings.TITLE).appendTo(this.frame);
 	
 	var base = $("<table/>")
@@ -91,6 +89,7 @@ var NewMail = function(callerID,applicationFrame,options,
 		"class": "errorArea"
 	}).appendTo(errorBox);
 	
+	// TODO: on show (not refresh)
 	eWolf.bind("refresh."+id,function(event,eventID) {
 		if(eventID == id) {
 			window.setTimeout(function () {
@@ -113,7 +112,7 @@ var NewMail = function(callerID,applicationFrame,options,
 		}
 	});
 	
-	eWolf.bind("select."+callerID,function(event,eventId) {
+	eWolf.bind("select",function(event,eventId) {
 		if(eventId != id) {
 			self.destroy();
 		}
@@ -225,7 +224,7 @@ var NewMail = function(callerID,applicationFrame,options,
 			self.updateSend();
 		});
 		
-		request.request(
+		eWolf.serverRequest.request(id,
 				createRequestObj(destId,data),
 				responseHandler.getHandler());
 	};

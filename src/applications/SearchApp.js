@@ -23,13 +23,13 @@ var SearchApp = function(menu,applicationFrame,container) {
 	}).css({
 		"width" : "400px"
 	}).autocomplete({
-		source: eWolf.wolfpacks.knownUsersFullDescriptionArray,
+		source: eWolf.members.knownUsersFullDescriptionArray,
 		select: onSelectAutocomplete
 	}).appendTo(this.frame);
 	
 	eWolf.bind("foundNewUser",function(event,id,name,fullDescription) {
 		query.autocomplete("destroy").autocomplete({
-			source: eWolf.wolfpacks.knownUsersFullDescriptionArray,
+			source: eWolf.members.knownUsersFullDescriptionArray,
 			select: onSelectAutocomplete
 		});
 	});
@@ -54,7 +54,7 @@ var SearchApp = function(menu,applicationFrame,container) {
 		
 		var searchAppKey = self.SEARCH_PROFILE_PREFIX + id;
 		menuList.addMenuItem(searchAppKey,tempName);
-		apps[searchAppKey] = new Profile(searchAppKey,id,name,applicationFrame)
+		apps[searchAppKey] = new Profile(searchAppKey,applicationFrame,id,name)
 			.onReceiveName(function(newName) {
 				menuList.renameMenuItem(searchAppKey,newName);
 			});	
@@ -91,21 +91,21 @@ var SearchApp = function(menu,applicationFrame,container) {
 		
 		if(key != null && key != "") {				
 			if(!name) {
-				name = eWolf.wolfpacks.getUserName(key);
+				name = eWolf.members.getUserName(key);
 			}
 
 			if(!name) {
-				var fullDescID = eWolf.wolfpacks.getUserFromFullDescription(key);
+				var fullDescID = eWolf.members.getUserFromFullDescription(key);
 				
 				if(fullDescID) {
 					key = fullDescID;
-					name = eWolf.wolfpacks.getUserName(key);
+					name = eWolf.members.getUserName(fullDescID);
 				}
 			}
 			
 			var searchAppKey = self.SEARCH_PROFILE_PREFIX + key;
 			
-			if(key == eWolf.userID) {
+			if(key == eWolf.profile.getID()) {
 				eWolf.selectApp(eWolf.MYPROFILE_APP_ID);
 			} else if(apps[searchAppKey] != null) {
 				eWolf.selectApp(searchAppKey);

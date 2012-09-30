@@ -1,4 +1,4 @@
-var AddToWolfpack = function(id, userID, frame, activator, request, packsAlreadyIn) {
+var AddToWolfpack = function(id, userID, frame, activator, packsAlreadyIn) {
 	var self = this;
 	PopUp.call(this,frame,activator);
 	
@@ -144,7 +144,7 @@ var AddToWolfpack = function(id, userID, frame, activator, request, packsAlready
 				}
 			}).complete(onComplete);
 			
-			request.request({
+			eWolf.serverRequest.request(id,{
 				createWolfpack: {
 					wolfpackNames: wolfpacks
 				}
@@ -160,10 +160,10 @@ var AddToWolfpack = function(id, userID, frame, activator, request, packsAlready
 			var response = new ResponseHandler("addWolfpackMember",[],null);
 			
 			response.complete(function (textStatus, postData) {
-				eWolf.trigger("needRefresh."+id.replace("+","\\+"));
+				eWolf.trigger("refresh",[id]);
 			});			
 			
-			request.request({
+			eWolf.serverRequest.request(id,{
 				addWolfpackMember: {
 					wolfpackNames: wolfpacks,
 					userIDs: [userID]

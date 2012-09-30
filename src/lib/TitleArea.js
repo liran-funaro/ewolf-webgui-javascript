@@ -82,6 +82,16 @@ var TitleArea = function (title) {
 		return self;
 	};
 	
+	this.hideFunctionArea = function() {
+		functions.hideFunctionArea();
+		return self;
+	};
+	
+	this.showFunctionArea = function() {
+		functions.showFunctionArea();
+		return self;
+	};
+	
 	this.setTitle(title);
 	
 	return this;

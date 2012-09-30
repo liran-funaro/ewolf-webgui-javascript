@@ -10,11 +10,13 @@ var MenuList = function(id,title,topbarFrame) {
 		.appendTo(frame);
 
 	var list = $("<ul/>").appendTo(frame);	
+	var menuItemList = $("<span/>").appendTo(list);
+	var xtraItemList = $("<span/>").appendTo(list);
 	
 	this.addMenuItem = function(id,title) {
 		if(items[id] == null) {
 			var menuItem = new MenuItem(id,title,topbarFrame)
-					.appendTo(list);
+					.appendTo(menuItemList);
 			
 			items[id] = menuItem;
 			
@@ -23,7 +25,14 @@ var MenuList = function(id,title,topbarFrame) {
 			}
 		} else {
 			console.log("[Menu Error] Item with id: "+ id +" already exist");
-		}		
+		}
+		
+		return self;
+	};
+	
+	this.addExtraItem = function(item) {
+		xtraItemList.append(item);
+		return self;
 	};
 	
 	this.removeMenuItem = function(removeId) {
@@ -35,22 +44,30 @@ var MenuList = function(id,title,topbarFrame) {
 		if(Object.keys(items).length <= 0) {
 			frame.hide();
 		}
+		
+		return self;
 	};
 	
 	this.renameMenuItem = function(id,newTitle) {
 		if(items[id] != null) {
 			items[id].renameTitle(newTitle);
 		}
+		
+		return self;
 	};
 	
 	this.hideMenu = function () {
 		frame.hide();
+		
+		return self;
 	};
 	
 	this.showMenu = function () {
 		if(Object.keys(items).length > 0) {
 			frame.show();
 		}
+		
+		return self;
 	};
 	
 	this.appendTo = function(container) {

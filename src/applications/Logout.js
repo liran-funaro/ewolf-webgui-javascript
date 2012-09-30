@@ -5,11 +5,7 @@ var Logout = function(text,container) {
 	})	.text(text)
 		.appendTo(container)
 		.click(function() {
-			// TODO: logout
-			eWolf.sendToProfile = {
-					userID: "THIS IS AN ERROR"
-			};
-			
+			// TODO: logout			
 			$(window).unbind('hashchange');
 			window.location.hash = "";
 			document.location.reload(true);

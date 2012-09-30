@@ -1,6 +1,8 @@
-var GenericMailList = function(mailType,request,serverSettings,
+var GenericMailList = function(mailType,appID,serverSettings,
 		listClass,msgBoxClass,preMessageTitle,allowShrink) {
 	var self = this;
+	
+	var newsFeedRequestName = appID + "__newsfeed_request_name__";
 	
 	var newestDate = null;
 	var oldestDate = null;
@@ -60,10 +62,14 @@ var GenericMailList = function(mailType,request,serverSettings,
 	
 	var responseHandler = new ResponseHandler(mailType,
 			["mailList"],handleNewData);
-	request.register(this.updateFromServer ,responseHandler.getHandler());
+	
+	eWolf.serverRequest.registerRequest(newsFeedRequestName,this.updateFromServer);
+	eWolf.serverRequest.registerHandler(newsFeedRequestName,responseHandler.getHandler());
+	eWolf.serverRequest.bindRequest(newsFeedRequestName,appID);
 	
 	var showMore = new ShowMore(this.frame,function() {
-		request.request(self.updateFromServer (true),responseHandler.getHandler());
+		eWolf.serverRequest.request(self.updateFromServer (true),
+				responseHandler.getHandler());
 	}).draw();
 	
 	function handleNewData(data, textStatus, postData) {
@@ -91,17 +97,17 @@ var GenericMailList = function(mailType,request,serverSettings,
 	return this;
 };
 
-var NewsFeedList = function (request,serverSettings) {
+var NewsFeedList = function (appID,serverSettings) {
 	$.extend(serverSettings,{maxMessages:2});
 
 	var pow = "<img src='wolf-paw.svg' height='18px' style='padding-right:5px;'></img>";
-	GenericMailList.call(this,"newsFeed",request,serverSettings,
+	GenericMailList.call(this,"newsFeed",appID,serverSettings,
 			"postListItem","postBox",pow,false);
 	
 	return this;
 };
 
-var WolfpackNewsFeedList = function (request,wolfpack) {
+var WolfpackNewsFeedList = function (appID,wolfpack) {
 	var newsFeedRequestObj = {
 		newsOf:"wolfpack"
 	};
@@ -110,29 +116,29 @@ var WolfpackNewsFeedList = function (request,wolfpack) {
 		newsFeedRequestObj.wolfpackName = wolfpack;
 	}
 	
-	NewsFeedList.call(this,request,newsFeedRequestObj);
+	NewsFeedList.call(this,appID,newsFeedRequestObj);
 	
 	return this;
 };
 
-var ProfileNewsFeedList = function (request,profileID) {
+var ProfileNewsFeedList = function (appID,profileID) {
 	var newsFeedRequestObj = {
 		newsOf:"user"
 	};
 	
-	if(profileID != eWolf.userID) {
+	if(profileID != eWolf.profile.getID()) {
 		newsFeedRequestObj.userID = profileID;
 	}
 	
-	NewsFeedList.call(this,request,newsFeedRequestObj);
+	NewsFeedList.call(this,appID,newsFeedRequestObj);
 	
 	return this;
 };
 
-var InboxList = function (request,serverSettings) {	
+var InboxList = function (appID,serverSettings) {	
 	$.extend(serverSettings,{maxMessages:2});
 	
-	GenericMailList.call(this,"inbox",request,serverSettings,
+	GenericMailList.call(this,"inbox",appID,serverSettings,
 			"messageListItem","messageBox", ">> ",true);
 	
 	return this;

@@ -33,7 +33,7 @@ var MenuItem = function(id,title,topbarFrame) {
 
 	refresh.click(function() {
 		if(isLoading == false) {
-			eWolf.trigger("refresh."+id.replace("+","\\+"),[id]);
+			eWolf.trigger("refresh",[id]);
 		}	
 	});
 	

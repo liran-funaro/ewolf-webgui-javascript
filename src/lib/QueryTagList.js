@@ -87,9 +87,9 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 
 var FriendsQueryTagList = function (minWidth) {
 	function sendToFuncReplace(query) {
-		var id = eWolf.wolfpacks.getUserFromFullDescription(query);
+		var id = eWolf.members.getUserFromFullDescription(query);
 		if(id) {
-			query = eWolf.wolfpacks.getUserName(id);
+			query = eWolf.members.getUserName(id);
 		} else {
 			id = query;
 			query = null;
@@ -102,7 +102,7 @@ var FriendsQueryTagList = function (minWidth) {
 	}
 	
 	return new QueryTagList(minWidth,"Type user name or ID...",
-			eWolf.wolfpacks.knownUsersFullDescriptionArray,true,sendToFuncReplace);
+			eWolf.members.knownUsersFullDescriptionArray,true,sendToFuncReplace);
 };
 
 var WolfpackQueryTagList = function (minWidth) {

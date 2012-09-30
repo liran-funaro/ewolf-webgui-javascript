@@ -1,38 +1,49 @@
-var Profile = function (id,userID,userName,applicationFrame) {
+var Profile = function (id,applicationFrame,userID,userName) {
 	var self = this;
+	
+	var profileRequestName = id + "__ProfileRequest__",
+			wolfpacksRequestName = id + "__WolfpakcsRequest__";
 	
 	Application.call(this,id,applicationFrame);
 	
 	var waitingForName = [];
 	
-	var userObj = {};
+	var handleProfileResonse = new ResponseHandler("profile",
+			["id","name"],handleProfileData);
 	
-	if(userID != eWolf.userID) {
-		userObj.userID = userID;
+	var handleWolfpacksResponse = new ResponseHandler("wolfpacks",
+			["wolfpacksList"],handleWolfpacksData);
+	
+	if(userID) {
+		handleProfileResonse.error(onProfileNotFound)
+												.badResponseHandler(onProfileNotFound);
+		
+		eWolf.serverRequest.registerRequest(profileRequestName,getProfileData);
+		eWolf.serverRequest.registerRequest(wolfpacksRequestName,geWolfpacksData);
+	} else {
+		profileRequestName = eWolf.PROFILE_REQUEST_NAME;
+		wolfpacksRequestName = eWolf.WOLFPACKS_REQUEST_NAME;
 	}
 	
-	var handleProfileResonse = new ResponseHandler("profile",
-			["id","name"],handleProfileData)
-		.error(onProfileNotFound);
+	eWolf.serverRequest.registerHandler(profileRequestName,handleProfileResonse.getHandler());
+	eWolf.serverRequest.registerHandler(wolfpacksRequestName,handleWolfpacksResponse.getHandler());
 	
-	var request = new PostRequestHandler(id,"/json",60)
-		.listenToRefresh()
-		.register(getProfileData,handleProfileResonse.getHandler())
-		.register(geWolfpacksData,new ResponseHandler("wolfpacks",
-				["wolfpacksList"],handleWolfpacksData).getHandler());
-	
+	eWolf.serverRequest.bindRequest(profileRequestName,id);
+	eWolf.serverRequest.bindRequest(wolfpacksRequestName,id);
+
 	var topTitle = new TitleArea("Searching profile...").appendTo(this.frame);
 	
 	var wolfpacksContainer = new CommaSeperatedList("Wolfpakcs");
 	topTitle.appendAtBottomPart(wolfpacksContainer.getList());
+	topTitle.hideFunctionArea();
 	
-	if(userID != eWolf.userID) {
+	if(userID) {
 		topTitle.addFunction("Send message...", function (event) {
 			new NewMessage(id,applicationFrame,userID).select();
 		});
 		
 		topTitle.addFunction("Add to wolfpack...", function () {
-			new AddToWolfpack(id, userID,self.frame, this, request, wolfpacksContainer.getItemNames());
+			new AddToWolfpack(id, userID,self.frame, this, wolfpacksContainer.getItemNames());
 			return false;
 		});
 	} else {
@@ -41,25 +52,17 @@ var Profile = function (id,userID,userName,applicationFrame) {
 		});
 	}
 	
-	topTitle.hideAll();
 	
 	var newsFeed = null;
 	
-	if(userName == null) {
-		request.request(getProfileData(),
-				handleProfileResonse.getHandler());
-	} else {
-		onProfileFound();
-	}
-	
 	function onProfileFound() {		
 		topTitle.setTitle(CreateUserBox(userID,userName,true));
-		eWolf.wolfpacks.addKnownUsers(userID,userName);
+		eWolf.members.addKnownUsers(userID,userName);
 		
-		topTitle.showAll();
+		topTitle.showFunctionArea();
 		
 		if(newsFeed == null) {			
-			newsFeed = new ProfileNewsFeedList(request,userID)
+			newsFeed = new ProfileNewsFeedList(id,userID)
 				.appendTo(self.frame);
 		} 	
 		
@@ -71,7 +74,7 @@ var Profile = function (id,userID,userName,applicationFrame) {
 	function onProfileNotFound() {
 		topTitle.setTitle("Profile not found");
 		
-		topTitle.hideAll();
+		topTitle.hideFunctionArea();
 		
 		if(newsFeed != null) {			
 			newsFeed.destroy();
@@ -79,7 +82,8 @@ var Profile = function (id,userID,userName,applicationFrame) {
 		} 
 	}
 	
-	function handleProfileData(data, textStatus, postData) {		
+	function handleProfileData(data, textStatus, postData) {
+		userID = data.id;
 		userName = data.name;
 		onProfileFound();
 	}
@@ -93,15 +97,11 @@ var Profile = function (id,userID,userName,applicationFrame) {
 	  }
 	
 	function getProfileData() {		
-		return {
-			profile: userObj,
-		  };
+		return {	profile: { userID: userID	} };
 	}
 	
 	function geWolfpacksData() {
-		return {
-			wolfpacks: userObj
-		  };
+		return { wolfpacks: {	userID: userID } };
 	}
 	
 	this.onReceiveName = function(nameHandler) {
@@ -112,6 +112,14 @@ var Profile = function (id,userID,userName,applicationFrame) {
 		}
 		
 		return self;
+	};
+	
+	this.getID = function() {
+		return userID;
+	};
+	
+	this.getName = function() {
+		return userName;
 	};
 	
 	return this;

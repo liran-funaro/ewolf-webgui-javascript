@@ -1,5 +1,5 @@
 var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
-		onFinish,request) {
+		onFinish) {
 	var self = this;
 	this.frame = $("<span/>");
 	
@@ -36,7 +36,7 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 			
 			errorMessage.html("");
 			
-			request.request({
+			eWolf.serverRequest.request(fatherID,{
 				addWolfpackMember: {
 					wolfpackNames: [wolfpack],
 					userIDs: itemsToAdd.getData()
@@ -56,7 +56,7 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 		
 		if(madeChanges) {
 			madeChanges = false;
-			eWolf.trigger("needRefresh."+fatherID.replace("+","\\+"));
+			eWolf.serverRequest.requestAll(fatherID,true);
 		}
 		
 		delete self;
@@ -105,7 +105,7 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 	this.complete = function (textStatus, postData) {
 		if(madeChanges) {
 			madeChanges = false;
-			eWolf.trigger("needRefresh."+fatherID.replace("+","\\+"));
+			eWolf.serverRequest.requestAll(fatherID,true);
 		}
 		
 		applyBtn.show(200);

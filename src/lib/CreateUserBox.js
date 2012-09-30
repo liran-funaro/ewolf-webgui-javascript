@@ -34,13 +34,13 @@ function CreateUserBox(id,name,showID) {
 	}
 	
 	if (!name) {
-		var fullDescID = eWolf.wolfpacks.getUserFromFullDescription(id);
+		var fullDescID = eWolf.members.getUserFromFullDescription(id);
 		
 		if(fullDescID) {
 			id = fullDescID;
 		}
 		
-		name = eWolf.wolfpacks.getUserName(id,function(receivedName) {
+		name = eWolf.members.getUserName(id,function(receivedName) {
 			name = receivedName;
 			fillInformation();	
 		});
