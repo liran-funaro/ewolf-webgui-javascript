@@ -1,5 +1,5 @@
 EWOLF_CONSTANTS = {
-	REFRESH_INTERVAL : 60,
+	REFRESH_INTERVAL_SEC : 60,
 	LOADING_FRAME : "loadingFrame",
 	APPLICATION_FRAME : "applicationFrame",
 	MAIN_FRAME : "mainFrame",
@@ -31,7 +31,7 @@ var eWolf = new function() {
 	this.serverRequest = null;
 	
 	this.init = function() {
-		self.serverRequest = new PostRequestHandler("/json",self.REFRESH_INTERVAL);
+		self.serverRequest = new PostRequestHandler("/json",self.REFRESH_INTERVAL_SEC);
 		
 		$(window).bind('hashchange', self.onHashChange);
 		

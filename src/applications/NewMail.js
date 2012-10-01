@@ -165,8 +165,7 @@ var NewMail = function(callerID,applicationFrame,options,
 	};
 	
 	this.send = function (event,resend) {
-		if(sendToQuery.tagList.isEmpty()) {
-			errorMessage.html("Please select a destination(s)");
+		if(sendToQuery.isMissingField(true)) {
 			return false;
 		}
 
@@ -179,7 +178,7 @@ var NewMail = function(callerID,applicationFrame,options,
 			
 		sendToQuery.tagList.unmarkTags({markedError:true});		
 		self.updateSend();		
-		errorMessage.html("");		
+		errorMessage.html("");
 		
 		self.sendToAll();
 	};

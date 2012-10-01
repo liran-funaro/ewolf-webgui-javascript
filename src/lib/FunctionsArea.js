@@ -10,12 +10,16 @@ var FunctionsArea = function () {
 		return self;
 	};
 	
-	this.addFunction = function (functionName,functionOp) {
+	this.addFunction = function (functionName,functionOp, hide) {
 		if(functions[functionName] == null) {
 			functions[functionName] = $("<input/>").attr({
 				"type": "button",
 				"value": functionName
-			}).click(functionOp).appendTo(this.frame);
+			}).click(functionOp).appendTo(self.frame);
+			
+			if(hide) {
+				functions[functionName].hide();
+			}
 		}
 		
 		return self;
@@ -59,16 +63,6 @@ var FunctionsArea = function () {
 			self.showFunction(functionName);
 		}
 		
-		return self;
-	};
-	
-	this.hideFunctionArea = function() {
-		self.frame.hide(0);		
-		return self;
-	};
-	
-	this.showFunctionArea = function() {
-		self.frame.show(0);		
 		return self;
 	};
 	

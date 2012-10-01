@@ -108,7 +108,7 @@ var SearchApp = function(menu,applicationFrame,container) {
 			if(key == eWolf.profile.getID()) {
 				eWolf.selectApp(eWolf.MYPROFILE_APP_ID);
 			} else if(apps[searchAppKey] != null) {
-				eWolf.selectApp(searchAppKey);
+				console.log("not deleted");
 			} else {
 				removeLastSearch();
 				lastSearch = key;

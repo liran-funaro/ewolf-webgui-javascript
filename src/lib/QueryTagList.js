@@ -1,6 +1,6 @@
 var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 		allowMultipleDestinations,commitQuery) {
-	var thisObj = this;
+	var self = this;
 	
 	this.frame = $("<div/>").attr("class","seachListClass");	
 	var queryBox = $("<div/>").appendTo(this.frame);
@@ -16,18 +16,20 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 		"type": "button",
 		"value": "Add"
 	}).click(function() {
-		thisObj.addTagByQuery(query.val(),true);
+		self.addTagByQuery(query.val(),true);
 	}).appendTo(queryBox).hide();
+	
+	var errorBox = $("<span/>").addClass("errorArea").appendTo(queryBox);
 	
 	query.autocomplete({
 		source: availableQueries,
 		select: onSelectSendTo
 	}).keyup(function(event) {
 	    if(event.keyCode == 13 && query.val() != "") {
-	    	thisObj.addTagByQuery(query.val(),true);   	
+	    	self.addTagByQuery(query.val(),true);   	
 	    } else {
 	    	updateQuery();
-	    }	    
+	    	}	    
 	});
 	
 	query.bind('input propertychange',function() {
@@ -39,13 +41,13 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 	});
 	
 	function onSelectSendTo(event,ui) {		
-		thisObj.addTagByQuery(ui.item.label,true);
+		self.addTagByQuery(ui.item.label,true);
 		return false;
 	}
 	
 	function updateQuery (id) {			
 		if(!allowMultipleDestinations) {
-			if(! thisObj.tagList.match().isEmpty()) {
+			if(! self.tagList.isEmpty()) {
 				queryBox.hide();
 			} else {
 				queryBox.show();
@@ -63,13 +65,43 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 			return false;
 		}
 		
-		if(thisObj.tagList.addTag(res.term,res.term,res.display,removable)) {
-			query.val("");
+		if(self.tagList.addTag(res.term,res.term,res.display,removable)) {
+				query.val("");
+				addBtn.hide(200);
     		updateQuery();
+    		self.isMissingField(false);
     		return true;
 		} else {
 			return false;
 		}		
+	};
+	
+	this.isMissingField = function (showError) {
+		var fieldEmpty = self.tagList.isEmpty();
+		
+		errorBox.animate({
+			"opacity" : "0"
+		},500,function() {
+			if(fieldEmpty && showError) {
+				errorBox.html(" * Please select a destination(s).");
+				
+				errorBox.animate({
+					"opacity" : "1"
+				},1000);
+				
+				query.animate({
+					"background-color" : "#debdbd"
+				},1000);
+			}
+			
+			if(!fieldEmpty) {
+				query.animate({
+					"background-color" : "#ddd"
+				},1000);
+			}
+		});
+		
+		return fieldEmpty;
 	};
 	
 	this.appendTo = function(someFrame) {
@@ -101,7 +133,7 @@ var FriendsQueryTagList = function (minWidth) {
 		};
 	}
 	
-	return new QueryTagList(minWidth,"Type user name or ID...",
+	return new QueryTagList(minWidth,"Type friend name or ID...",
 			eWolf.members.knownUsersFullDescriptionArray,true,sendToFuncReplace);
 };
 
