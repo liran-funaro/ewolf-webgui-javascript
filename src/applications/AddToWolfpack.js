@@ -123,38 +123,6 @@ var AddToWolfpack = function(id, userID, frame, activator, packsAlreadyIn) {
 		return result;	
 	};
 	
-	this.createWolfpacks = function(wolfpacks,onComplete) {
-		if(wolfpacks.length > 0) {			
-			var responseHandler = new ResponseHandler("createWolfpack",[],null);
-			
-			responseHandler.success(function(data, textStatus, postData) {
-				$.each(wolfpacks,function(i,pack) {
-					eWolf.wolfpacks.addWolfpack(pack);
-				});
-			}).error(function(data, textStatus, postData) {				
-				if(data.wolfpacksResult == null) {
-					console.log("No wolfpacksResult in response");
-				} else {
-					$.each(data.wolfpacksResult, function(i,response) {
-						if(response.result == RESPONSE_RESULT.SUCCESS) {
-							eWolf.wolfpacks.addWolfpack(postData.wolfpackNames[i]);
-						}
-					});
-					
-				}
-			}).complete(onComplete);
-			
-			eWolf.serverRequest.request(id,{
-				createWolfpack: {
-					wolfpackNames: wolfpacks
-				}
-			},responseHandler.getHandler());
-			
-		} else {
-			onComplete();
-		}
-	};
-	
 	this.addToAllWolfpacks = function (wolfpacks) {
 		if(wolfpacks.length > 0) {
 			var response = new ResponseHandler("addWolfpackMember",[],null);
@@ -177,7 +145,7 @@ var AddToWolfpack = function(id, userID, frame, activator, packsAlreadyIn) {
 		
 		self.destroy();
 		
-		self.createWolfpacks(result.create, function () {
+		eWolf.wolfpacks.createWolfpacks(result.create, function () {
 			self.addToAllWolfpacks(result.add);
 		});
 	};

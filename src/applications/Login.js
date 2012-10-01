@@ -1,3 +1,15 @@
+LOGIN_CONSTANTS = {
+	LOGIN_USERNAME_ID : "login username",
+	LOGIN_PASSWORD_ID : "login password"
+};
+
+SIGNUP_CONSTANTS = {
+	SIGNUP_FULL_NAME_ID : "signup full name",
+	SIGNUP_USERNAME_ID : "signup username",
+	SIGNUP_PASSWORD_ID : "signup password",
+	SIGNUP_VERIFY_PASSWORD_ID : "signup verify password"
+};
+
 var Login = function(id,applicationFrame) {
 	Application.call(this,id,applicationFrame);
 	
@@ -7,7 +19,7 @@ var Login = function(id,applicationFrame) {
 	
 	var signup = new SignUpArea(id).appendTo(this.frame);
 	
-	eWolf.bind("select",function(event,eventID) {
+	eWolf.bind("refresh",function(event,eventID) {
 		if(id == eventID) {
 			login.clearAll();
 			signup.clearAll();
@@ -19,6 +31,7 @@ var Login = function(id,applicationFrame) {
 
 var LoginArea = function(id) {
 	var self = this;
+	$.extend(this,LOGIN_CONSTANTS);
 	
 	var login = new TitleArea("Login").appendTo(this.frame);
 	
@@ -73,10 +86,12 @@ var LoginArea = function(id) {
 	
 	function errorHandler(data, textStatus, postData) {
 		loginError.html(data.errorMessage);
+		self.clearAll();
 	}
 	
 	function badRequestHandler(data, textStatus, postData) {
 		loginError.html("Server Error. Could not login.");
+		self.clearAll();
 	}
 	
 	this.showErrors = function() {
@@ -84,39 +99,33 @@ var LoginArea = function(id) {
 		checkForError(password, passwordError, "* Must specify a password.");		
 	};
 	
+	var formValidator = new FormValidator()
+			.registerField(self.LOGIN_USERNAME_ID, username, usernameError)
+			.registerField(self.LOGIN_PASSWORD_ID, password, passwordError)
+			.attachOnSend(function() {
+						var handler = new ResponseHandler("login",[])
+							.success(handleLogin)
+							.error(errorHandler)
+							.badResponseHandler(badRequestHandler);
+						
+						eWolf.serverRequest.request(id,{
+							login : {
+								username : username.val(),
+								password : password.val()
+							}
+						}, handler.getHandler());
+				})
+			.addValidator(self.LOGIN_USERNAME_ID, VALIDATOR_IS_NOT_EMPTY,
+					"* Must specify a user name.")
+			.addValidator(self.LOGIN_PASSWORD_ID, VALIDATOR_IS_NOT_EMPTY,
+					"* Must specify a password.");
+	
+	login.addFunction("Login",formValidator.sendForm);
+	
 	this.clearAll = function() {
-		clearField(username, usernameError);
-		clearField(password, passwordError);
+		formValidator.clearAllFields();
+		return self;
 	};
-	
-	this.commitLogin = function () {
-		self.showErrors();
-		
-		if(	username.val() != "" &&
-				password.val() != "" ) {
-			var handler = new ResponseHandler("login",[])
-				.success(handleLogin)
-				.error(errorHandler)
-				.badResponseHandler(badRequestHandler);
-			
-			eWolf.serverRequest.request(id,{
-				login : {
-					username : username.val(),
-					password : password.val()
-				}
-			}, handler.getHandler());
-		}
-	};
-	
-	function onKeyUp(event) {
-		if (event.keyCode == 13) {
-			self.commitLogin();
-		}
-	}
-	
-	login.addFunction("Login",this.commitLogin);	
-	username.keyup(onKeyUp);
-	password.keyup(onKeyUp);
 	
 	this.appendTo = function (someFrame) {
 		login.appendTo(someFrame);
@@ -128,6 +137,7 @@ var LoginArea = function(id) {
 
 var SignUpArea = function(id) {
 	var self = this;
+	$.extend(this,SIGNUP_CONSTANTS);
 	
 	var signup = new TitleArea("Sign Up");
 	
@@ -214,61 +224,51 @@ var SignUpArea = function(id) {
 	
 	function errorHandler(data, textStatus, postData) {
 		signUpError.html(data.errorMessage);
+		self.clearAll();
 	}
 	
 	function badRequestHandler(data, textStatus, postData) {
 		signUpError.html("Server Error. Could not sign up.");
+		self.clearAll();
 	}
 	
-	this.showErrors = function() {
-		checkForError(fullName, fullNameError, "* Must specify a name.");
-		checkForError(username, usernameError, "* Must specify a user name.");
-		checkForError(password, passwordError, "* Must specify a password.");		
-		checkForError(verifyPassword, verifyPasswordError, "* Must verify the password.",
-				password.val() == verifyPassword.val() ?
-						null : "* Password do not mach.");
-	};
+	var formValidator = new FormValidator()
+			.registerField(self.SIGNUP_FULL_NAME_ID, fullName, fullNameError)
+			.registerField(self.SIGNUP_USERNAME_ID, username, usernameError)
+			.registerField(self.SIGNUP_PASSWORD_ID, password, passwordError)
+			.registerField(self.SIGNUP_VERIFY_PASSWORD_ID, verifyPassword, verifyPasswordError)
+			.attachOnSend(function() {
+				var handler = new ResponseHandler("createAccount",[])
+					.success(handleSignUp)
+					.error(errorHandler)
+					.badResponseHandler(badRequestHandler);
+				
+				eWolf.serverRequest.request(id,{
+						createAccount : {
+							name : fullName.val(),
+							username : username.val(),
+							password : password.val()
+						}
+					}, handler.getHandler());
+				})
+			.addValidator(self.SIGNUP_FULL_NAME_ID, VALIDATOR_IS_NOT_EMPTY,
+					"* Must specify a name.")
+			.addValidator(self.SIGNUP_USERNAME_ID, VALIDATOR_IS_NOT_EMPTY,
+					"* Must specify a user name.")
+			.addValidator(self.SIGNUP_PASSWORD_ID, VALIDATOR_IS_NOT_EMPTY,
+					"* Must specify a password.")
+			.addValidator(self.SIGNUP_VERIFY_PASSWORD_ID, VALIDATOR_IS_NOT_EMPTY,
+					"* Must verify the password.")
+			.addValidator(self.SIGNUP_VERIFY_PASSWORD_ID, function(field) {
+				return password.val() == field.val();
+			},"* Password do not mach.");
+			
+	signup.addFunction("Sign Up",formValidator.sendForm);
 	
 	this.clearAll = function() {
-		clearField(fullName, fullNameError);
-		clearField(username, usernameError);
-		clearField(password, passwordError);
-		clearField(verifyPassword, verifyPasswordError);
+		formValidator.clearAllFields();
+		return self;
 	};
-	
-	this.commitSignUp = function() {
-		if(		fullName.val() == "" ||
-				username.val() == "" ||
-				password.val() == "" ||
-				password.val() != verifyPassword.val()) {
-			self.showErrors();
-		} else {
-			var handler = new ResponseHandler("createAccount",[])
-				.success(handleSignUp)
-				.error(errorHandler)
-				.badResponseHandler(badRequestHandler);
-			
-			eWolf.serverRequest.request(id,{
-				createAccount : {
-					name : fullName.val(),
-					username : username.val(),
-					password : password.val()
-				}
-			}, handler.getHandler());
-		}
-	};
-	
-	function onKeyUp(event) {
-		if (event.keyCode == 13) {
-			self.commitSignUp();
-		}
-	}
-	
-	signup.addFunction("Sign Up",this.commitSignUp);	
-	fullName.keyup(onKeyUp);
-	username.keyup(onKeyUp);
-	password.keyup(onKeyUp);
-	verifyPassword.keyup(onKeyUp);
 
 	this.appendTo = function (someFrame) {
 		signup.appendTo(someFrame);
@@ -277,56 +277,3 @@ var SignUpArea = function(id) {
 	
 	return this;
 };
-
-function clearField(field,errorField) {
-	errorField.animate({
-		"opacity" : "0"
-	},500,function() {
-		errorField.val("");
-	});
-	
-	field.val("");		
-	
-	field.animate({
-		"background-color" : "#ddd"
-	},500);
-	
-//	field.css({
-//		"background-color" : ""
-//	});
-}
-
-function checkForError(field,errorField,emptyErrorMessage,
-		forceErrorMessage) {
-	var fieldEmpty = field.val() == "";
-	var forecedError = 	forceErrorMessage != undefined &&
-											forceErrorMessage != null;
-	
-	var haveError = fieldEmpty || forecedError;
-	
-	errorField.animate({
-		"opacity" : "0"
-	},500,function() {
-		if(fieldEmpty) {
-			errorField.html(emptyErrorMessage);	
-		} else if(forecedError) {
-			errorField.html(forceErrorMessage);
-		}
-		
-		if(haveError) {
-			errorField.animate({
-				"opacity" : "1"
-			},1000);
-			
-			field.animate({
-				"background-color" : "#debdbd"
-			},1000);
-		} else {
-			field.animate({
-				"background-color" : "#bddec0"
-			},1000);
-		}
-	});
-	
-	return haveError;
-}
