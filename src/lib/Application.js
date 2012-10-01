@@ -68,6 +68,7 @@ var Application = function(id,container) {
 		eWolf.unbind("select."+id);
 		eWolf.unbind("destroy."+id);
 		self.frame.remove();
+		eWolf.serverRequest.unregisterApp(id);
 		delete self;
 	};
 	
