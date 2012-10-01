@@ -48,32 +48,32 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 			topTitle.showFunction("Add members...");
 			members.show(200);
 		};
-		
-		this.deleteWolfpack = function() {
-			var diag = $("<div/>").attr({
-				"id" : "dialog-confirm",
-				"title" : "Delete wolfpack?"
-			});
-			
-			var p = $("<p/>").appendTo(diag);
-		
-			p.append("The wolfpack will be permanently deleted and cannot be recovered. Are you sure?");
-			
-			diag.dialog({
-				resizable: true,
-				modal: true,
-				buttons: {
-					"Delete wolfpack": function() {
-						// TODO: delete wolfpack
-						$( this ).dialog( "close" );
-						alert("Option unavailible");
-					},
-					Cancel: function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		};
+
+//		this.deleteWolfpack = function() {
+//			var diag = $("<div/>").attr({
+//				"id" : "dialog-confirm",
+//				"title" : "Delete wolfpack?"
+//			});
+//			
+//			var p = $("<p/>").appendTo(diag);
+//		
+//			p.append("The wolfpack will be permanently deleted and cannot be recovered. Are you sure?");
+//			
+//			diag.dialog({
+//				resizable: true,
+//				modal: true,
+//				buttons: {
+//					"Delete wolfpack": function() {
+//						// TODO: delete wolfpack
+//						$( this ).dialog( "close" );
+//						alert("Option unavailible");
+//					},
+//					Cancel: function() {
+//						$( this ).dialog( "close" );
+//					}
+//				}
+//			});
+//		};
 		
 		function getWolfpacksMembersData() {
 			return {
@@ -107,7 +107,7 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 					
 		
 		topTitle.addFunction("Add members...", this.showAddMembers);		
-		topTitle.addFunction("Delete wolfpack", this.deleteWolfpack);
+//		topTitle.addFunction("Delete wolfpack", this.deleteWolfpack);
 		
 		eWolf.bind("select",function(event,eventId) {
 			self.removeAddMemebers();
