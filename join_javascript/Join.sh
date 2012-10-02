@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JSSRC="src/*.js src/UI/*.js src/server\-request/*.js src/lib/*.js src/widgets/*.js src/plugins/*.js src/menu/*.js src/mail/*.js src/applications/*.js"
+JSSRC="src/*.js src/server\-request/*.js src/lib/*.js src/widgets/*.js src/plugins/*.js src/menu/*.js src/mail/*.js src/applications/*.js"
 CSSSRC=CSS/*.css
 
 JSTEMP=core.js.temp

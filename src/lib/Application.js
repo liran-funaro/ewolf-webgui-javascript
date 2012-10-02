@@ -1,11 +1,23 @@
 var Application = function(id,container,titleText) {
-	ApplicationUI.call(this, applicationFrame, titleText);
-	
 	/****************************************************************************
 	 * Members
 	  ***************************************************************************/
 	var self = this;
 	var selected = false;
+	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
+	if(!this.frame) {
+		this.frame = $("<div/>")
+		.addClass("applicationContainer")
+		.appendTo(container)
+		.hide();
+	}
+
+	if(!this.title) {
+		this.title = new TitleArea(titleText).appendTo(this.frame);
+	}
 	
 	/****************************************************************************
 	 * Event Listeners

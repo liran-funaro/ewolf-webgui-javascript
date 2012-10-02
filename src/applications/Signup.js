@@ -6,10 +6,20 @@ SIGNUP_CONSTANTS = {
 };
 
 var Signup = function(id) {
+	/****************************************************************************
+	 * Base class
+	  ***************************************************************************/	
 	Application.call(this, id, applicationFrame, "Sign Up");
+	
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	$.extend(this,SIGNUP_CONSTANTS);
 	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
 	var fullName = $("<input/>").attr({
 		"type" : "text",
 		"placeholder" : "Full Name"
@@ -87,6 +97,9 @@ var Signup = function(id) {
 	
 	this.title.appendAtBottomPart(base);
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/
 	function handleSignUp(data, textStatus, postData) {
 		eWolf.getUserInformation();
 	}

@@ -1,13 +1,30 @@
 var Profile = function (id,applicationFrame,userID,userName) {
+	/****************************************************************************
+	 * Base class
+	  ***************************************************************************/	
+	Application.call(this, id, applicationFrame, "Searching profile...");
+	
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	
 	var profileRequestName = id + "__ProfileRequest__",
 			wolfpacksRequestName = id + "__WolfpakcsRequest__";
 	
-	Application.call(this, id, applicationFrame, "Searching profile...");
-	
 	var waitingForName = [];
 	
+	var newsFeed = null;
+	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
+	var wolfpacksContainer = new CommaSeperatedList("Wolfpakcs");
+	this.title.appendAtBottomPart(wolfpacksContainer.getList());
+	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
 	var handleProfileResonse = new ResponseHandler("profile",
 			["id","name"],handleProfileData);
 	
@@ -31,9 +48,6 @@ var Profile = function (id,applicationFrame,userID,userName) {
 	eWolf.serverRequest.bindRequest(profileRequestName,id);
 	eWolf.serverRequest.bindRequest(wolfpacksRequestName,id);
 	
-	var wolfpacksContainer = new CommaSeperatedList("Wolfpakcs");
-	this.title.appendAtBottomPart(wolfpacksContainer.getList());	
-	
 	if(userID) {
 		this.title.addFunction("Send message...", function (event) {
 			new NewMessage(id,applicationFrame,userID).select();
@@ -48,8 +62,6 @@ var Profile = function (id,applicationFrame,userID,userName) {
 			new NewPost(id,applicationFrame).select();
 		}, true);
 	}
-	
-	var newsFeed = null;
 	
 	function onProfileFound() {		
 		self.title.setTitle(CreateUserBox(userID,userName,true));

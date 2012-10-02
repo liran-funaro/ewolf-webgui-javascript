@@ -11,17 +11,25 @@ NEWMAIL_CONSTANTS = {
 var NewMail = function(callerID,applicationFrame,options,		
 		createRequestObj,handleResponseCategory,
 		allowAttachment,sendTo,sendToQuery) {
-	Application.call(this, id ,applicationFrame, settings.TITLE);
-	
 	/****************************************************************************
 	 * Members
 	  ***************************************************************************/
 	var self = this;
 	$.extend(this,NEWMAIL_CONSTANTS);	
-	var id = self.NEWMAIL_APP_ID_PREFIX+callerID;	
+	var id = self.NEWMAIL_APP_ID_PREFIX + callerID;	
 	
 	var settings = $.extend({}, self.NEW_MAIL_DAFAULTS, options);
 	
+	var files = null;
+	
+	/****************************************************************************
+	 * Base class
+	  ***************************************************************************/	
+	Application.call(this, id ,applicationFrame, settings.TITLE);	
+	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
 	var base = $("<table/>")
 		.addClass("newMainTable")
 		.appendTo(this.frame);
@@ -53,7 +61,6 @@ var NewMail = function(callerID,applicationFrame,options,
 	var messageText = $("<div/>")
 		.addClass("textarea-div")
 		.attr({
-//		"placeholder": "What is on your mind...",
 		"style" : "min-height:"+height+"px;",
 		"contentEditable" : "true"
 	});
@@ -61,7 +68,6 @@ var NewMail = function(callerID,applicationFrame,options,
 	$("<td/>").append(messageText)
 		.appendTo(msgRaw);
 	
-	var files = null;
 	if(allowAttachment) {
 		var attacheRaw = $("<tr/>").appendTo(base);
 		$("<td/>")
@@ -89,26 +95,14 @@ var NewMail = function(callerID,applicationFrame,options,
 		"class": "errorArea"
 	}).appendTo(errorBox);
 	
-	// TODO: on show (not refresh)
-	eWolf.bind("refresh."+id,function(event,eventID) {
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/		
+	eWolf.bind("select",function(event,eventID) {
 		if(eventID == id) {
 			window.setTimeout(function () {
 				messageText.focus();
 			}, 0);
-
-///////////////////////////////////////////////////////////////////////////////			
-//	Changed due to Issue #3 (Focus on the content in new mail)
-///////////////////////////////////////////////////////////////////////////////
-//			if(sendTo != null) {				
-//				window.setTimeout(function () {
-//					messageText.focus();
-//				}, 0);				
-//			} else {
-//				window.setTimeout(function () {
-//					sendToQuery.focus();
-//				}, 0);
-//			}
-///////////////////////////////////////////////////////////////////////////////
 		}
 	});
 	
@@ -160,7 +154,7 @@ var NewMail = function(callerID,applicationFrame,options,
 			operations.showAll();
 		} else {			
 			eWolf.trigger("needRefresh."+callerID.replace("+","\\+"),[callerID]);
-			this.cancel();
+			self.cancel();
 		}		
 	};
 	

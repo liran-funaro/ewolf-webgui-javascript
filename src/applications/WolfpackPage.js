@@ -1,15 +1,28 @@
 var WolfpackPage = function (id,wolfpackName,applicationFrame) {	
+	/****************************************************************************
+	 * Base class
+	  ***************************************************************************/	
 	Application.call(this, id, applicationFrame, 
 			wolfpackName == null ? "News Feed" : CreateWolfpackBox(wolfpackName));
 			
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
+	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
+	this.feed = new WolfpackNewsFeedList(id,wolfpackName)
+			.appendTo(this.frame);
+	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
 	this.title.addFunction("Post", function() {
-			new NewPost(id,applicationFrame,wolfpackName).select();
-		});
-	
-	new WolfpackNewsFeedList(id,wolfpackName)
-		.appendTo(this.frame);
-	
+		new NewPost(id,applicationFrame,wolfpackName).select();
+	});
+
 	if(wolfpackName != null) {
 		var addMembers = null;
 
@@ -41,32 +54,6 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 			self.title.showFunction("Add members...");
 			members.show(200);
 		};
-
-//		this.deleteWolfpack = function() {
-//			var diag = $("<div/>").attr({
-//				"id" : "dialog-confirm",
-//				"title" : "Delete wolfpack?"
-//			});
-//			
-//			var p = $("<p/>").appendTo(diag);
-//		
-//			p.append("The wolfpack will be permanently deleted and cannot be recovered. Are you sure?");
-//			
-//			diag.dialog({
-//				resizable: true,
-//				modal: true,
-//				buttons: {
-//					"Delete wolfpack": function() {
-//						// TODO: delete wolfpack
-//						$( this ).dialog( "close" );
-//						alert("Option unavailible");
-//					},
-//					Cancel: function() {
-//						$( this ).dialog( "close" );
-//					}
-//				}
-//			});
-//		};
 		
 		function getWolfpacksMembersData() {
 			return {
@@ -99,8 +86,7 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 					id);
 					
 		
-		self.title.addFunction("Add members...", this.showAddMembers);		
-//		self.title.addFunction("Delete wolfpack", this.deleteWolfpack);
+		self.title.addFunction("Add members...", this.showAddMembers);
 		
 		eWolf.bind("select",function(event,eventId) {
 			self.removeAddMemebers();

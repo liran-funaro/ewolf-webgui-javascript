@@ -4,19 +4,25 @@ LOGIN_CONSTANTS = {
 };
 
 var Login = function(id,applicationFrame) {
-	Application.call(this, id, applicationFrame, "Welcome to eWolf");
+	/****************************************************************************
+	 * Base class
+	  ***************************************************************************/	
+	Application.call(this, id, applicationFrame, "Welcome to eWolf");	
 	
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
+	var self = this;
+	$.extend(this,LOGIN_CONSTANTS);
+	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
 	var itro = $("<div/>").css({
 		"font-size" : "12px"
 	}).append("If it is your first time using eWolf, please take the time to signup first.");
 	
 	this.title.appendAtBottomPart(itro);
-	this.title.addFunction("Signup",function() {
-		eWolf.selectApp(eWolf.SIGNUP_APP_ID);
-	});
-	
-	var self = this;
-	$.extend(this,LOGIN_CONSTANTS);
 	
 	this.frame.append("<br>");
 	
@@ -67,6 +73,13 @@ var Login = function(id,applicationFrame) {
 	
 	login.appendAtBottomPart(base);
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/
+	this.title.addFunction("Signup",function() {
+		eWolf.selectApp(eWolf.SIGNUP_APP_ID);
+	});	
+	
 	function handleLogin(data, textStatus, postData) {
 		eWolf.getUserInformation();
 	}
@@ -105,7 +118,7 @@ var Login = function(id,applicationFrame) {
 			.addValidator(self.LOGIN_USERNAME_ID, VALIDATOR_IS_NOT_EMPTY,
 					"* Must specify a user name.")
 			.addValidator(self.LOGIN_PASSWORD_ID, VALIDATOR_IS_NOT_EMPTY,
-					"* Must specify a password.");
+					"* Must specify a password.");	
 	
 	login.addFunction("Login",formValidator.sendForm);
 	
@@ -118,8 +131,7 @@ var Login = function(id,applicationFrame) {
 		if(id == eventID) {
 			self.clearAll();
 		}
-	});
-	
+	});	
 	
 	return this;
 };
