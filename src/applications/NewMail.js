@@ -153,7 +153,7 @@ var NewMail = function(callerID,applicationFrame,options,
 			self.title.showAll();
 			operations.showAll();
 		} else {			
-			eWolf.trigger("needRefresh."+callerID.replace("+","\\+"),[callerID]);
+			eWolf.trigger("needRefresh",[callerID]);
 			self.cancel();
 		}		
 	};
@@ -184,42 +184,89 @@ var NewMail = function(callerID,applicationFrame,options,
 				text: msg
 		};
 		
-		sendToQuery.tagList.foreachTag({markedOK:false},function(destId) {
-			if(allowAttachment && files) {
-				files.uploadAllFiles(destId, function(success, uploadedFiles) {
-					if(success) {
-						mailObject.attachment = uploadedFiles;
-						self.sendTo(destId,JSON.stringify(mailObject));
-					} else {
-						errorMessage.html("Some of the files failed to upload...<br>Message did not sent.");
-						self.title.showAll();
-						operations.showAll();
-					}
-				});			
-			} else {
-				self.sendTo(destId,JSON.stringify(mailObject));
-			}			
-		});	
+		// TODO: should remove true to apply new Interface
+		if(true || allowAttachment && files) {
+			sendToQuery.tagList.foreachTag({markedOK:false},function(destId) {
+				self.uploadFilesThenSendTo(destId, mailObject);
+			});
+		} else {
+			var destVector = [];
+			
+			sendToQuery.tagList.foreachTag({markedOK:false},function(destId) {
+				destVector.push(destId);
+			});
+			
+			self.sendTo(destVector, mailObject);
+		}			
 	};
 	
-	this.sendTo = function(destId,data) {
+	this.uploadFilesThenSendTo = function (dest, mailObject) {
+		if(allowAttachment && files) {
+			files.uploadAllFiles(dest, function(success, uploadedFiles) {
+				if(success) {
+					mailObject.attachment = uploadedFiles;
+					self.sendTo(dest,mailObject);
+				} else {
+					errorMessage.html("Some of the files failed to upload...<br>Message did not sent.");
+					self.title.showAll();
+					operations.showAll();
+				}
+			});			
+		} else {
+			self.sendTo(dest, mailObject);
+		}	
+	};
+	
+	this.sendTo = function(destId,dataObj) {
+		var data = JSON.stringify(dataObj);
+		
 		var responseHandler = new ResponseHandler(handleResponseCategory,[],null);
 		
 		responseHandler.success(function(data, textStatus, postData) {
-			sendToQuery.tagList.markTagOK(destId);				
+			if($.isArray(destId)) {
+				$.each(destId, function(i, id) {
+					sendToQuery.tagList.markTagOK(id);
+				});
+			} else {
+				sendToQuery.tagList.markTagOK(destId);
+			}
+			
 			self.updateSend();
 		}).error(function(data, textStatus, postData) {
-			var errorMsg = "Failed to arrive at destination: " +
-			destId + " with error: " + data.result;
-			errorMessage.append(errorMsg+"<br>");
+			if($.isArray(destId)) {
+				if(data.userIDsResult) {
+					$.each(data.userIDsResult, function(i, result) {
+						var itemID = postData.userIDs[i];
+						var item = sendToQuery.tagList.match({id:itemID});
+						
+						if(result == "success") {							
+							item.markOK();
+						} else {
+							self.appendFailErrorMessage(itemID, result);
+						}		
+					});
+				} else {
+					self.appendFailErrorMessage("everyone", data.result);
+				}
+			} else {
+				self.appendFailErrorMessage(destId, data.result);
+			}
 			
-			sendToQuery.tagList.markTagError(destId,errorMsg);
 			self.updateSend();
 		});
 		
 		eWolf.serverRequest.request(id,
 				createRequestObj(destId,data),
 				responseHandler.getHandler());
+	};
+	
+	this.appendFailErrorMessage = function (id, result) {
+		var errorMsg = "Failed to arrive at destination: " +
+										id + " with error: " + result;
+		errorMessage.append(errorMsg+"<br>");
+		
+		//sendToQuery.tagList.markTagError(id,errorMsg);
+		sendToQuery.tagList.match(id == "everyone" ? {markedOK:false} : {id:id}).markError(errorMsg);
 	};
 	
 	this.cancel = function() {

@@ -59,6 +59,14 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 		self.requestAll(eventId,true);
 	});
 	
+	eWolf.bind("needRefresh",function(event,eventId) {
+		if(eventId && appsRequests[eventId]) {
+			$.each(appsRequests[eventId], function(i, req) {
+				req.lastUpdate = 0;
+			});
+		}
+	});
+	
 	this.setRequestAllOnSelect = function (enable) {
 		requestAllOnSelect = enable;
 	};

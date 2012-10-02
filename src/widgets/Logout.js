@@ -1,6 +1,6 @@
-var Logout = function(text,container) {
+var Logout = function(id,text,container) {
 	var self = this;	
-	var LOGOUT = "logout";
+
 	this.frame =$("<div/>").attr({
 		"class": "logoutLink aLink"
 	})	.text(text)
@@ -17,7 +17,7 @@ var Logout = function(text,container) {
 	}
 	
 	this.commitLogout = function () {
-		eWolf.serverRequest.request(LOGOUT,{
+		eWolf.serverRequest.request(id,{
 				logout : {}
 			}, null, onLogout);
 	};

@@ -15,6 +15,7 @@ EWOLF_CONSTANTS = {
 	INBOX_APP_ID : "inbox",
 	LOGIN_APP_ID : "login",
 	SIGNUP_APP_ID : "signup",
+	LOGOUT_APP_ID : "logout",
 	
 	FIRST_EWOLF_LOGIN_REQUEST_ID : "eWolfLogin",
 	
@@ -120,7 +121,7 @@ var eWolf = new function() {
 		self.mainAppsCreated = true;
 		
 		self.welcome.hideMenu();
-		self.logout = new Logout("Logout",eWolf.topBarFrame);
+		self.logout = new Logout(self.LOGOUT_APP_ID,"Logout",eWolf.topBarFrame);
 		
 		self.mainApps.addMenuItem(self.MYPROFILE_APP_ID,"My Profile");
 				

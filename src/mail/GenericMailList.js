@@ -68,7 +68,7 @@ var GenericMailList = function(mailType,appID,serverSettings,
 	eWolf.serverRequest.bindRequest(newsFeedRequestName,appID);
 	
 	var showMore = new ShowMore(this.frame,function() {
-		eWolf.serverRequest.request(self.updateFromServer (true),
+		eWolf.serverRequest.request(appID,self.updateFromServer (true),
 				responseHandler.getHandler());
 	}).draw();
 	

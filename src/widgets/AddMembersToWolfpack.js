@@ -79,7 +79,7 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 			console.log("No usersResult in response");
 		} else {
 			$.each(data.usersResult, function(i, result) {
-				var itemID = postData.userID[i];
+				var itemID = postData.userIDs[i];
 				var item = addMembersQuery.tagList.match({id:itemID});
 				
 				if(result == "success") {
