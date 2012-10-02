@@ -94,11 +94,6 @@ var Login = function(id,applicationFrame) {
 		self.clearAll();
 	}
 	
-	this.showErrors = function() {
-		checkForError(username, usernameError, "* Must specify a user name.");
-		checkForError(password, passwordError, "* Must specify a password.");		
-	};
-	
 	var formValidator = new FormValidator()
 			.registerField(self.LOGIN_USERNAME_ID, username, usernameError)
 			.registerField(self.LOGIN_PASSWORD_ID, password, passwordError)
@@ -131,7 +126,9 @@ var Login = function(id,applicationFrame) {
 		if(id == eventID) {
 			self.clearAll();
 		}
-	});	
+	});
+	
+	eWolf.serverRequest.bindAppToAnotherApp(id, eWolf.FIRST_EWOLF_LOGIN_REQUEST_ID);
 	
 	return this;
 };

@@ -6,6 +6,7 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 			generalRequests = [];
 
 	var onCompleteAll = null;
+	var onGeneralError = null;
 	var timer = null;
 	var requestAllOnSelect = false;
 	
@@ -24,7 +25,7 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 		eWolf.trigger("loading",[appID]);
 	}
 	
-	function onRequestComplete (appID) {
+	function onRequestComplete (appID, response, status) {
 		eWolf.trigger("loadingEnd",[appID]);		
 	}
 	
@@ -32,15 +33,15 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 		self.stopRefreshInterval();
 	}
 	
-	function onRequestAllComplete(appID) {
+	function onRequestAllComplete(appID, response, status) {
 		self.restartRefreshInterval();
 		
 		if(appID && appsRequests[appID] && appsRequests[appID].onComplete) {
-			appsRequests[appID].onComplete();
+			appsRequests[appID].onComplete(appID, response, status);
 		}
 		
 		if(onCompleteAll) {
-			onCompleteAll();
+			onCompleteAll(appID, response, status);
 		}		
 	}
 		
@@ -97,6 +98,16 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 		return self;
 	};
 	
+	this.bindAppToAnotherApp = function(newAppID, existsAppID) {
+		if(existsAppID && appsRequests[existsAppID]) {
+			if(newAppID) {
+				appsRequests[newAppID] = appsRequests[existsAppID];
+			}
+		}
+		
+		return self;
+	};
+	
 	this.unregisterApp = function(appID) {
 		if(appID && appsRequests[appID]) {
 			delete appsRequests[appID];
@@ -122,12 +133,16 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 				if(handleDataFunction != null) {
 					handleDataFunction(receivedData,textStatus,data);
 				}				
-			}).complete(function() {
-				onRequestComplete(appID);
+			}).complete(function(response, status) {
+				onRequestComplete(appID, response, status);
 
 				if(handleOnComplete != null) {
-					handleOnComplete(appID);
+					handleOnComplete(appID, response, status);
 				}				
+			}).error(function(response, status, xhr){ 
+				if(onGeneralError) {
+					onGeneralError(response, status, xhr);
+				}
 			});
 		
 		return self;
@@ -198,6 +213,14 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 			appsRequests[appID].onComplete = newOnComplete;
 		} else {
 			onCompleteAll = newOnComplete;
+		}		
+		
+		return self;
+	};
+	
+	this.error = function(newOnGeneralError) {
+		if(newOnGeneralError) {
+			onGeneralError = newOnGeneralError;
 		}		
 		
 		return self;

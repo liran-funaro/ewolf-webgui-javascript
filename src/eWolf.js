@@ -16,7 +16,8 @@ EWOLF_CONSTANTS = {
 	LOGIN_APP_ID : "login",
 	SIGNUP_APP_ID : "signup",
 	
-	LOGIN_REQUEST_NAME : "eWolfLogin",
+	FIRST_EWOLF_LOGIN_REQUEST_ID : "eWolfLogin",
+	
 	PROFILE_REQUEST_NAME : "__main_profile_request__",
 	WOLFPACKS_REQUEST_NAME : "__main_wolfpacks_request",
 	MEMBERS_REQUEST_NAME : "__main_members_request__"
@@ -31,6 +32,8 @@ var eWolf = new function() {
 	this.selectedApp = null;
 	
 	this.serverRequest = null;
+	
+	this.mainAppsCreated = false;
 	
 	this.init = function() {
 		self.serverRequest = new PostRequestHandler("/json",self.REFRESH_INTERVAL_SEC);
@@ -67,7 +70,7 @@ var eWolf = new function() {
 					return { wolfpacks : {}	};
 				});
 		
-		self.serverRequest.bindRequest(self.PROFILE_REQUEST_NAME,self.LOGIN_REQUEST_NAME);
+		self.serverRequest.bindRequest(self.PROFILE_REQUEST_NAME, self.FIRST_EWOLF_LOGIN_REQUEST_ID);
 		self.serverRequest.bindRequest(self.WOLFPACKS_REQUEST_NAME);
 		
 		self.members = new Members();		
@@ -78,7 +81,23 @@ var eWolf = new function() {
 				new ResponseHandler("profile",["id","name"],
 						function (data, textStatus, postData) {
 					document.title = "eWolf - " + data.name;
+					self.userID = data.id;
+					self.userName = data.name;
 				}).getHandler());
+		
+		self.serverRequest.complete(null,function(appID, response, status) {
+			if(self.mainAppsCreated) {
+				if(response.status != 200 || self.userID == null) {
+					document.location.reload(true);
+				}				
+			} else if(response.status == 200 && self.userID != null) {
+				self.serverRequest.restartRefreshInterval();
+				self.createMainApps();
+			} else if(response.status != 200 || self.userID == null) {
+				self.serverRequest.stopRefreshInterval();
+				self.presentLoginScreen();
+			}
+		});
 		
 		self.getUserInformation();
 	};
@@ -94,22 +113,12 @@ var eWolf = new function() {
 			self.signupApp = null;
 		}
 		
-		self.serverRequest.complete(null,function() {
-			self.serverRequest.complete(null,null);
-
-			if(self.profile.getID()) {
-				self.serverRequest.restartRefreshInterval();
-				self.createMainApps();
-			} else {
-				self.serverRequest.stopRefreshInterval();
-				self.presentLoginScreen();
-			}
-		});
-		
-		self.serverRequest.requestAll(self.LOGIN_REQUEST_NAME);
+		self.serverRequest.requestAll(self.FIRST_EWOLF_LOGIN_REQUEST_ID, true);
 	};
 	
 	this.createMainApps = function () {
+		self.mainAppsCreated = true;
+		
 		self.welcome.hideMenu();
 		self.logout = new Logout("Logout",eWolf.topBarFrame);
 		

@@ -11,12 +11,12 @@ var Members = function() {
 	eWolf.serverRequest.registerRequest(eWolf.MEMBERS_REQUEST_NAME,
 			function() {
 				return { wolfpackMembers : {}	};
-			});	
+			});
 	
 	eWolf.serverRequest.registerHandler(eWolf.MEMBERS_REQUEST_NAME,
 			membersResponseHandler.getHandler());
 	
-	eWolf.serverRequest.bindRequest(eWolf.MEMBERS_REQUEST_NAME,eWolf.LOGIN_REQUEST_NAME);
+	eWolf.serverRequest.bindRequest(eWolf.MEMBERS_REQUEST_NAME,eWolf.FIRST_EWOLF_LOGIN_REQUEST_ID);
 	
 	function handleMembers(data, textStatus, postData) {
 		$.each(data.membersList, function(i,userObj){

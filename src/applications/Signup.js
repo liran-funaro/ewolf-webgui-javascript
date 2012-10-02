@@ -158,5 +158,7 @@ var Signup = function(id) {
 		}
 	});
 	
+	eWolf.serverRequest.bindAppToAnotherApp(id, eWolf.FIRST_EWOLF_LOGIN_REQUEST_ID);
+	
 	return this;
 };
