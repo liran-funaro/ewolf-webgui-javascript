@@ -1,18 +1,11 @@
-var WolfpackPage = function (id,wolfpackName,applicationFrame) {
-	var self = this;
-	
-	Application.call(this,id,applicationFrame);
+var WolfpackPage = function (id,wolfpackName,applicationFrame) {	
+	Application.call(this, id, applicationFrame, 
+			wolfpackName == null ? "News Feed" : CreateWolfpackBox(wolfpackName));
 			
-	var topTitle = new TitleArea().appendTo(this.frame)
-		.addFunction("Post", function() {
+	var self = this;
+	this.title.addFunction("Post", function() {
 			new NewPost(id,applicationFrame,wolfpackName).select();
-		});		
-	
-	if(wolfpackName != null) {
-		topTitle.setTitle(CreateWolfpackBox(wolfpackName));
-	} else {
-		topTitle.setTitle("News Feed");
-	}
+		});
 	
 	new WolfpackNewsFeedList(id,wolfpackName)
 		.appendTo(this.frame);
@@ -21,17 +14,17 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 		var addMembers = null;
 
 		var members = new CommaSeperatedList("Members");
-		topTitle.appendAtBottomPart(members.getList());
+		this.title.appendAtBottomPart(members.getList());
 		
 		this.showAddMembers = function () {
 			members.hide(200);
-			topTitle.hideFunction("Add members...");
+			self.title.hideFunction("Add members...");
 			if(addMembers != null) {
 				addMembers.remove();
 			}
 			
 			addMembers = $("<span/>");
-			topTitle.appendAtBottomPart(addMembers);
+			self.title.appendAtBottomPart(addMembers);
 			
 			new AddMembersToWolfpack(id,wolfpackName,members.getItemNames(),
 					self.removeAddMemebers).frame.appendTo(addMembers);
@@ -45,7 +38,7 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 				});			
 			}
 			
-			topTitle.showFunction("Add members...");
+			self.title.showFunction("Add members...");
 			members.show(200);
 		};
 
@@ -106,8 +99,8 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 					id);
 					
 		
-		topTitle.addFunction("Add members...", this.showAddMembers);		
-//		topTitle.addFunction("Delete wolfpack", this.deleteWolfpack);
+		self.title.addFunction("Add members...", this.showAddMembers);		
+//		self.title.addFunction("Delete wolfpack", this.deleteWolfpack);
 		
 		eWolf.bind("select",function(event,eventId) {
 			self.removeAddMemebers();

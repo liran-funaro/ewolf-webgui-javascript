@@ -1,6 +1,9 @@
 var TitleArea = function (title) {
 	var self = this;
 	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
 	this.frame = $("<div/>").attr("class","titleArea");
 	
 	var topPart = $("<div/>").appendTo(this.frame);
@@ -24,6 +27,9 @@ var TitleArea = function (title) {
 	
 	var titleExtraText = $("<span/>").appendTo(titleTextArea);
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
 	this.setTitle = function (newTitle) {
 		if(newTitle != null) {
 			theTitle.html(newTitle);

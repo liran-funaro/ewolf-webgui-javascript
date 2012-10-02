@@ -16,7 +16,7 @@ var Members = function() {
 	eWolf.serverRequest.registerHandler(eWolf.MEMBERS_REQUEST_NAME,
 			membersResponseHandler.getHandler());
 	
-	eWolf.serverRequest.bindRequest(eWolf.MEMBERS_REQUEST_NAME,"eWolfLogin");
+	eWolf.serverRequest.bindRequest(eWolf.MEMBERS_REQUEST_NAME,eWolf.LOGIN_REQUEST_NAME);
 	
 	function handleMembers(data, textStatus, postData) {
 		$.each(data.membersList, function(i,userObj){

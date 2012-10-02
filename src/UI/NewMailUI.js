@@ -8,10 +8,10 @@ NEWMAIL_CONSTANTS = {
 		}
 };
 
-var NewMail = function(callerID,applicationFrame,options,		
+var NewMailUI = function(callerID,applicationFrame,options,		
 		createRequestObj,handleResponseCategory,
 		allowAttachment,sendTo,sendToQuery) {
-	Application.call(this, id ,applicationFrame, settings.TITLE);
+	UI.call(this);
 	
 	/****************************************************************************
 	 * Members
@@ -22,9 +22,12 @@ var NewMail = function(callerID,applicationFrame,options,
 	
 	var settings = $.extend({}, self.NEW_MAIL_DAFAULTS, options);
 	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/	
 	var base = $("<table/>")
 		.addClass("newMainTable")
-		.appendTo(this.frame);
+		.appendTo(this.context);
 	
 	var queryRaw = $("<tr/>").appendTo(base);
 	$("<td/>")

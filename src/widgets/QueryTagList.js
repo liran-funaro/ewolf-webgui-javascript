@@ -19,7 +19,7 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 		self.addTagByQuery(query.val(),true);
 	}).appendTo(queryBox).hide();
 	
-	var errorBox = $("<span/>").addClass("errorArea").appendTo(queryBox);
+	var errorBox = $("<div/>").addClass("errorArea").appendTo(queryBox).hide();
 	
 	query.autocomplete({
 		source: availableQueries,
@@ -76,14 +76,16 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 		}		
 	};
 	
-	this.isMissingField = function (showError) {
-		var fieldEmpty = self.tagList.isEmpty();
+	this.isMissingField = function (showError, errorMessage) {
+		var fieldEmpty = self.tagList.match({removable:true}).isEmpty();
 		
 		errorBox.animate({
 			"opacity" : "0"
 		},500,function() {
 			if(fieldEmpty && showError) {
-				errorBox.html(" * Please select a destination(s).");
+				query.focus();
+				errorBox.html(errorMessage);
+				errorBox.show();
 				
 				errorBox.animate({
 					"opacity" : "1"
@@ -98,6 +100,8 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 				query.animate({
 					"background-color" : "#ddd"
 				},1000);
+				
+				errorBox.hide();
 			}
 		});
 		

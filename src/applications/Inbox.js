@@ -1,13 +1,14 @@
 var Inbox = function (id,applicationFrame) {
-	Application.call(this,id,applicationFrame);
+	Application.call(this, id, applicationFrame, "Inbox");
 	
-	new TitleArea("Inbox")
-		.appendTo(this.frame)
-		.addFunction("New Message...", function() {
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/		
+	this.title.addFunction("New Message...", function() {
 			new NewMessage(id,applicationFrame).select();
 		});
 	
-	new InboxList(id,{}).appendTo(this.frame);
+	this.inbox = new InboxList(id,{}).appendTo(this.frame);
 	
 	return this;
 };

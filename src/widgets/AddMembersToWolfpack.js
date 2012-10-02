@@ -28,9 +28,7 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 	this.apply = function() {
 		var itemsToAdd = addMembersQuery.tagList.match({removable:true});
 		
-		if(itemsToAdd.isEmpty()) {
-			errorMessage.html("Please add new members...");
-		} else {
+		if(!addMembersQuery.isMissingField(true, "Please add new members...")) {
 			applyBtn.hide(200);
 			cancelBtn.hide(200);
 			

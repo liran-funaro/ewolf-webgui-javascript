@@ -1,12 +1,15 @@
-var Application = function(id,container) {
+var Application = function(id,container,titleText) {
+	ApplicationUI.call(this, applicationFrame, titleText);
+	
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	var selected = false;
 	
-	this.frame = $("<div/>")
-			.addClass("applicationContainer")
-			.appendTo(container)
-			.hide();
-	
+	/****************************************************************************
+	 * Event Listeners
+	  ***************************************************************************/	
 	eWolf.bind("select."+id,function(event,eventId) {
 		if(id == eventId) {	
 			self.doSelect();
@@ -17,8 +20,11 @@ var Application = function(id,container) {
 	
 	eWolf.bind("destroy."+id,function(event,eventId) {
 		self.destroy();
-	});	
+	});		
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
 	this.getFrame = function() {
 		return self.frame;
 	};

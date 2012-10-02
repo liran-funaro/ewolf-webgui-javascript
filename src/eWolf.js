@@ -14,7 +14,9 @@ EWOLF_CONSTANTS = {
 	NEWSFEED_APP_ID : "newsfeed",
 	INBOX_APP_ID : "inbox",
 	LOGIN_APP_ID : "login",
+	SIGNUP_APP_ID : "signup",
 	
+	LOGIN_REQUEST_NAME : "eWolfLogin",
 	PROFILE_REQUEST_NAME : "__main_profile_request__",
 	WOLFPACKS_REQUEST_NAME : "__main_wolfpacks_request",
 	MEMBERS_REQUEST_NAME : "__main_members_request__"
@@ -65,7 +67,7 @@ var eWolf = new function() {
 					return { wolfpacks : {}	};
 				});
 		
-		self.serverRequest.bindRequest(self.PROFILE_REQUEST_NAME);
+		self.serverRequest.bindRequest(self.PROFILE_REQUEST_NAME,self.LOGIN_REQUEST_NAME);
 		self.serverRequest.bindRequest(self.WOLFPACKS_REQUEST_NAME);
 		
 		self.members = new Members();		
@@ -87,6 +89,11 @@ var eWolf = new function() {
 			self.loginApp = null;
 		}
 		
+		if(self.signupApp) {
+			self.signupApp.destroy();
+			self.signupApp = null;
+		}
+		
 		self.serverRequest.complete(null,function() {
 			self.serverRequest.complete(null,null);
 
@@ -99,7 +106,7 @@ var eWolf = new function() {
 			}
 		});
 		
-		self.serverRequest.requestAll("eWolfLogin");
+		self.serverRequest.requestAll(self.LOGIN_REQUEST_NAME);
 	};
 	
 	this.createMainApps = function () {
@@ -114,7 +121,7 @@ var eWolf = new function() {
 		self.mainApps.addMenuItem(self.INBOX_APP_ID,"Messages");
 		self.inboxApp = new Inbox(self.INBOX_APP_ID,self.applicationFrame);
 		
-		self.searchApp = new SearchApp(self.sideMenu,
+		self.searchBar = new SearchBar(self.sideMenu,
 				self.applicationFrame,$("#"+self.TOPBAR_FRAME));
 		
 		self.serverRequest.setRequestAllOnSelect(true);
@@ -129,6 +136,11 @@ var eWolf = new function() {
 		self.welcome.addMenuItem(self.LOGIN_APP_ID,"Login");
 		if(!self.loginApp) {
 			self.loginApp = new Login(self.LOGIN_APP_ID,self.applicationFrame).select();
+		}
+		
+		self.welcome.addMenuItem(self.SIGNUP_APP_ID,"Signup");
+		if(!self.signupApp) {
+			self.signupApp = new Signup(self.SIGNUP_APP_ID,self.applicationFrame);
 		}
 	};
 	
@@ -149,10 +161,10 @@ var eWolf = new function() {
 				self.trigger("select",[selected]);
 			} else {
 				var selectedSubString = selected.substring(0,
-						self.searchApp.SEARCH_PROFILE_PREFIX.length);
+						self.searchBar.SEARCH_PROFILE_PREFIX.length);
 				
 				if(selectedSubString ==
-					self.searchApp.SEARCH_PROFILE_PREFIX) {
+					self.searchBar.SEARCH_PROFILE_PREFIX) {
 					var searchTerm = selected.substring(selectedSubString.length);
 					if(searchTerm != "") {
 						self.trigger("search",[searchTerm]);

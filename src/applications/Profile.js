@@ -4,7 +4,7 @@ var Profile = function (id,applicationFrame,userID,userName) {
 	var profileRequestName = id + "__ProfileRequest__",
 			wolfpacksRequestName = id + "__WolfpakcsRequest__";
 	
-	Application.call(this,id,applicationFrame);
+	Application.call(this, id, applicationFrame, "Searching profile...");
 	
 	var waitingForName = [];
 	
@@ -30,23 +30,21 @@ var Profile = function (id,applicationFrame,userID,userName) {
 	
 	eWolf.serverRequest.bindRequest(profileRequestName,id);
 	eWolf.serverRequest.bindRequest(wolfpacksRequestName,id);
-
-	var topTitle = new TitleArea("Searching profile...").appendTo(this.frame);
 	
 	var wolfpacksContainer = new CommaSeperatedList("Wolfpakcs");
-	topTitle.appendAtBottomPart(wolfpacksContainer.getList());	
+	this.title.appendAtBottomPart(wolfpacksContainer.getList());	
 	
 	if(userID) {
-		topTitle.addFunction("Send message...", function (event) {
+		this.title.addFunction("Send message...", function (event) {
 			new NewMessage(id,applicationFrame,userID).select();
 		}, true);
 		
-		topTitle.addFunction("Add to wolfpack...", function () {
+		this.title.addFunction("Add to wolfpack...", function () {
 			new AddToWolfpack(id, userID,self.frame, this, wolfpacksContainer.getItemNames());
 			return false;
 		}, true);
 	} else {
-		topTitle.addFunction("Post", function() {
+		this.title.addFunction("Post", function() {
 			new NewPost(id,applicationFrame).select();
 		}, true);
 	}
@@ -54,10 +52,10 @@ var Profile = function (id,applicationFrame,userID,userName) {
 	var newsFeed = null;
 	
 	function onProfileFound() {		
-		topTitle.setTitle(CreateUserBox(userID,userName,true));
+		self.title.setTitle(CreateUserBox(userID,userName,true));
 		eWolf.members.addKnownUsers(userID,userName);
 		
-		topTitle.showAll();
+		self.title.showAll();
 		
 		if(newsFeed == null) {			
 			newsFeed = new ProfileNewsFeedList(id,userID)
@@ -70,9 +68,9 @@ var Profile = function (id,applicationFrame,userID,userName) {
 	}
 	
 	function onProfileNotFound() {
-		topTitle.setTitle("Profile not found");
+		self.title.setTitle("Profile not found");
 		
-		topTitle.hideAll();
+		self.title.hideAll();
 		
 		if(newsFeed != null) {			
 			newsFeed.destroy();
