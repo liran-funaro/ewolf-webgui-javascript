@@ -1,29 +1,3 @@
-EWOLF_CONSTANTS = {
-	REFRESH_INTERVAL_SEC : 60,
-	LOADING_FRAME : "loadingFrame",
-	APPLICATION_FRAME : "applicationFrame",
-	MAIN_FRAME : "mainFrame",
-	MENU_FRAME : "menu",
-	TOPBAR_FRAME : "topbarID",
-	
-	WELCOME_MENU_ID : "__welcome_menu__",
-	MAINAPPS_MENU_ID : "__mainapps_menu__",
-	WOLFPACKS_MENU_ID : "__wolfpacks_menu__",
-	
-	MYPROFILE_APP_ID : "profile",
-	NEWSFEED_APP_ID : "newsfeed",
-	INBOX_APP_ID : "inbox",
-	LOGIN_APP_ID : "login",
-	SIGNUP_APP_ID : "signup",
-	LOGOUT_APP_ID : "logout",
-	
-	FIRST_EWOLF_LOGIN_REQUEST_ID : "eWolfLogin",
-	
-	PROFILE_REQUEST_NAME : "__main_profile_request__",
-	WOLFPACKS_REQUEST_NAME : "__main_wolfpacks_request",
-	MEMBERS_REQUEST_NAME : "__main_members_request__"
-};
-
 var eWolf = new function() {
 	var self = this;
 	$.extend(this,EWOLF_CONSTANTS);

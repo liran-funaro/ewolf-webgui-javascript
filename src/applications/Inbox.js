@@ -7,7 +7,7 @@ var Inbox = function (id,applicationFrame) {
 	/****************************************************************************
 	 * User Interface
 	  ***************************************************************************/
-	this.inbox = new InboxList(id,{}).appendTo(this.frame);
+	this.inbox = new InboxList(id).appendTo(this.frame);
 	
 	/****************************************************************************
 	 * Functionality

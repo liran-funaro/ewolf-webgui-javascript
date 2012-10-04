@@ -1,10 +1,3 @@
-SIGNUP_CONSTANTS = {
-	SIGNUP_FULL_NAME_ID : "signup full name",
-	SIGNUP_USERNAME_ID : "signup username",
-	SIGNUP_PASSWORD_ID : "signup password",
-	SIGNUP_VERIFY_PASSWORD_ID : "signup verify password"
-};
-
 var Signup = function(id) {
 	/****************************************************************************
 	 * Base class

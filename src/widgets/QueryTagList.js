@@ -124,16 +124,17 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 var FriendsQueryTagList = function (minWidth) {
 	function sendToFuncReplace(query) {
 		var id = eWolf.members.getUserFromFullDescription(query);
+		var name = null;
+		
 		if(id) {
-			query = eWolf.members.getUserName(id);
+			name = eWolf.members.getUserName(id);
 		} else {
 			id = query;
-			query = null;
 		}
 		
 		return {
 			term: id,
-			display: CreateUserBox(id,query)
+			display: CreateUserBox(id,name)
 		};
 	}
 	

@@ -1,7 +1,3 @@
-CREATE_NEW_WOLFPACK_LINK_CONSTANTS = {
-	QUERY_ID : "query"	
-};
-
 var CreateNewWolfpackLink = function() {
 	var self = this;
 	$.extend(this,CREATE_NEW_WOLFPACK_LINK_CONSTANTS);

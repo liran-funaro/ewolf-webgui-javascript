@@ -1,17 +1,6 @@
-var RESPONSE_RESULT = {
-		SUCCESS :				"SUCCESS",
-			//	if everything went well.
-		BAD_REQUEST :			"BAD_REQUEST",
-			//	Missing an obligatory parameter.
-			//	Wrong type or format parameter.
-		INTERNAL_SERVER_ERROR :	"INTERNAL_SERVER_ERROR", 
-			//for any internal server error.
-		ITEM_NOT_FOUND :		"ITEM_NOT_FOUND",
-			//	if the requested item did not found (for any reason).
-		GENERAL_ERROR :			"GENERAL_ERROR",
-			// for errors from unknown reason (no one of above)
-		UNAVAILBLE_REQUEST :	"UNAVAILBLE_REQUEST",
-			// if the request category is unavailable or not exists.
+RESPONSE_ARRAY_CONDITION_GENRAL_ERROR = 
+	function(response, textStatus, postData) {
+	return response.isGeneralError();
 };
 
 var ResponseHandler = function(category, requiredFields, handler) {
@@ -20,30 +9,58 @@ var ResponseHandler = function(category, requiredFields, handler) {
 	var errorHandler = null;
 	var completeHandler = null;
 	var badResponseHandler = null;
+	var responseArray = [];
 	
 	function theHandler(data, textStatus, postData) {
-		if (data[category] != null) {
-			if (data[category].result == RESPONSE_RESULT.SUCCESS) {
-				var valid = true;
+		if (data[category]) {
+			var response = new GenericResponse(data[category]);
+			var valid = true;
+			
+			$.each(responseArray, function(i, resObj) {
+				if(resObj.condition && resObj.key &&
+						resObj.condition(response, textStatus, postData[category])) {
+					if(response[resObj.key]) {
+						$.each(response[resObj.key], function(pos, item) {
+							var subResponse = new GenericResponse(item);
+							
+							if(subResponse.isSuccess()) {
+								if(resObj.success) {
+									resObj.success(pos, subResponse, textStatus, postData[category]);
+								}								
+							} else {
+								if(resObj.error) {
+									resObj.error(pos, subResponse, textStatus, postData[category]);
+								}								
+							}
+						});
+					} else {
+						console.log("No " + resObj.key + " in response");
+					}
+				}
+			});
+			
+			if (response.isSuccess()) {				
 				$.each(requiredFields, function(i, field) {
-					if (field == null) {
+					if (field && !response[field]) {
 						console.log("No field: \"" + field + "\" in response");
 						valid = false;
-						return false;
 					}
 				});
-
-				if (valid && handler) {
-					handler(data[category], textStatus, postData[category]);
-				}
 			} else {
-				console.log(data[category].result + " : " +
-						data[category].errorMessage);
+				valid = false;
+			}
+			
+			if (valid) {
+				if(handler) {
+					handler(response, textStatus, postData[category]);
+				}				
+			} else {
+				console.log(response.toString());
+				
 				if(errorHandler) {
-					errorHandler(data[category], textStatus, postData[category]);
+					errorHandler(response, textStatus, postData[category]);
 				}
 			}
-
 		} else {
 			var errorMsg = "No category: \"" + category + "\" in response";
 			console.log(errorMsg);
@@ -56,8 +73,18 @@ var ResponseHandler = function(category, requiredFields, handler) {
 		if(completeHandler) {
 			completeHandler(textStatus, postData[category]);
 		}		
-	};
+	};	
 	
+	this.addResponseArray = function(key, conditionFunc, success, error) {
+		responseArray.push({
+			key : key,
+			condition : conditionFunc,
+			success : success,
+			error : error
+		});
+		
+		return thisObj;
+	};
 
 	this.getHandler = function() {
 		return theHandler;

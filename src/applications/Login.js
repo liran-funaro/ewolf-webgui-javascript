@@ -1,8 +1,3 @@
-LOGIN_CONSTANTS = {
-	LOGIN_USERNAME_ID : "login username",
-	LOGIN_PASSWORD_ID : "login password"
-};
-
 var Login = function(id,applicationFrame) {
 	/****************************************************************************
 	 * Base class

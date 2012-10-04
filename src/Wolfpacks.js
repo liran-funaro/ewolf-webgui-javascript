@@ -1,7 +1,3 @@
-WOLFPACK_CONSTANTS = {
-	WOLFPACK_APP_PREFIX : "wolfpack:"
-};
-
 var Wolfpacks = function (menuList,applicationFrame) {
 	var self = this;
 	$.extend(this,WOLFPACK_CONSTANTS);

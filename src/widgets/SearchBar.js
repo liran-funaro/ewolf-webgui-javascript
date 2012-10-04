@@ -1,8 +1,3 @@
-SEARCHBAR_CONSTANTS = {
-	SEARCH_PROFILE_PREFIX : "profile:",
-	SEARCH_MENU_ITEM_ID : "__seach_menu_id__"
-};
-
 var SearchBar = function(menu,applicationFrame,container) {
 	var self = this;
 	$.extend(this,SEARCHBAR_CONSTANTS);

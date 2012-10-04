@@ -26,7 +26,7 @@ function CreateUserBox(id,name,showID) {
 	function fillInformation() {
 		nameBox.attr({
 			"title": id
-		}).text(name);
+		}).text(name ? name : id);
 		
 		if(idBox) {
 			idBox.html(id);
@@ -40,10 +40,11 @@ function CreateUserBox(id,name,showID) {
 			id = fullDescID;
 		}
 		
-		name = eWolf.members.getUserName(id,function(receivedName) {
-			name = receivedName;
-			fillInformation();	
-		});
+		name = eWolf.members.getUserName(id);
+
+		if(name) {
+			fillInformation();
+		}
 	}
 	
 	fillInformation();	

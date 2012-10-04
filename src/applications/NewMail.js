@@ -1,13 +1,3 @@
-NEWMAIL_CONSTANTS = {
-	NEWMAIL_APP_ID_PREFIX : "mailto:",
-	NEW_MAIL_DAFAULTS : {
-			TITLE : "New Mail",
-			TO : "To",
-			CONTENT : "Content",
-			ATTACHMENT : "Attachment"
-		}
-};
-
 var NewMail = function(callerID,applicationFrame,options,		
 		createRequestObj,handleResponseCategory,
 		allowAttachment,sendTo,sendToQuery, sendToMultipleInOneMessage) {
@@ -162,12 +152,17 @@ var NewMail = function(callerID,applicationFrame,options,
 		if(sendToQuery.isMissingField(true, " * Please select a destination(s).")) {
 			return false;
 		}
-
+		
 		if(!resend) {
 			if(sendToQuery.tagList.match({markedOK:true}).count() > 0) {
 				showDeleteSuccessfulDialog(event);
 				return false;
 			}
+		}
+		
+		if(sendToQuery.tagList.match({markedOK:false}).count() <= 0) {
+			self.updateSend();
+			return false;
 		}
 			
 		sendToQuery.tagList.unmarkTags({markedError:true});		
@@ -229,30 +224,31 @@ var NewMail = function(callerID,applicationFrame,options,
 			} else {
 				sendToQuery.tagList.markTagOK(destId);
 			}
-			
-			self.updateSend();
-		}).error(function(data, textStatus, postData) {
-			if($.isArray(destId)) {
-				if(data.userIDsResult) {
-					$.each(data.userIDsResult, function(i, result) {
-						var itemID = postData.userIDs[i];
-						var item = sendToQuery.tagList.match({id:itemID});
-						
-						if(result == "success") {							
-							item.markOK();
-						} else {
-							self.appendFailErrorMessage(itemID, result);
-						}		
-					});
-				} else {
-					self.appendFailErrorMessage("everyone", data.result);
-				}
-			} else {
-				self.appendFailErrorMessage(destId, data.result);
+		}).error(function(response, textStatus, postData) {
+			if( ! $.isArray(destId)) {
+				self.appendFailErrorMessage(destId, response.toString());
 			}
-			
-			self.updateSend();
-		});
+		}).addResponseArray("userIDsResult",
+				// Condition
+				function(response, textStatus, postData) {
+					return $.isArray(destId) && response.isGeneralError();
+				},
+				// Success
+				function(pos, response, textStatus, postData) {
+					var itemID = postData.userIDs[pos];
+					var item = sendToQuery.tagList.match({id:itemID});
+					
+					item.markOK();
+				},
+				// Error
+				function(pos, response, textStatus, postData) {
+					var itemID = postData.userIDs[pos];
+					
+					self.appendFailErrorMessage(itemID, 
+							response.toString());		
+				}).complete(function() {
+					self.updateSend();
+				});
 		
 		eWolf.serverRequest.request(id,
 				createRequestObj(destId,data),

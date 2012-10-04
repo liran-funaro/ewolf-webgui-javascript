@@ -1,4 +1,5 @@
-var GenericMailList = function(mailType,appID,serverSettings,
+var GenericMailList = function(mailType,appID,
+		extraDataToSend, maxOlderMessagesFetch,
 		listClass,msgBoxClass,preMessageTitle,allowShrink) {
 	var self = this;
 	
@@ -17,13 +18,17 @@ var GenericMailList = function(mailType,appID,serverSettings,
 	
 	this.updateFromServer = function (getOlder) {
 		var data = {};
-		$.extend(data,serverSettings);
+		$.extend(data,extraDataToSend);
 		
 		if(getOlder && newestDate != null && oldestDate != null) {
 			data.olderThan = oldestDate-1;
 		} else if(newestDate != null) {
 			data.newerThan = newestDate+1;
-		}		
+		}
+		
+		if(!data.newerThan) {
+			data.maxMessages = maxOlderMessagesFetch;			
+		}
 		
 		var postData = {};
 		postData[mailType] = data;
@@ -67,10 +72,10 @@ var GenericMailList = function(mailType,appID,serverSettings,
 	eWolf.serverRequest.registerHandler(newsFeedRequestName,responseHandler.getHandler());
 	eWolf.serverRequest.bindRequest(newsFeedRequestName,appID);
 	
-	var showMore = new ShowMore(this.frame,function() {
+	var showMore = new ShowMore(function() {
 		eWolf.serverRequest.request(appID,self.updateFromServer (true),
 				responseHandler.getHandler());
-	}).draw();
+	}).appendTo(this.frame);
 	
 	function handleNewData(data, textStatus, postData) {
 		$.each(data.mailList, function(j, mailItem) {
@@ -78,9 +83,12 @@ var GenericMailList = function(mailType,appID,serverSettings,
 					mailItem.timestamp, mailItem.mail);
 		});
 		
-		if (postData.newerThan == null &&
+		if ( (!postData.newerThan) &&
 				data.mailList.length < postData.maxMessages) {
-			showMore.remove();
+			showMore.hide();
+		} else if( (!postData.newerThan) && (!postData.olderThan)
+				&& data.mailList.length >= postData.maxMessages) {
+			showMore.show();
 		}
 	}
 	
@@ -98,10 +106,9 @@ var GenericMailList = function(mailType,appID,serverSettings,
 };
 
 var NewsFeedList = function (appID,serverSettings) {
-	$.extend(serverSettings,{maxMessages:2});
-
 	var pow = "<img src='wolf-paw.svg' height='18px' style='padding-right:5px;'></img>";
 	GenericMailList.call(this,"newsFeed",appID,serverSettings,
+			eWolf.NEWSFEED_MAX_OLDER_MESSAGES_FETCH,
 			"postListItem","postBox",pow,false);
 	
 	return this;
@@ -135,10 +142,10 @@ var ProfileNewsFeedList = function (appID,profileID) {
 	return this;
 };
 
-var InboxList = function (appID,serverSettings) {	
-	$.extend(serverSettings,{maxMessages:2});
+var InboxList = function (appID) {	
 	
-	GenericMailList.call(this,"inbox",appID,serverSettings,
+	GenericMailList.call(this,"inbox",appID,{},
+			eWolf.INBOX_MAX_OLDER_MESSAGES_FETCH,
 			"messageListItem","messageBox", ">> ",true);
 	
 	return this;

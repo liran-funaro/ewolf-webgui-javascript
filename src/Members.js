@@ -25,7 +25,7 @@ var Members = function() {
 	}
 	
 	this.addKnownUsers = function(userID,userName) {
-		if(knownUsersMapByID[userID] == null) {
+		if(!knownUsersMapByID[userID]) {
 			knownUsersMapByID[userID] = userName;
 			var fullDesc = userName+" ("+userID+")";
 			self.knownUsersFullDescriptionArray.push(fullDesc);

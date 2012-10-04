@@ -1,5 +1,5 @@
-var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
-		onFinish) {
+var AddMembersToWolfpack = function(fatherID,wolfpack, 
+		existingMemebers,	onFinish) {
 	var self = this;
 	this.frame = $("<span/>");
 	
@@ -65,39 +65,33 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 		self.cancel();
 	};
 	
-	this.error = function(data, textStatus, postData) {
-		var errorMsg = null;
+	this.wolfpackError = function(pos, response, textStatus, postData) {
+		errorMessage.append(response.toString()+"<br>");
+	};
+	
+	this.userSuccess = function(pos, response, textStatus, postData) {
+		var itemID = postData.userIDs[pos];
+		var item = addMembersQuery.tagList.match({id:itemID});
 		
-		if(data.wolfpacksResult == null) {
-			console.log("No wolfpacksResult in response");
-		} else if(data.wolfpacksResult[0] != "success") {
-			errorMsg = "Error: " + data.wolfpacksResult[0];
-			errorMessage.append(errorMsg+"<br>");
-		}
+		madeChanges = true;
+		item.unremovable().markOK();			
+	};
+	
+	this.userError = function(pos, response, textStatus, postData) {
+		var itemID = postData.userIDs[pos];
+		var item = addMembersQuery.tagList.match({id:itemID});
 		
-		if(data.usersResult == null) {
-			console.log("No usersResult in response");
-		} else {
-			$.each(data.usersResult, function(i, result) {
-				var itemID = postData.userIDs[i];
-				var item = addMembersQuery.tagList.match({id:itemID});
-				
-				if(result == "success") {
-					madeChanges = true;
-					item.unremovable().markOK();
-				} else {
-					var errorMsg = "Failed to add: " + itemID +
-							" with error: " + result;
-					errorMessage.append(errorMsg+"<br>");
-					
-					item.markError(errorMsg);
-				}					
-			});
-		}
-		
-		if(errorMsg == null) {
+		var errorMsg = "Failed to add: " + itemID +
+					" with error: " + response.toString();
+		errorMessage.append(errorMsg+"<br>");
+			
+		item.markError(errorMsg);
+	};
+	
+	this.error = function(response, textStatus, postData) {		
+		if(!response.isSuccess() && !response.isGeneralError()) {
 			errorMessage.append("Unknown error...<br>");
-		}			
+		}
 	};
 	
 	this.complete = function (textStatus, postData) {
@@ -116,7 +110,13 @@ var AddMembersToWolfpack = function(fatherID,wolfpack, existingMemebers,
 	responseHandler
 		.success(this.success)	
 		.error(this.error)	
-		.complete(this.complete);
+		.complete(this.complete)
+		.addResponseArray("wolfpacksResult",
+				RESPONSE_ARRAY_CONDITION_GENRAL_ERROR,
+				null,this.wolfpackError)
+		.addResponseArray("usersResult",
+				RESPONSE_ARRAY_CONDITION_GENRAL_ERROR,
+				this.userSuccess, this.userError);
 	
 	return this;
 };
