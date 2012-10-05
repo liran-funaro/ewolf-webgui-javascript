@@ -28,7 +28,8 @@ var Profile = function (id,applicationFrame,userID,userName) {
 	var handleProfileResonse = new ResponseHandler("profile",
 			["id","name"],handleProfileData);
 	
-	var handleWolfpacksResponse = new ResponseHandler("wolfpacks",
+	var handleWolfpacksResponse = new ResponseHandler(
+			userID ? "wolfpacks" : "wolfpacksAll",
 			["wolfpacksList"],handleWolfpacksData);
 	
 	if(userID) {
@@ -54,8 +55,11 @@ var Profile = function (id,applicationFrame,userID,userName) {
 		}, true);
 		
 		this.title.addFunction("Add to wolfpack...", function () {
-			new AddToWolfpack(id, userID,self.frame, this, wolfpacksContainer.getItemNames());
-			return false;
+			var widget = new AddToWolfpack(id, userID, 
+					wolfpacksContainer.getItemNames());
+			new Popup(self.frame, this, "bottom-right",200)
+						.append(widget.context)
+						.start();
 		}, true);
 	} else {
 		this.title.addFunction("Post", function() {

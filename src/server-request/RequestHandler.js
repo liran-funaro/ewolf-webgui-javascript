@@ -5,7 +5,7 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 			appsRequests = {},
 			generalRequests = [];
 
-	var onCompleteAll = null;
+	var onCompleteAll = [];
 	var onGeneralError = null;
 	var timer = null;
 	var requestAllOnSelect = false;
@@ -41,7 +41,9 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 		}
 		
 		if(onCompleteAll) {
-			onCompleteAll(appID, response, status);
+			$.each(onCompleteAll, function(i, onCompleteFunc) {
+				onCompleteFunc(appID, response, status);
+			});			
 		}		
 	}
 		
@@ -216,11 +218,11 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 		return needRefresh;
 	};
 	
-	this.complete = function(appID,newOnComplete) {
+	this.addOnComplete = function(appID,newOnComplete) {
 		if(appID && appsRequests[appID]) {
 			appsRequests[appID].onComplete = newOnComplete;
 		} else {
-			onCompleteAll = newOnComplete;
+			onCompleteAll.push(newOnComplete);
 		}		
 		
 		return self;

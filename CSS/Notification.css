@@ -1,0 +1,19 @@
+.notification {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	background: #c10015;
+	color: white;
+	border-radius: 9px;
+	font-weight: bold;
+	font-size: 11px;
+	vertical-align: middle;
+	text-align: center;
+	font-family: "trebuchet MS", veranda, arial;
+	line-height: 18px;
+}
+
+.onItemNotification {
+	display:block;
+	position:absolute;
+}

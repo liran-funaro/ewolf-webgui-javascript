@@ -1,4 +1,4 @@
-var MenuList = function(id,title,topbarFrame) {
+var MenuList = function(id,title) {
 	var self = this;
 	
 	var items = [];
@@ -15,7 +15,7 @@ var MenuList = function(id,title,topbarFrame) {
 	
 	this.addMenuItem = function(id,title) {
 		if(items[id] == null) {
-			var menuItem = new MenuItem(id,title,topbarFrame)
+			var menuItem = new MenuItem(id,title)
 					.appendTo(menuItemList);
 			
 			items[id] = menuItem;

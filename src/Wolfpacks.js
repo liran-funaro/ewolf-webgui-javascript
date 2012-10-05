@@ -9,7 +9,7 @@ var Wolfpacks = function (menuList,applicationFrame) {
 	
 	menuList.addExtraItem(CreateNewWolfpackLink());
 	
-	var wolfpacksResponseHandler = new ResponseHandler("wolfpacks",
+	var wolfpacksResponseHandler = new ResponseHandler("wolfpacksAll",
 			["wolfpacksList"],handleWolfpacks);
 	
 	eWolf.serverRequest.registerHandler(eWolf.WOLFPACKS_REQUEST_NAME,

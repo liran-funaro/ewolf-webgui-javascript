@@ -1,10 +1,26 @@
-var AddToWolfpack = function(id, userID, frame, activator, packsAlreadyIn) {
+var AddToWolfpack = function(id, userID, packsAlreadyIn) {
 	var self = this;
-	PopUp.call(this,frame,activator);
 	
-	var packList = $("<ul/>").attr({
-		"class": "packListSelect"
-	}).appendTo(this.frame);	
+	this.context = $("<span/>");
+	
+	this.title = $("<span/>")
+				.css({
+					"padding" : "5px",
+					"font-size" : "12px"
+				})
+				.appendTo(this.context);
+	
+	$("<hr/>").css({
+		"margin":"0"
+	}).appendTo(this.context);
+	
+	this.title.append("Add ");
+	this.title.append(CreateUserBox(userID, null, false));
+	this.title.append(" to:");
+	
+	var packList = $("<ul/>")
+				.addClass("packListSelect")
+				.appendTo(this.context);	
 
 	$.each(eWolf.wolfpacks.wolfpacksArray,function(i,pack) {
 		var box = $("<input/>").attr({
@@ -87,11 +103,11 @@ var AddToWolfpack = function(id, userID, frame, activator, packsAlreadyIn) {
 	
 	$("<hr/>").css({
 		"margin":"0"
-	}).appendTo(this.frame);
+	}).appendTo(this.context);
 	
 	var applyBtn = $("<span/>").attr({
 		"class": "aLink applyLink"
-	}).append("Apply").appendTo(this.frame);
+	}).append("Apply").appendTo(this.context);
 	
 	this.getSelection = function () {
 		var result = {

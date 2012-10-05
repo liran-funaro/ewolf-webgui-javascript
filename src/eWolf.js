@@ -24,7 +24,7 @@ var eWolf = new function() {
 		new Loading(self.loadingFrame);		
 		
 		self.sideMenu = new SideMenu(self.menuFrame,
-				self.mainFrame,self.topBarFrame);
+				self.mainFrame);
 		
 		self.welcome = self.sideMenu.createNewMenuList(
 				self.WELCOME_MENU_ID,"Welcome");
@@ -42,7 +42,21 @@ var eWolf = new function() {
 		
 		self.serverRequest.registerRequest(self.WOLFPACKS_REQUEST_NAME,
 				function() {
-					return { wolfpacks : {}	};
+					return { wolfpacksAll : {}	};
+				});
+		
+		self.serverRequest.registerRequest(eWolf.APPROVED_MEMBERS_REQUEST_NAME,
+				function() {
+					var result = {};
+					result[eWolf.REQUEST_CATEGORY_WOLFPACK_MEMBERS_ALIAS1] = {
+							wolfpackName : eWolf.APPROVED_WOLFPACK_NAME
+					};
+					
+					result[eWolf.REQUEST_CATEGORY_WOLFPACK_MEMBERS_ALIAS2] = {
+							wolfpackName : eWolf.APPROVED_ME_WOLFPACK_NAME
+					};
+					
+					return result;
 				});
 		
 		self.serverRequest.bindRequest(self.PROFILE_REQUEST_NAME, self.FIRST_EWOLF_LOGIN_REQUEST_ID);
@@ -60,7 +74,7 @@ var eWolf = new function() {
 					self.userName = data.name;
 				}).getHandler());
 		
-		self.serverRequest.complete(null,function(appID, response, status) {
+		self.serverRequest.addOnComplete(null,function(appID, response, status) {
 			if(self.mainAppsCreated) {
 				if(response.status != 200 || self.userID == null) {
 					document.location.reload(true);
@@ -105,8 +119,10 @@ var eWolf = new function() {
 		self.mainApps.addMenuItem(self.INBOX_APP_ID,"Messages");
 		self.inboxApp = new Inbox(self.INBOX_APP_ID,self.applicationFrame);
 		
+		self.pendingRequests = new PendingRequests(self.topBarFrame);
+		
 		self.searchBar = new SearchBar(self.sideMenu,
-				self.applicationFrame,$("#"+self.TOPBAR_FRAME));
+				self.applicationFrame,self.topBarFrame);
 		
 		self.serverRequest.setRequestAllOnSelect(true);
 		self.onHashChange();

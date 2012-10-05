@@ -1,4 +1,4 @@
-var MenuItem = function(id,title,topbarFrame) {
+var MenuItem = function(id,title) {
 	var thisObj = this;
 	var isLoading = false;
 	var selected = false;	
@@ -11,19 +11,27 @@ var MenuItem = function(id,title,topbarFrame) {
 		"style": "width:1%;"
 	}).appendTo(aObj);
 	
-	var refreshContainer = $("<div/>").attr({
-		"class": "refreshButtonArea"
-	})	.appendTo(aObj).hide();
+	var refreshContainer = $("<div/>")
+				.addClass("menuItemExtraInfoArea")
+				.css("padding-top","5px")
+				.appendTo(aObj).hide();
 	
-	var loadingContainer = $("<div/>").attr({
-		"class": "refreshButtonArea",
-		"id": id,
-	})	.appendTo(aObj).hide();
+	var loadingContainer = $("<div/>")
+				.addClass("menuItemExtraInfoArea")
+				.css("padding-top","5px")
+				.appendTo(aObj).hide();
+	
+	var notificationsContainer = $("<div/>")
+				.addClass("menuItemExtraInfoArea")
+				.appendTo(aObj).hide();
 	
 	var refresh = $("<img/>").attr({
 		"src": "refresh.svg",
 		"class": "refreshButton"
 	})	.appendTo(refreshContainer);
+	
+	var notification = new Notification(notificationsContainer)
+							.setCounter(0);
 	
 	listItem.click(function() {
 		if(selected == false) {
@@ -44,6 +52,12 @@ var MenuItem = function(id,title,topbarFrame) {
 			w = w - 20;
 		} else {
 			refreshContainer.hide();
+		}
+		
+		if(selected || isLoading) {
+			notificationsContainer.hide();
+		} else {
+			notificationsContainer.show();
 		}
 		
 		if(isLoading) {
@@ -68,7 +82,7 @@ var MenuItem = function(id,title,topbarFrame) {
 		updateView();
 	}
 	
-	eWolf.bind("select."+id,function(event,eventId) {
+	eWolf.bind("select",function(event,eventId) {
 		if(id == eventId) {
 			select();
 		} else {
@@ -76,7 +90,7 @@ var MenuItem = function(id,title,topbarFrame) {
 		}			
 	});
 	
-	eWolf.bind("loading."+id,function(event,eventId) {
+	eWolf.bind("loading",function(event,eventId) {
 		if(id == eventId) {
 			isLoading = true;
 			updateView();
@@ -84,7 +98,7 @@ var MenuItem = function(id,title,topbarFrame) {
 		}	
 	});
 	
-	eWolf.bind("loadingEnd."+id,function(event,eventId) {
+	eWolf.bind("loadingEnd",function(event,eventId) {
 		if(id == eventId) {
 			isLoading = false;
 			updateView();
@@ -105,6 +119,18 @@ var MenuItem = function(id,title,topbarFrame) {
 	this.renameTitle = function(newTitle) {
 		title = newTitle;
 		updateView();
+		return thisObj;
+	};
+	
+	this.setNotificationCounter = function(number) {
+		if(number < 0) {
+			number = 0;
+		}
+		
+		if(notification) {
+			notification.setCounter(number);
+		}
+		
 		return thisObj;
 	};
 	

@@ -1,15 +1,15 @@
-var WolfpackPage = function (id,wolfpackName,applicationFrame) {	
-	/****************************************************************************
-	 * Base class
-	  ***************************************************************************/	
-	Application.call(this, id, applicationFrame, 
-			wolfpackName == null ? "News Feed" : CreateWolfpackBox(wolfpackName));
-			
+var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 	/****************************************************************************
 	 * Members
 	  ***************************************************************************/
 	var self = this;
 	
+	/****************************************************************************
+	 * Base class
+	  ***************************************************************************/	
+	Application.call(this, id, applicationFrame, 
+			wolfpackName == null ? "News Feed" : CreateWolfpackBox(wolfpackName));
+		
 	/****************************************************************************
 	 * User Interface
 	  ***************************************************************************/
@@ -74,16 +74,27 @@ var WolfpackPage = function (id,wolfpackName,applicationFrame) {
 		}
 		
 		var wolfpackMembersRequestName = id + "__wolfpack_members_request_name__";
+		var handlerCategory = eWolf.REQUEST_CATEGORY_WOLFPACK_MEMBERS;
 		
-		eWolf.serverRequest
-			.registerRequest(wolfpackMembersRequestName,
-					getWolfpacksMembersData)
-			.registerHandler(wolfpackMembersRequestName,
-					new ResponseHandler("wolfpackMembers",
+		if(wolfpackName == eWolf.APPROVED_WOLFPACK_NAME ||
+				wolfpackName == eWolf.APPROVED_ME_WOLFPACK_NAME) {
+			wolfpackMembersRequestName = eWolf.APPROVED_MEMBERS_REQUEST_NAME;
+		} else {
+			eWolf.serverRequest.registerRequest(wolfpackMembersRequestName,
+					getWolfpacksMembersData);
+		}
+		
+		if(wolfpackName == eWolf.APPROVED_WOLFPACK_NAME) {
+			handlerCategory = eWolf.REQUEST_CATEGORY_WOLFPACK_MEMBERS_ALIAS1;
+		} else if(wolfpackName == eWolf.APPROVED_ME_WOLFPACK_NAME) {
+			handlerCategory = eWolf.REQUEST_CATEGORY_WOLFPACK_MEMBERS_ALIAS2;
+		}		
+		
+		eWolf.serverRequest.registerHandler(wolfpackMembersRequestName,
+					new ResponseHandler(handlerCategory,
 					["membersList"],
 					handleWolfpacksMembersData).getHandler())
-			.bindRequest(wolfpackMembersRequestName,
-					id);
+			.bindRequest(wolfpackMembersRequestName, id);
 					
 		
 		self.title.addFunction("Add members...", this.showAddMembers);

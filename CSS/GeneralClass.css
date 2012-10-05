@@ -42,6 +42,11 @@
 	font-style:italic;
 	font-weight:normal !important;
 	padding-left:5px;
+	padding-top:0;
+	padding-bottom:0;
+	margin-top:0;
+	margin-bottom:0;
 	word-wrap:break-word;
 	white-space:pre-line;
+	display:inline-block;
 }

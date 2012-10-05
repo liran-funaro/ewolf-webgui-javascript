@@ -1,4 +1,4 @@
-var SideMenu = function(menu, mainFrame,topbarFrame) {
+var SideMenu = function(menu, mainFrame) {
 	var thisObj = this;
 	
 	var itemSpace = menu.children("#menuItemsSpace");
@@ -109,7 +109,7 @@ var SideMenu = function(menu, mainFrame,topbarFrame) {
 	};
 	
 	this.createNewMenuList = function(id, title) {
-		var menuLst = new MenuList(id,title,topbarFrame)
+		var menuLst = new MenuList(id,title)
 			.appendTo(itemSpace);
 		menuLists.push(menuLst);
 		return menuLst;
