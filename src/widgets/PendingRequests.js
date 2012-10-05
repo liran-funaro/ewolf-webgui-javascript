@@ -116,7 +116,11 @@ var PendingRequests = function (insideContext) {
 	
 	pendingRequestImage.click(function() {
 		if(pendingApproval.length > 0) {
-			var widget = new PendingApprovalList(pendingApproval, 300);
+			var widget = new UserList(pendingApproval, 400,	"add >>", 
+					function(userID) {
+						return new AddToWolfpack(null, userID, 
+								[eWolf.APPROVED_ME_WOLFPACK_NAME]).context;
+					}, 200);
 			new Popup(document.body, pendingRequestImage, "bottom-left", 
 					null, {left: 0, top: 3})
 						.append(widget.context)
@@ -125,9 +129,18 @@ var PendingRequests = function (insideContext) {
 	});
 	
 	blockedImage.click(function() {
-		if(requestApproval.length > 0) {
-			new PendingApprovalList(requestApproval,
-					document.body, blockedImage, -7, 8, 350);
+		// TODO should be requestApproval (NOT pendingApproval)
+		if(pendingApproval.length > 0) {
+			var widget = new UserList(pendingApproval, 400,	"send a message", 
+					function(userID) {
+						new NewMessage(eWolf.selectedApp,
+								eWolf.applicationFrame,userID).select();
+						return null;
+					},0);
+			new Popup(document.body, blockedImage, "bottom-left", 
+					null, {left: 0, top: 3})
+						.append(widget.context)
+						.start();
 		}		
 	});
 	

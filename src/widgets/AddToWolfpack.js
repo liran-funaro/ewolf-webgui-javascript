@@ -159,7 +159,7 @@ var AddToWolfpack = function(id, userID, packsAlreadyIn) {
 	this.apply = function() {
 		result = self.getSelection();
 		
-		self.destroy();
+		eWolf.trigger("select",[id]);
 		
 		eWolf.wolfpacks.createWolfpacks(result.create, function () {
 			self.addToAllWolfpacks(result.add);

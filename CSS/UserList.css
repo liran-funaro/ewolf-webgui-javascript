@@ -1,40 +1,25 @@
-.profileListSide {
+.userListContextSide {
 	float:left;
 	border-right-style:solid;
 	border-right-width:1px;
 	border-right-color:#aaa;'
 }
 
-.addToWolfpackWidgetSide {
-	width:200px;
+.userListActionContextSide {
 	float:right;
 	border-left-style:solid;
 	border-left-width:1px;
 	border-left-color:#aaa;
+	opacity:0;
 }
 
-.actionItem {
-	/*display:none;*/
-	float:right;
-	padding-right:5px;
-	color:#444;
-	font-size:14px;
-	padding-top:15px;
-}
-
-.pendingListItemLeftSideItem {
-	float:left;
-	padding-top:5px;
-	align:bottom;
-}
-
-.cleanList {
+.userListClass {
 	list-style-type:none;
 	padding:5px;
 	margin: 0 0;
 }
 
-.pendingListItem {
+.userListClass li {
 	display:block;
 	text-decoration:none;
 	color:#000000;
@@ -46,3 +31,18 @@
 	padding-left:10px;
 	align:bottom;
 }
+
+.userListTextItem {
+	float:left;
+	padding-top:5px;
+	align:bottom;
+}
+
+.userListActionItem {
+	float:right;
+	padding-right:5px;
+	color:#444;
+	font-size:14px;
+	padding-top:15px;
+}
+
