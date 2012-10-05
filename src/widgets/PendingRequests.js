@@ -129,9 +129,8 @@ var PendingRequests = function (insideContext) {
 	});
 	
 	blockedImage.click(function() {
-		// TODO should be requestApproval (NOT pendingApproval)
-		if(pendingApproval.length > 0) {
-			var widget = new UserList(pendingApproval, 400,	"send a message", 
+		if(requestApproval.length > 0) {
+			var widget = new UserList(requestApproval, 400,	"send a message", 
 					function(userID) {
 						new NewMessage(eWolf.selectedApp,
 								eWolf.applicationFrame,userID).select();

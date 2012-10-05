@@ -29,7 +29,7 @@ var UserList = function(users, width,
 	/****************************************************************************
 	 * Functionality
 	  ***************************************************************************/
-	this.addUser = function(id) {
+	this.addUser = function(userID) {
 		var listItem = $("<li/>")
 					.appendTo(self.userList);
 		
@@ -37,8 +37,14 @@ var UserList = function(users, width,
 					.addClass("userListTextItem")					
 					.appendTo(listItem);
 		
-		$("<div/>").append(CreateUserBox(id,null,false)).appendTo(leftSide);
-		$("<div/>").addClass("idBox").append(id).appendTo(leftSide);
+		$("<div/>")
+				.append(CreateUserBox(userID))
+				.appendTo(leftSide);
+		
+		$("<div/>")
+				.addClass("idBox")
+				.append(userID)
+				.appendTo(leftSide);
 		
 		$("<div/>")
 				.addClass("userListActionItem")
@@ -46,35 +52,37 @@ var UserList = function(users, width,
 				.appendTo(listItem)
 				.append(actionText)
 				.click(function () {
-					var inflator = actionContextInflator(id);
-					
-					if(inflator) {
-						if(!inlated) {
-							inlated = true;
-							
-							self.context.animate({
-								width : width + actionContextWidth + 2
-							},300, function() {
-								self.actionContext.html(inflator).show().animate({
-									opacity : 1
-								},200);
-							});
-						} else {
-							self.actionContext.animate({
-								opacity : 0
-							},200, function() {
-								self.actionContext.html(inflator).animate({
-									opacity: 1
-								},200);
-							}); 
-						}
-					}					
+					self.inflateContext(userID);
 				});
 	};
 	
+	this.inflateContext = function(userID) {
+		var inflator = actionContextInflator(userID);
+		
+		if(inflator) {
+			if(!inlated) {
+				inlated = true;
+				
+				self.context.animate({
+					width : width + actionContextWidth + 2
+				},300, function() {
+					self.actionContext.html(inflator).show().animate({
+						opacity : 1
+					},200);
+				});
+			} else {
+				self.actionContext.animate({
+					opacity : 0
+				},200, function() {
+					self.actionContext.html(inflator).animate({
+						opacity: 1
+					},200);
+				}); 
+			}
+		}
+	};
+	
 	$.each(users, function(i, id) {
-		self.addUser(id);
-		self.addUser(id);
 		self.addUser(id);
 	});
 	
