@@ -26,7 +26,7 @@ function CreateUserBox(id,name,showID) {
 	function fillInformation() {
 		nameBox.attr({
 			"title": id
-		}).text(name ? name : id);
+		}).text(name ? name : "Unknown ID: " + id);
 		
 		if(idBox) {
 			idBox.html(id);
