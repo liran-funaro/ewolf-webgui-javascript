@@ -1,7 +1,13 @@
 var ThumbnailImage = function (src,altText,quality,maxWidth,maxHeight,onReady) {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var image = new Image();
 	image.src = src;
 
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/
 	image.onload = function() {
 		var imageWidth = image.width,
 			imageHeight = image.height;

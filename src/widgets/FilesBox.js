@@ -1,4 +1,7 @@
 var FilesBox = function(uploaderArea) {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	
 	var fileselect;
@@ -9,6 +12,9 @@ var FilesBox = function(uploaderArea) {
 	// file unique ID
 	var UID = 0;
 	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
 	if (new XMLHttpRequest().upload) {
 		fileselect = $("<input/>").attr({
 			"type" : "file",
@@ -36,6 +42,9 @@ var FilesBox = function(uploaderArea) {
 			.appendTo(uploaderArea);
 	}
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
 	this.addFiles = function (files) {
 		if(!files) {
 			return;
@@ -170,7 +179,7 @@ var FilesBox = function(uploaderArea) {
 	this.uploadAllFiles = function(wolfpackName,onComplete) {
 		if(!filelist || filelist.match({markedOK:false}).isEmpty()) {
 			onComplete(true,[]);
-			return this;
+			return self;
 		}
 		
 		function onCompleteOneFile() {
@@ -197,7 +206,7 @@ var FilesBox = function(uploaderArea) {
 			},onCompleteOneFile);
 		});
 		
-		return this;
+		return self;
 	};
 	
 	return this;

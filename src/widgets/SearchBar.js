@@ -1,4 +1,7 @@
 var SearchBar = function(menu,applicationFrame,container) {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	$.extend(this,SEARCHBAR_CONSTANTS);
 	
@@ -6,6 +9,9 @@ var SearchBar = function(menu,applicationFrame,container) {
 	var apps = new Object();
 	var lastSearch = null;
 	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/	
 	this.frame = $("<div/>")
 		.addClass("title-bar")
 		.appendTo(container);
@@ -22,6 +28,9 @@ var SearchBar = function(menu,applicationFrame,container) {
 		select: onSelectAutocomplete
 	}).appendTo(this.frame);
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/
 	eWolf.bind("foundNewUser",function(event,id,name,fullDescription) {
 		query.autocomplete("destroy").autocomplete({
 			source: eWolf.members.knownUsersFullDescriptionArray,
@@ -29,15 +38,16 @@ var SearchBar = function(menu,applicationFrame,container) {
 		});
 	});
 	
-	function onSelectAutocomplete(event,ui) {
-		self.search(ui.item.label);
-		return false;
-	}
-
 	var searchBtn = $("<input/>").attr({
 		"type" : "button",
 		"value" : "Search"
 	}).appendTo(this.frame).hide();
+	
+
+	function onSelectAutocomplete(event,ui) {
+		self.search(ui.item.label);
+		return false;
+	}
 	
 	function addSearchMenuItem(id,name) {
 //		var tempName;

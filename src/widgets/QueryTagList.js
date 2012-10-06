@@ -1,8 +1,14 @@
 var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 		allowMultipleDestinations,commitQuery) {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	
-	this.frame = $("<div/>").attr("class","seachListClass");	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
+	this.frame = $("<div/>").addClass("seachListClass");	
 	var queryBox = $("<div/>").appendTo(this.frame);
 	
 	var query = $("<input/>").attr({
@@ -20,7 +26,12 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 	}).appendTo(queryBox).hide();
 	
 	var errorBox = $("<div/>").addClass("errorArea").appendTo(queryBox).hide();
+
+	this.tagList = new TagList(false,updateQuery).appendTo(this.frame);
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/
 	query.autocomplete({
 		source: availableQueries,
 		select: onSelectSendTo
@@ -31,7 +42,7 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 	    	updateQuery();
 	    	}	    
 	});
-	
+
 	query.bind('input propertychange',function() {
 		if(query.val() == "") {
 			addBtn.hide(200);
@@ -54,8 +65,6 @@ var QueryTagList = function(minWidth,queryPlaceHolder,availableQueries,
 			}
 		}
 	}
-	
-	this.tagList = new TagList(false,updateQuery).appendTo(this.frame);
 		
 	this.addTagByQuery = function(thisQuery,removable) {
 		var res = commitQuery(thisQuery);

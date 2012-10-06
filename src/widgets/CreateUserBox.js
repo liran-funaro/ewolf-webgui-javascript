@@ -3,6 +3,8 @@ function CreateUserBox(id,name,showID) {
 		return null;
 	}
 	
+	var idBox = null;
+	
 	var link = $("<a/>").attr({
 		"style": "width:1%;",
 		"class": "selectableBox selectableBoxHovered",
@@ -11,8 +13,6 @@ function CreateUserBox(id,name,showID) {
 	});
 	
 	var nameBox = $("<span/>").appendTo(link);
-	
-	var idBox = null;
 	
 	if(showID) {
 		idBox = $("<span/>")
