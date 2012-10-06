@@ -57,7 +57,7 @@ var Profile = function (id,applicationFrame,userID,userName) {
 		this.title.addFunction("Add to wolfpack...", function () {
 			var widget = new AddToWolfpack(id, userID, 
 					wolfpacksContainer.getItemNames());
-			new Popup(self.frame, this, "bottom-right",200)
+			new Popup(self.frame, this, "bottom-right",250)
 						.append(widget.context)
 						.start();
 		}, true);
