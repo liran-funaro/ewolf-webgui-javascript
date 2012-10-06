@@ -1,13 +1,19 @@
 var Wolfpacks = function (menuList,applicationFrame) {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	$.extend(this,WOLFPACK_CONSTANTS);
 	
 	var wolfpacksApps = {},
-		UID = 100;
+			UID = 100;
 	
 	this.wolfpacksArray = [];
 	
-	menuList.addExtraItem(CreateNewWolfpackLink());
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
+	menuList.addExtraItem(CreateNewWolfpackLink());	
 	
 	var wolfpacksResponseHandler = new ResponseHandler("wolfpacksAll",
 			["wolfpacksList"],handleWolfpacks);

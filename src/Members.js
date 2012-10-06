@@ -1,10 +1,16 @@
 var Members = function() {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	
 	this.knownUsersFullDescriptionArray = [];
 	this.knownUsersIDArray = [];
 	var knownUsersMapByID = {};
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/
 	var membersResponseHandler = new ResponseHandler("wolfpackMembers",
 			["membersList"],handleMembers);
 	
