@@ -1,4 +1,5 @@
-var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
+var BasicRequestHandler = function(requestAddress,
+		refreshIntervalMillisec) {
 	var self = this;
 	
 	var requestsMap = {},
@@ -10,14 +11,19 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 	var timer = null;
 	var requestAllOnSelect = false;
 	
+	this.setRefreshInterval = function (newRefreshIntervalMillisec) {
+		refreshIntervalMillisec = newRefreshIntervalMillisec;
+	};
+	
 	this.stopRefreshInterval = function () {
 		clearTimeout(timer);
 	};
 	
 	this.restartRefreshInterval = function () {
-		if(refreshIntervalSec > 0) {
-			clearTimeout(timer);
-			timer = setTimeout(timerTimeout,refreshIntervalSec*1000);
+		clearTimeout(timer);
+		
+		if(refreshIntervalMillisec > 0) {
+			timer = setTimeout(timerTimeout,refreshIntervalMillisec);
 		}
 	};
 	
@@ -29,13 +35,7 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 		eWolf.trigger("loadingEnd",[appID]);		
 	}
 	
-	function omRequestAllBegin(appID) {
-		self.stopRefreshInterval();
-	}
-	
 	function onRequestAllComplete(appID, response, status) {
-		self.restartRefreshInterval();
-		
 		if(appID && appsRequests[appID] && appsRequests[appID].onComplete) {
 			appsRequests[appID].onComplete(appID, response, status);
 		}
@@ -183,7 +183,7 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 	};
 	
 	this.requestAll = function(appID,forceUpdate) {
-		omRequestAllBegin(appID);
+		self.stopRefreshInterval();
 		
 		var requestsObj = generalRequests;
 		
@@ -197,17 +197,25 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 			needRefresh = requestsObj;
 		} else {
 			needRefresh = self.filterByLastUpdate(requestsObj);
-		}	
+		}
+		
+		if(needRefresh.length == 0) {
+			self.restartRefreshInterval();
+			return self;
+		}
 		
 		return self.requestObjectArray(appID,needRefresh,
-				onRequestAllComplete);
+				function (appID, response, status) {
+			self.restartRefreshInterval();
+			onRequestAllComplete(appID, response, status);
+		});
 	};
 	
 	this.filterByLastUpdate = function(requestsObj) {
 		var needRefresh = [];
 		
 		var needRefreshTime = new Date().getTime() - 
-							(refreshIntervalSec * 1000);
+							(refreshIntervalMillisec);
 
 		$(requestsObj).each(function(i,reqObj) {
 			if(reqObj.lastUpdate < needRefreshTime) {
@@ -239,8 +247,8 @@ var BasicRequestHandler = function(requestAddress,refreshIntervalSec) {
 	return this;
 };
 
-var PostRequestHandler = function(requestAddress,refreshIntervalSec) {
-	BasicRequestHandler.call(this,requestAddress,refreshIntervalSec);
+var PostRequestHandler = function(requestAddress,refreshIntervalMillisec) {
+	BasicRequestHandler.call(this,requestAddress,refreshIntervalMillisec);
 	
 	this._makeRequest = function (address,data,success) {
 		return $.post(address,JSON.stringify(data),success,"json");
@@ -249,8 +257,8 @@ var PostRequestHandler = function(requestAddress,refreshIntervalSec) {
 	return this;
 };
 
-/*var JSONRequestHandler = function(id,requestAddress,refreshIntervalSec) {
-	BasicRequestHandler.call(this,id,requestAddress,refreshIntervalSec);
+/*var JSONRequestHandler = function(id,requestAddress,refreshIntervalMillisec) {
+	BasicRequestHandler.call(this,id,requestAddress,refreshIntervalMillisec);
 	
 	this._makeRequest = function (address,data,success) {		
 		return $.getJSON(address,data,success);

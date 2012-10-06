@@ -1,4 +1,7 @@
 var eWolf = new function() {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	$.extend(this,EWOLF_CONSTANTS);
 	
@@ -10,8 +13,15 @@ var eWolf = new function() {
 	
 	this.mainAppsCreated = false;
 	
+	this.notificationCount = 0;
+	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/
 	this.init = function() {
-		self.serverRequest = new PostRequestHandler("/json",self.REFRESH_INTERVAL_SEC);
+		self.serverRequest = new PostRequestHandler(
+				self.JSON_REQUEST,
+				self.REQUEST_INTERVAL_ACTIVE_MILLISECOUNDS);
 		
 		$(window).bind('hashchange', self.onHashChange);
 		
@@ -69,9 +79,9 @@ var eWolf = new function() {
 		self.serverRequest.registerHandler(self.PROFILE_REQUEST_NAME,
 				new ResponseHandler("profile",["id","name"],
 						function (data, textStatus, postData) {
-					document.title = "eWolf - " + data.name;
 					self.userID = data.id;
 					self.userName = data.name;
+					self.updateTitle();
 				}).getHandler());
 		
 		self.serverRequest.addOnComplete(null,function(appID, response, status) {
@@ -91,6 +101,21 @@ var eWolf = new function() {
 		self.getUserInformation();
 	};
 	
+	this.updateTitle = function () {
+		var title = "eWolf";
+		if(self.userName) {
+			title += " - " + self.userName;
+		}
+		
+		if(self.notificationCount > 0) {
+			title += " (" + self.notificationCount + ")";
+		}
+		
+		document.title = title;
+		
+		return self;
+	};
+	
 	this.getUserInformation = function () {
 		if(self.loginApp) {
 			self.loginApp.destroy();
@@ -103,6 +128,8 @@ var eWolf = new function() {
 		}
 		
 		self.serverRequest.requestAll(self.FIRST_EWOLF_LOGIN_REQUEST_ID, true);
+		
+		return self;
 	};
 	
 	this.createMainApps = function () {
@@ -126,6 +153,40 @@ var eWolf = new function() {
 		
 		self.serverRequest.setRequestAllOnSelect(true);
 		self.onHashChange();
+		
+		self.monitor = new IdleMonitor(
+				self.TIMEOUT_AWAY_MINUTES,
+				self.TIMEOUT_AWAY_FOR_LONG_MINUTES,
+				self.TIMEOUT_IDLE_MINUTES);
+		
+		self.bind(self.EVENT_AWAY, function() {
+			//console.log(self.EVENT_AWAY);
+			self.serverRequest.setRefreshInterval(
+					eWolf.REQUEST_INTERVAL_AWAY_MILLISECOUNDS);
+		});
+		
+		self.bind(self.EVENT_AWAY_FOR_LONG, function() {
+			//console.log(self.EVENT_AWAY_FOR_LONG);
+			self.serverRequest.setRefreshInterval(
+					eWolf.REQUEST_INTERVAL_AWAY_FOR_LONG_MILLISECOUNDS);
+		});
+		
+		self.bind(self.EVENT_IDLE, function() {
+			//console.log(self.EVENT_IDLE);
+			self.serverRequest.setRefreshInterval(
+					eWolf.REQUEST_INTERVAL_IDLE_MILLISECOUNDS);
+		});
+		
+		self.bind(self.EVENT_ACTIVE, function() {
+			//console.log(self.EVENT_ACTIVE);
+			self.serverRequest.setRefreshInterval(
+					eWolf.REQUEST_INTERVAL_ACTIVE_MILLISECOUNDS);
+			self.serverRequest.requestAll(self.selectedApp,false);
+		});
+		
+		self.monitor.initialize();
+		
+		return self;
 	};
 	
 	this.presentLoginScreen = function() {
@@ -142,6 +203,8 @@ var eWolf = new function() {
 		if(!self.signupApp) {
 			self.signupApp = new Signup(self.SIGNUP_APP_ID,self.applicationFrame);
 		}
+		
+		return self;
 	};
 	
 	this.onHashChange = function() {
@@ -187,6 +250,8 @@ var eWolf = new function() {
 		} else {
 			self.onHashChange();
 		}
+		
+		return self;
 	};
 	
 	this.bind = function (arg0,arg1) {

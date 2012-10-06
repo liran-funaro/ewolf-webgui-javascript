@@ -88,6 +88,9 @@ var PendingRequests = function (insideContext) {
 
 		pendingCount.setCounter(pendingApprovalCount);
 		blockingCount.setCounter(requestApprovalCount);
+		
+		eWolf.notificationCount = pendingApprovalCount + requestApprovalCount;
+		eWolf.updateTitle();
 	};
 	
 	this.appendTo = function(somthing) {
