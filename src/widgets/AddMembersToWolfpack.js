@@ -1,9 +1,16 @@
 var AddMembersToWolfpack = function(fatherID,wolfpack, 
 		existingMemebers,	onFinish) {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
-	this.frame = $("<span/>");
 	
 	madeChanges = false;	
+	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
+	this.frame = $("<span/>");
 
 	addMembersQuery = new FriendsQueryTagList(400).appendTo(this.frame);
 	
@@ -21,8 +28,13 @@ var AddMembersToWolfpack = function(fatherID,wolfpack,
 		"value": "Cancel"
 	}).appendTo(this.frame);
 	
-	errorMessage = $("<div/>").addClass("errorArea").appendTo(this.frame);
+	errorMessage = $("<div/>")
+			.addClass("errorArea")
+			.appendTo(this.frame);
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
 	responseHandler = new ResponseHandler("addWolfpackMember",[],null);
 	
 	this.apply = function() {

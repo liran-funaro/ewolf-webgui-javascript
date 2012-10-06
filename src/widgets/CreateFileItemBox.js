@@ -1,26 +1,27 @@
 function CreateFileItemBox(name,type,size,file) {
-	var box =  $("<div/>").css({
-		"display": "inline-block"
-	});
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
+	var box =  $("<div/>")
+				.addClass("fileItemBox");
 	
 	var attachImage = $("<img/>").attr({
 		"src" : "/Paperclip.png",
 		"align" : "absmiddle",
 		"vertical-align" : "middle"
-	}).css({
-		"margin-right" : "3px"
-	}).appendTo(box);
+	})	.addClass("fileItemThunmnailImage")
+			.appendTo(box);
 	
-	$("<span/>").css({
-		"white-space" : "normal"
-	}).append(name).appendTo(box);
+	$("<span/>")
+			.addClass("fileItemFileNameBox")
+			.append(name)
+			.appendTo(box);
 	
 	if(type) {
-		$("<span/>").css({
-			"text-align" : "right",
-			"font-size" : "10px",
-			"margin-left" : "5px"
-		}).append("(" + type + ")").appendTo(box);
+		$("<span/>")
+					.addClass("fileItemExtraDataBox")
+					.append("(" + type + ")")
+					.appendTo(box);
 	}
 	
 	if(size) {
@@ -35,22 +36,21 @@ function CreateFileItemBox(name,type,size,file) {
 		   fileSize =  "(" + fileSize + ")";
 	   }
 		
-		$("<span/>").css({
-			"text-align" : "right",
-			"font-size" : "10px",
-			"margin-left" : "5px"
-		}).append(fileSize).appendTo(box);
+		$("<span/>")
+				.addClass("fileItemExtraDataBox")
+				.append(fileSize)
+				.appendTo(box);
 	}
 	
 	if(file && file.type.substring(0,5) == "image") {
 		new ThumbnailImageFromFile(file,file.name,
 				0.7,100,50,function(img) {
 			attachImage.remove();
-			img.attr({
-				"align" : "absmiddle"
-			}).css({
-				"margin-right" : "3px"
-			});
+			img	.attr({
+						"align" : "absmiddle"
+					})
+					.addClass("fileItemThunmnailImage");
+			
 			box.prepend(img);
 		});
 	}

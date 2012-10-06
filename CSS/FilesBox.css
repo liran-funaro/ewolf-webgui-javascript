@@ -33,6 +33,24 @@
 	font-size:10px;
 }
 
+.fileItemBox {
+	display:inline-block;
+}
+
+.fileItemThunmnailImage {
+	margin-right:3px;
+}
+
+.fileItemFileNameBox {
+	white-space:normal;
+}
+
+.fileItemExtraDataBox {
+	text-align:right;
+	font-size:10px;
+	margin-left:5px;
+}
+
 h1, h2
 {
 	font-size: 1.5em;

@@ -52,7 +52,6 @@ function CreateMailItemBox(mailObj) {
 			
 			$("<div/>")
 				.append(line)
-				//.append("Attachments:")
 				.append(attachList)
 				.appendTo(canvas);
 		}

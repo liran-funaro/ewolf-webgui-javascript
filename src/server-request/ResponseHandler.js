@@ -1,16 +1,22 @@
 RESPONSE_ARRAY_CONDITION_GENRAL_ERROR = 
 	function(response, textStatus, postData) {
-	return response.isGeneralError();
-};
+		return response.isGeneralError();
+	};
 
 var ResponseHandler = function(category, requiredFields, handler) {
-	var thisObj = this;
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
+	var self = this;
 	
 	var errorHandler = null;
 	var completeHandler = null;
 	var badResponseHandler = null;
 	var responseArray = [];
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/
 	function theHandler(data, textStatus, postData) {
 		if (data[category]) {
 			var response = new GenericResponse(data[category]);
@@ -83,7 +89,7 @@ var ResponseHandler = function(category, requiredFields, handler) {
 			error : error
 		});
 		
-		return thisObj;
+		return self;
 	};
 
 	this.getHandler = function() {
@@ -92,22 +98,22 @@ var ResponseHandler = function(category, requiredFields, handler) {
 	
 	this.error = function (newErrorHandler) {
 		errorHandler = newErrorHandler;
-		return thisObj;
+		return self;
 	};
 	
 	this.success = function (newSuccessHandler) {
 		handler = newSuccessHandler;
-		return thisObj;
+		return self;
 	};
 	
 	this.complete = function (newCompleteHandler) {
 		completeHandler = newCompleteHandler;
-		return thisObj;
+		return self;
 	};
 	
 	this.badResponseHandler = function (newBadResponseHandler) {
 		badResponseHandler = newBadResponseHandler;
-		return thisObj;
+		return self;
 	};
 	
 	return this;

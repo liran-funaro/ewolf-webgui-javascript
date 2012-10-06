@@ -1,5 +1,8 @@
 var BasicRequestHandler = function(requestAddress,
 		refreshIntervalMillisec) {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	
 	var requestsMap = {},
@@ -11,6 +14,9 @@ var BasicRequestHandler = function(requestAddress,
 	var timer = null;
 	var requestAllOnSelect = false;
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
 	this.setRefreshInterval = function (newRefreshIntervalMillisec) {
 		refreshIntervalMillisec = newRefreshIntervalMillisec;
 	};

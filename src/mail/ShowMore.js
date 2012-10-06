@@ -1,22 +1,21 @@
-var ShowMore = function (onClick) {
+var ShowMore = function () {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
-	var element = null;
+	var element = $("<div/>")
+			.addClass("showMoreClass")
+			.append("Show More...");
 	
-	this.draw = function () {
-		element = $("<div/>").addClass("showMoreClass")
-			.append("Show More...")
-			.click(onClick);
-		
-		return self;
-	};
-	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/		
 	this.remove = function() {
 		if(element != null) {
 			element.remove();
 			element = null;
+			delete self;
 		}
-		
-		return self;
 	};
 	
 	this.show = function () {
@@ -35,6 +34,12 @@ var ShowMore = function (onClick) {
 		return self;
 	};
 	
+	this.setOnClick = function(newOnClick) {
+		if(newOnClick && element) {
+			element.click(newOnClick);
+		}
+	};
+	
 	this.appendTo = function (something) {
 		if(element) {
 			element.appendTo(something);
@@ -42,8 +47,6 @@ var ShowMore = function (onClick) {
 		
 		return self;
 	};
-	
-	self.draw();
 	
 	return this;
 };

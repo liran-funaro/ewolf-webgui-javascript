@@ -15,11 +15,17 @@ var RESPONSE_RESULT = {
 };
 
 var GenericResponse = function (obj) {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;	
 	$.extend(this,obj);
 	
 	var UNDEFINED_RESULT = "undifined result";
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
 	this.isSuccess = function() {
 		if(self.result) {
 			return self.result == RESPONSE_RESULT.SUCCESS;

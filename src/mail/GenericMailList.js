@@ -1,6 +1,9 @@
 var GenericMailList = function(mailType,appID,
 		extraDataToSend, maxOlderMessagesFetch,
 		listClass,msgBoxClass,preMessageTitle,allowShrink) {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	
 	var newsFeedRequestName = appID + "__newsfeed_request_name__";
@@ -10,11 +13,27 @@ var GenericMailList = function(mailType,appID,
 	
 	var lastItem = null;
 	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
 	this.frame = $("<span/>");
 	
-	var list = $("<ul/>").attr({
-		"class" : "messageList"
-	}).appendTo(this.frame);
+	var list = $("<ul/>")
+				.addClass("messageList")
+				.appendTo(this.frame);
+	
+	var showMore = new ShowMore().appendTo(this.frame);
+	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
+	var responseHandler = new ResponseHandler(mailType,
+			["mailList"],handleNewData);
+	
+	showMore.setOnClick(function() {
+		eWolf.serverRequest.request(appID,self.updateFromServer (true),
+				responseHandler.getHandler());
+	});
 	
 	this.updateFromServer = function (getOlder) {
 		var data = {};
@@ -65,18 +84,6 @@ var GenericMailList = function(mailType,appID,
 		return item;
 	};
 	
-	var responseHandler = new ResponseHandler(mailType,
-			["mailList"],handleNewData);
-	
-	eWolf.serverRequest.registerRequest(newsFeedRequestName,this.updateFromServer);
-	eWolf.serverRequest.registerHandler(newsFeedRequestName,responseHandler.getHandler());
-	eWolf.serverRequest.bindRequest(newsFeedRequestName,appID);
-	
-	var showMore = new ShowMore(function() {
-		eWolf.serverRequest.request(appID,self.updateFromServer (true),
-				responseHandler.getHandler());
-	}).appendTo(this.frame);
-	
 	function handleNewData(data, textStatus, postData) {
 		$.each(data.mailList, function(j, mailItem) {
 			self.addItem(mailItem.senderID,mailItem.senderName,
@@ -101,6 +108,10 @@ var GenericMailList = function(mailType,appID,
 		self.frame.remove();
 		delete self;
 	};
+	
+	eWolf.serverRequest.registerRequest(newsFeedRequestName,this.updateFromServer);
+	eWolf.serverRequest.registerHandler(newsFeedRequestName,responseHandler.getHandler());
+	eWolf.serverRequest.bindRequest(newsFeedRequestName,appID);
 	
 	return this;
 };

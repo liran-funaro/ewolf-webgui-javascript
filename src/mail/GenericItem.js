@@ -1,6 +1,14 @@
 var GenericItem = function(senderID,senderName,timestamp,mail,
 		listClass,msgBoxClass,preMessageTitle,allowShrink) {
-	var thisObj = this;
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
+	var self = this;
+	var isOnSender = false;
+	
+	/****************************************************************************
+	 * User Interface
+	  ***************************************************************************/
 	var itemSpan = $("<span/>");
 	
 	var listItem = $("<li/>").attr({
@@ -10,25 +18,27 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 	var preMessageBox = $("<span/>").attr({
 		"style": "width:1%;",
 		"class": "preMessageBox"
-	}).append(preMessageTitle).appendTo(listItem);	
-	
-	var isOnSender = false;
+	}).append(preMessageTitle).appendTo(listItem);		
+
 	var senderBox = CreateUserBox(senderID,senderName)
-		.appendTo(listItem)
-		.hover(function() {
-			isOnSender = true;
-		}, function () {
-			isOnSender = false;
-		});
+				.appendTo(listItem)
+				.hover(function() {
+					isOnSender = true;
+				}, function () {
+					isOnSender = false;
+				});	
 	
-	
-	var timestampBox = CreateTimestampBox(timestamp).appendTo(listItem);
+	var timestampBox = CreateTimestampBox(timestamp)
+				.appendTo(listItem);
 		
-	var itsMessage = $("<li/>").attr({
-		 "class": msgBoxClass
-	 })	.append(CreateMailItemBox(JSON.parse(mail)))
-	 	.insertAfter(listItem);
+	var itsMessage = $("<li/>")
+				.addClass(msgBoxClass)
+				.append(CreateMailItemBox(JSON.parse(mail)))
+				.insertAfter(listItem);	
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/	
 	if(allowShrink) {
 		itsMessage.hide();
 		
@@ -38,7 +48,7 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 			}				
 		});
 	}	
-	
+
 	function updateView() {
 		var w = listItem.width()-timestampBox.width()-preMessageBox.width()-20;		
 		senderBox.text(senderName).shorten({width:w});
@@ -51,19 +61,19 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 	this.appendTo = function(place) {
 		itemSpan.appendTo(place);
 		updateView();
-		return thisObj;
+		return self;
 	};
 	
 	this.prependTo = function(place) {
 		itemSpan.prependTo(place);
 		updateView();
-		return thisObj;
+		return self;
 	};
 	
 	this.insertAfter = function(place) {
 		itemSpan.insertAfter(place);
 		updateView();
-		return thisObj;
+		return self;
 	};
 	
 	this.getListItem = function() {
@@ -73,7 +83,7 @@ var GenericItem = function(senderID,senderName,timestamp,mail,
 	this.destroy = function() {
 		message.destroy();
 		itemSpan.remove();
-		delete thisObj;
+		delete self;
 	};
 	
 	return this;
