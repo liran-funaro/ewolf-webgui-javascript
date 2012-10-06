@@ -3,11 +3,17 @@ VALIDATOR_IS_NOT_EMPTY = function(field) {
 };
 
 var FormValidator = function() {
+	/****************************************************************************
+	 * Members
+	  ***************************************************************************/
 	var self = this;
 	
 	var fields = {};
 	var onSend = null;
 	
+	/****************************************************************************
+	 * Functionality
+	  ***************************************************************************/		
 	this.attachOnSend = function(newOnSend) {
 		onSend = newOnSend;
 		return self;

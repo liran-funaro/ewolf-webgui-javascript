@@ -44,19 +44,13 @@ var Popup = function(frame, activator, align, width, offset) {
 	/****************************************************************************
 	 * User Interface
 	  ***************************************************************************/
-	this.frame = $("<div/>").css({
-			"position" : "absolute",
-			"border": "1px solid #999",
-			"background-color" : "white",
-			"z-index" : "1000",
-			"opacity" : "0.9"
-	});
-	
-	this.frame.css({
-		top : top + "px",
-		left : left + "px",
-		width : width + "px",
-	});
+	this.frame = $("<div/>")
+				.addClass("popupFrameClass")
+				.css({
+					top : top + "px",
+					left : left + "px",
+					width : width + "px",
+				});
 	
 	this.frame.appendTo(document.body).hide();
 	
