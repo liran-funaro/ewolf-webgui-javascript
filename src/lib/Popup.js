@@ -23,16 +23,12 @@ var Popup = function(frame, activator, align, width, offset) {
 		top += offset.top;
 	}
 	
-//	if(!width) {
-//		width = outerWidth;
-//	}
-	
 	if(align.indexOf("bottom") == 0 && outerHeight) {
 		top += outerHeight + leftMargin;
 	}
 	
 	if(align == "bottom-left") {		
-		
+		// Nothing to do, this is the default.
 	} else if(align == "bottom-right") {
 		left -= (width - outerWidth);
 	} else if(align == "top-left") {
