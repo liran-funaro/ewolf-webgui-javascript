@@ -98,6 +98,10 @@ var eWolf = new function() {
 			}
 		});
 		
+		$("#eWolfTitleLink").click(function() {
+			self.trigger("refresh",[self.selectedApp]);
+		});
+		
 		self.getUserInformation();
 	};
 	
@@ -213,7 +217,7 @@ var eWolf = new function() {
 			
 			var found = false;
 			
-			$.each($(self).data("events").select, function(i,handler) {				
+			$.each($._data(self, "events").select, function(i,handler) {				
 				if(handler.type == "select" && handler.namespace == selected) {
 					found = true;
 					return false;
@@ -222,7 +226,7 @@ var eWolf = new function() {
 			
 			if(found) {
 				self.trigger("select",[selected]);
-			} else {
+			} else if(self.searchBar){
 				var selectedSubString = selected.substring(0,
 						self.searchBar.SEARCH_PROFILE_PREFIX.length);
 				
@@ -237,7 +241,7 @@ var eWolf = new function() {
 				} else {
 					self.selectApp(self.NEWSFEED_APP_ID);
 				}				
-			}			
+			}		
 		} else {
 			self.selectApp(self.NEWSFEED_APP_ID);
 		}

@@ -64,3 +64,7 @@
 	float:left;
 	padding:7px 0 8px 0;
 }
+
+#eWolfTitleLink {
+	cursor:pointer;
+}

@@ -13,13 +13,13 @@ var Logout = function(id,text,container) {
 		});
 	
 	function onLogout(appID) {
-		document.location.reload(true);
+		document.location.reload(false);
 	}
 	
 	this.commitLogout = function () {
 		eWolf.serverRequest.request(id,{
 				logout : {}
-			}, null, onLogout);
+			}, null , onLogout);
 	};
 	
 	this.destroy = function() {

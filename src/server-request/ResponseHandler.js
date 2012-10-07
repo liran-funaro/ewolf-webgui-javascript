@@ -18,7 +18,7 @@ var ResponseHandler = function(category, requiredFields, handler) {
 	 * Functionality
 	  ***************************************************************************/
 	function theHandler(data, textStatus, postData) {
-		if (data[category]) {
+		if (data && data[category]) {
 			var response = new GenericResponse(data[category]);
 			var valid = true;
 			
