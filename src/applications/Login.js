@@ -71,6 +71,14 @@ var Login = function(id,applicationFrame) {
 	/****************************************************************************
 	 * Functionality
 	  ***************************************************************************/
+	eWolf.bind("select",function(event,eventID) {
+		if(eventID == id) {
+			window.setTimeout(function () {
+				username.focus();
+			}, 0);
+		}
+	});
+	
 	this.title.addFunction("Signup",function() {
 		eWolf.selectApp(eWolf.SIGNUP_APP_ID);
 	});	

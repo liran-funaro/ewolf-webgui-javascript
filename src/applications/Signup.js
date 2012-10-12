@@ -93,6 +93,14 @@ var Signup = function(id) {
 	/****************************************************************************
 	 * Functionality
 	  ***************************************************************************/
+	eWolf.bind("select",function(event,eventID) {
+		if(eventID == id) {
+			window.setTimeout(function () {
+				fullName.focus();
+			}, 0);
+		}
+	});
+	
 	function handleSignUp(data, textStatus, postData) {
 		eWolf.getUserInformation();
 	}
