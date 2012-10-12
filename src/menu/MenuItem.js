@@ -13,7 +13,7 @@ var MenuItem = function(id,title) {
 	
 	var refreshContainer = $("<div/>")
 				.addClass("menuItemExtraInfoArea")
-				.css("padding-top","5px")
+				.css("padding-top","3px")
 				.appendTo(aObj).hide();
 	
 	var loadingContainer = $("<div/>")

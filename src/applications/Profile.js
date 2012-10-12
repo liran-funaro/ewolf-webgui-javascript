@@ -64,7 +64,11 @@ var Profile = function (id,applicationFrame,userID,userName) {
 	} else {
 		this.title.addFunction("Post", function() {
 			new NewPost(id,applicationFrame).select();
-		}, true);
+		}, true);		
+		
+		eWolf.bind("newWolfpack",function(event,wolfpacksArray) {
+			refreshWolfpackData(wolfpacksArray);
+		});
 	}
 	
 	function onProfileFound() {		
@@ -100,13 +104,17 @@ var Profile = function (id,applicationFrame,userID,userName) {
 		onProfileFound();
 	}
 	
-	function handleWolfpacksData(data, textStatus, postData) {		
+	function handleWolfpacksData(data, textStatus, postData) {		 
+		 refreshWolfpackData(data.wolfpacksList);
+	  }
+	
+	function refreshWolfpackData(wolfpacksList) {		
 		wolfpacksContainer.removeAll();		 
-
-		 $.each(data.wolfpacksList,function(i,pack) {
+		
+		$.each(wolfpacksList,function(i,pack) {
 			 wolfpacksContainer.addItem(CreateWolfpackBox(pack),pack);
 		 });
-	  }
+	}
 	
 	function getProfileData() {		
 		return {	profile: { userID: userID	} };

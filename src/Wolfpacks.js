@@ -69,10 +69,12 @@ var Wolfpacks = function (menuList,applicationFrame) {
 	this.createWolfpacks = function(wolfpacks,onComplete) {
 		if(wolfpacks.length > 0) {			
 			var responseHandler = new ResponseHandler("createWolfpack",[],null);
+			var wolfpacksAdded = false;
 			
 			responseHandler.success(function(data, textStatus, postData) {
 				$.each(wolfpacks,function(i,pack) {
 					self.addWolfpack(pack);
+					wolfpacksAdded = true;
 				});
 			}).error(function(data, textStatus, postData) {				
 				if(data.wolfpacksResult == null) {
@@ -81,10 +83,19 @@ var Wolfpacks = function (menuList,applicationFrame) {
 					$.each(data.wolfpacksResult, function(i,response) {
 						if(response.result == RESPONSE_RESULT.SUCCESS) {
 							self.addWolfpack(postData.wolfpackNames[i]);
+							wolfpacksAdded = true;
 						}
 					});
 				}
-			}).complete(onComplete);
+			}).complete(function() {
+				if(wolfpacksAdded) {
+					eWolf.trigger("newWolfpack",[self.wolfpacksArray]);
+				}
+				
+				if(onComplete) {
+					onComplete();
+				}	
+			});			
 			
 			eWolf.serverRequest.request("wolfpacks",{
 				createWolfpack: {
