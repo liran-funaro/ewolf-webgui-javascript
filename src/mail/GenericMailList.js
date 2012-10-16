@@ -117,7 +117,8 @@ var GenericMailList = function(mailType,appID,
 };
 
 var NewsFeedList = function (appID,serverSettings) {
-	var pow = "<img src='wolf-paw.svg' height='18px' style='padding-right:5px;'></img>";
+	var pow = "<img src='" + eWolf.IMAGE_PAW +
+		"' height='18px' style='padding-right:5px;'></img>";
 	GenericMailList.call(this,"newsFeed",appID,serverSettings,
 			eWolf.NEWSFEED_MAX_OLDER_MESSAGES_FETCH,
 			"postListItem","postBox",pow,false);

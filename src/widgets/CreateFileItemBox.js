@@ -6,7 +6,7 @@ function CreateFileItemBox(name,type,size,file) {
 				.addClass("fileItemBox");
 	
 	var attachImage = $("<img/>").attr({
-		"src" : "/Paperclip.png",
+		"src" : eWolf.IMAGE_PAPER_CLIP,
 		"align" : "absmiddle",
 		"vertical-align" : "middle"
 	})	.addClass("fileItemThunmnailImage")

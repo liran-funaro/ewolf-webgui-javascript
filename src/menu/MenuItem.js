@@ -26,7 +26,7 @@ var MenuItem = function(id,title) {
 				.appendTo(aObj).hide();
 	
 	var refresh = $("<img/>").attr({
-		"src": "refresh.svg",
+		"src": eWolf.IMAGE_REFRESH,
 		"class": "refreshButton"
 	})	.appendTo(refreshContainer);
 	

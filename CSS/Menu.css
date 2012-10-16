@@ -62,7 +62,7 @@
 
 #menu ul li a:hover {
 	color:#FFFFFF;
-	background-image:url(hover.png);
+	background-image:url(/static_files/hover.png);
 	background-repeat:repeat-x;
 }
 

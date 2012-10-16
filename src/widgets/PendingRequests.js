@@ -17,7 +17,7 @@ var PendingRequests = function (insideContext) {
 				.appendTo(insideContext);
 	
 	var pendingRequestImage = $("<img/>").attr({
-		"src": "user-add.png",
+		"src": eWolf.IMAGE_USER_ADD,
 	})	.css({
 		"width" : "28px",
 		"height" : "28px"
@@ -25,7 +25,7 @@ var PendingRequests = function (insideContext) {
 			.appendTo(this.context);
 	
 	var blockedImage = $("<img/>").attr({
-		"src": "user-blocking.png",
+		"src": eWolf.IMAGE_USER_BLOCKING,
 	})	.css({
 		"width" : "32px",
 		"height" : "28px"
