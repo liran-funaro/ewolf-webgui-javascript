@@ -87,7 +87,9 @@ var eWolf = new function() {
 		self.serverRequest.addOnComplete(null,function(appID, response, status) {
 			if(self.mainAppsCreated) {
 				if(response.status != 200 || self.userID == null) {
-					document.location.reload(true);
+					alert("realod now");
+					console.log(response);
+					//document.location.reload(true);
 				}				
 			} else if(response.status == 200 && self.userID != null) {
 				self.serverRequest.restartRefreshInterval();
