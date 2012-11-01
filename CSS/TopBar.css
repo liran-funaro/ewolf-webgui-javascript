@@ -3,28 +3,24 @@
 	background-color:/*black*/ whitesmoke;
 	opacity: 0.70;
 	height:45px;
-	min-width:750px;
 	padding:0px 0px 0px 0px;
 	overflow: hidden;
 	
-	z-index:10000;
+/* 	z-index:10000; */
+	
+	position:fixed;
+	top:0;
+/* 	right:0; */
+	left:0;
+	width:1000px;
+	z-index:1000;
+	min-width:750px;
 }
 
 .shadow-top {
 	-webkit-box-shadow:0 2px 3px rgba(0,0,0,.25);
 	-moz-box-shadow:0 2px 3px rgba(0,0,0,.25);
 	box-shadow:0 2px 3px rgba(0,0,0,.25);
-}
-
-.topbar-fixed {
-	position:fixed;
-	top:0;right:0;left:0;z-index:1000;
-}
-
-.topbar-absolute {
-	position:absolute;
-	top:0;left:0;
-	width:750px;
 }
 
 .logoutLink {

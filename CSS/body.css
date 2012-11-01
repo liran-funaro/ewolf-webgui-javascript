@@ -7,6 +7,7 @@ html,body {
 	background-color: /*#f6f4f5*/ #E6EBEA;
 	font-family:"Serif",serif;
 	font-size:16px;
+	min-width:750px;
 }
 
 body {

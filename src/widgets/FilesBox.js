@@ -114,9 +114,9 @@ var FilesBox = function(uploaderArea) {
 	};
 	
 	this.getCallbackAddress = function (wolfpackName, fileName, fileType) {
-		return  "/sfsupload?" + "wolfpackName=" + wolfpackName
+		return  encodeURI("/sfsupload?" + "wolfpackName=" + wolfpackName
 			+ "&fileName=" + fileName
-			+ "&contentType=" + fileType;
+			+ "&contentType=" + fileType);
 	};
 	
 	this.initProgress = function (id) {

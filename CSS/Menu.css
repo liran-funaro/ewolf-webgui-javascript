@@ -9,7 +9,8 @@
 	background-color:white;	
 	opacity:0.7;
 	width:200px;
-	overflow:hidden;
+/* 	overflow:hidden; */
+	overflow-y:auto;
 	height:1500px;
 	margin:0;
 	padding:5px 0 0 0;
@@ -17,7 +18,7 @@
 	color:black;
 	
 	top:45px;right:0;left:-35px;z-index:999;
-	position:fixed;	
+	position:fixed;
 }
 
 .menuListTitle {	
